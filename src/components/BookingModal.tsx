@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { X, CalendarDays, Users, Home, User, Phone, Mail, MessageSquare, CheckCircle2 } from "lucide-react";
 import { site, waLink } from "@/data/site";
 import { roomTypeOptions } from "@/data/rooms";
+import { createBooking } from "@/app/actions/booking";
 
 type Props = {
   onClose: () => void;
@@ -28,6 +29,9 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
   const [form, setForm] = useState(() => ({ ...empty, roomType: presetRoom ?? "" }));
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [bookingRef, setBookingRef] = useState<string | null>(null);
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -62,9 +66,10 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
     return e;
   }
 
-  function buildMessage() {
+  function buildMessage(ref: string) {
     return [
       `*New Booking Request — ${site.name}*`,
+      `Booking Ref: ${ref}`,
       "",
       `Room: ${form.roomType}`,
       `Check-in: ${form.checkIn}`,
@@ -80,21 +85,50 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
       .join("\n");
   }
 
-  function handleWhatsApp() {
+  async function submit() {
     const e = validate();
     setErrors(e);
+    setServerError(null);
     if (Object.keys(e).length) return;
-    window.open(waLink(buildMessage()), "_blank", "noopener");
-    setSubmitted(true);
+
+    setLoading(true);
+    // Open WhatsApp synchronously in the click's gesture so the popup blocker allows it.
+    const waWindow = window.open("", "_blank", "noopener");
+    try {
+      const result = await createBooking({
+        roomType: form.roomType,
+        checkIn: form.checkIn,
+        checkOut: form.checkOut,
+        guests: Number(form.guests),
+        roomsCount: Number(form.roomsCount),
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        requests: form.requests,
+      });
+
+      if (!result.success) {
+        setServerError(result.error);
+        waWindow?.close();
+        return;
+      }
+
+      setBookingRef(result.bookingRef);
+      const url = waLink(buildMessage(result.bookingRef));
+      if (waWindow) waWindow.location.href = url;
+      else window.open(url, "_blank", "noopener");
+      setSubmitted(true);
+    } catch {
+      setServerError("Something went wrong. Please try again or contact us on WhatsApp.");
+      waWindow?.close();
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
-    const e = validate();
-    setErrors(e);
-    if (Object.keys(e).length) return;
-    window.open(waLink(buildMessage()), "_blank", "noopener");
-    setSubmitted(true);
+    void submit();
   }
 
   const today = new Date().toISOString().split("T")[0];
@@ -129,11 +163,16 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
           <div className="px-6 py-10 text-center">
             <CheckCircle2 className="mx-auto size-14 text-green-500" />
             <p className="mt-4 font-heading text-lg font-semibold text-navy">
-              Your booking request has been prepared.
+              Booking request received!
             </p>
+            {bookingRef && (
+              <p className="mt-2 text-sm text-slate">
+                Your reference: <span className="font-bold text-navy">{bookingRef}</span>
+              </p>
+            )}
             <p className="mt-2 text-slate">
-              We&apos;ve opened WhatsApp with your details. Our team will confirm your
-              reservation shortly. You can also call us at{" "}
+              We&apos;ve saved your request and opened WhatsApp with your details. Our team
+              will confirm your reservation shortly. You can also call us at{" "}
               <a href={`tel:${site.phoneIntl}`} className="font-semibold text-navy underline">
                 {site.phone}
               </a>
@@ -248,17 +287,25 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
               />
             </Field>
 
+            {serverError && (
+              <p className="mt-4 rounded-md bg-red-50 px-4 py-3 text-sm text-red-600" role="alert">
+                {serverError}
+              </p>
+            )}
+
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <button
                 type="submit"
-                className="rounded-md bg-gold px-6 py-3 font-semibold text-navy-dark transition hover:brightness-95"
+                disabled={loading}
+                className="rounded-md bg-gold px-6 py-3 font-semibold text-navy-dark transition hover:brightness-95 disabled:opacity-60"
               >
-                Book Now
+                {loading ? "Saving…" : "Book Now"}
               </button>
               <button
                 type="button"
-                onClick={handleWhatsApp}
-                className="flex items-center justify-center gap-2 rounded-md bg-[#25D366] px-6 py-3 font-semibold text-white transition hover:brightness-95"
+                onClick={() => void submit()}
+                disabled={loading}
+                className="flex items-center justify-center gap-2 rounded-md bg-[#25D366] px-6 py-3 font-semibold text-white transition hover:brightness-95 disabled:opacity-60"
               >
                 <MessageSquare className="size-4" /> WhatsApp Booking
               </button>

@@ -2,12 +2,6 @@ import type { Metadata } from "next";
 import { Montserrat, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { site } from "@/data/site";
-import { hotelSchema, websiteSchema } from "@/lib/seo";
-import JsonLd from "@/components/JsonLd";
-import BookingProvider from "@/components/BookingProvider";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import BookingBar from "@/components/BookingBar";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -58,15 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${montserrat.variable} ${inter.variable} ${playfair.variable} antialiased`}
     >
-      <body className="flex min-h-dvh flex-col bg-white">
-        <JsonLd data={[hotelSchema, websiteSchema]} />
-        <BookingProvider>
-          <Header />
-          <main className="flex-1 pb-[68px]">{children}</main>
-          <Footer />
-          <BookingBar />
-        </BookingProvider>
-      </body>
+      <body className="flex min-h-dvh flex-col bg-white">{children}</body>
     </html>
   );
 }
