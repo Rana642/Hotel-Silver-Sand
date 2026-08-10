@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #0b2b4b;
+  --color-navy-dark: #061d35;
+  --color-gold: #d9a928;
+  --color-gold-dark: #b98d1a;
+  --color-cream: #f8f8f6;
+  --color-ink: #092b4c;
+  --color-slate: #4a4a4a;
+
+  --font-heading: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), Georgia, serif;
+
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  --shadow-card: 0px 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-pop: 0px 8px 30px rgba(0, 0, 0, 0.08);
+
+  --breakpoint-xs: 24rem;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #092b4c;
+}
+
+* {
+  min-width: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-heading);
+}
+
+/* Utilities */
+@utility container-site {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@utility subtitle-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--color-gold);
+}
+
+/* Reusable focus ring */
+@layer base {
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

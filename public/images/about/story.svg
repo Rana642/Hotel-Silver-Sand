@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="640" viewBox="0 0 800 640" role="img" aria-label="Our Story">
+  <defs>
+    <linearGradient id="gv2lo8w" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b2b4b"/>
+      <stop offset="1" stop-color="#061d35"/>
+    </linearGradient>
+    <pattern id="pv2lo8w" width="46" height="46" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="46" height="46" fill="none"/>
+      <circle cx="8" cy="8" r="1.4" fill="#d9a928" opacity="0.10"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="640" fill="url(#gv2lo8w)"/>
+  <rect width="800" height="640" fill="url(#pv2lo8w)"/>
+  <rect x="16" y="16" width="768" height="608" fill="none" stroke="#d9a928" stroke-opacity="0.35" stroke-width="2" rx="10"/>
+  <circle cx="400" cy="286" r="26" fill="none" stroke="#d9a928" stroke-width="2.5"/>
+  <text x="400" y="293" font-family="Georgia, serif" font-size="22" fill="#d9a928" text-anchor="middle" font-style="italic">SS</text>
+  <text x="400" y="338" font-family="Montserrat, Arial, sans-serif" font-size="30" font-weight="700" fill="#f8f8f6" text-anchor="middle" letter-spacing="0.5">Our Story</text>
+  <text x="400" y="366" font-family="Arial, sans-serif" font-size="12" fill="#d9a928" text-anchor="middle" letter-spacing="2" opacity="0.85">SINCE 1986</text>
+</svg>
