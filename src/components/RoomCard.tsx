@@ -109,7 +109,7 @@ export default function RoomCard({ room }: { room: Room }) {
             <button
               type="button"
               onClick={() => booking.open(room.name)}
-              className="flex items-center justify-center gap-1.5 rounded-md bg-gold px-4 py-2.5 text-sm font-semibold text-navy-dark transition hover:bg-gold-dark"
+              className="flex items-center justify-center gap-1.5 rounded-md bg-gold px-4 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95"
             >
               <CalendarDays className="size-4" /> Book Direct
             </button>

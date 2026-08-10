@@ -123,7 +123,7 @@ export default function ContactForm() {
         </label>
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 font-semibold text-navy-dark transition hover:bg-gold-dark"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 font-semibold text-navy-dark transition hover:brightness-95"
         >
           <Send className="size-4" /> Send Message
         </button>

@@ -251,7 +251,7 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <button
                 type="submit"
-                className="rounded-md bg-gold px-6 py-3 font-semibold text-navy-dark transition hover:bg-gold-dark"
+                className="rounded-md bg-gold px-6 py-3 font-semibold text-navy-dark transition hover:brightness-95"
               >
                 Book Now
               </button>

@@ -45,7 +45,7 @@ export default function BookingBar() {
           <button
             type="button"
             onClick={() => booking.open()}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2.5 text-sm font-semibold text-navy-dark transition hover:bg-gold-dark lg:flex-none"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95 lg:flex-none"
           >
             <CalendarDays className="size-4" />
             <span className="hidden xs:inline">Book Now</span>

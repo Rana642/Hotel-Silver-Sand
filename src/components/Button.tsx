@@ -4,7 +4,7 @@ import type { ComponentProps, ReactNode } from "react";
 type Variant = "gold" | "navy" | "outline" | "outline-light" | "whatsapp";
 
 const variants: Record<Variant, string> = {
-  gold: "bg-gold text-navy-dark hover:bg-gold-dark",
+  gold: "bg-gold text-navy-dark hover:brightness-95",
   navy: "bg-navy text-white hover:bg-navy-dark",
   outline: "border border-navy/20 text-navy hover:bg-navy hover:text-white",
   "outline-light": "border border-white/40 text-white hover:bg-white/10",
