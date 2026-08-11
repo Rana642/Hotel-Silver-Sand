@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { X, CalendarDays, Users, Home, User, Phone, Mail, MessageSquare, CheckCircle2 } from "lucide-react";
+import { X, CalendarDays, Users, Home, User, Phone, Mail, MessageSquare, CheckCircle2, MapPin } from "lucide-react";
 import { site, waLink } from "@/data/site";
 import { roomTypeOptions, rooms } from "@/data/rooms";
 import { createBooking } from "@/app/actions/booking";
@@ -37,6 +37,8 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
   const [couponMsg, setCouponMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [discount, setDiscount] = useState(0);
   const [checkingCoupon, setCheckingCoupon] = useState(false);
+  const [locationConfirmed, setLocationConfirmed] = useState(false);
+  const [confirmError, setConfirmError] = useState(false);
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -126,6 +128,10 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
     const e = validate();
     setErrors(e);
     setServerError(null);
+    if (!locationConfirmed) {
+      setConfirmError(true);
+      return;
+    }
     if (Object.keys(e).length) return;
 
     setLoading(true);
@@ -226,6 +232,11 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="px-6 py-5" noValidate>
+            <div className="mb-4 flex items-center gap-2 rounded-md border border-gold/40 bg-gold/10 px-3 py-2 text-sm font-semibold text-navy">
+              <MapPin className="size-4 shrink-0 text-gold" />
+              You are booking <span className="text-gold">Hotel Silver Sand, Multan, Pakistan</span>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Check-In Date" icon={CalendarDays} error={errors.checkIn}>
                 <input
@@ -370,6 +381,24 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
                 </div>
               )}
             </div>
+
+            <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-sm text-navy">
+              <input
+                type="checkbox"
+                checked={locationConfirmed}
+                onChange={(e) => {
+                  setLocationConfirmed(e.target.checked);
+                  if (e.target.checked) setConfirmError(false);
+                }}
+                className="mt-0.5 size-4 shrink-0 accent-[#d9a928]"
+              />
+              <span>
+                I confirm this booking is for <strong>Hotel Silver Sand, Multan, Pakistan</strong>.
+              </span>
+            </label>
+            {confirmError && (
+              <p className="mt-1.5 text-xs text-red-500">Please confirm the hotel location to continue.</p>
+            )}
 
             {serverError && (
               <p className="mt-4 rounded-md bg-red-50 px-4 py-3 text-sm text-red-600" role="alert">

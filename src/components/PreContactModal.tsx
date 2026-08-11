@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { X, MessageSquare, Phone } from "lucide-react";
+import { X, MessageSquare, Phone, MapPin } from "lucide-react";
 import { site, tel, waLink } from "@/data/site";
 import { createInquiry } from "@/app/actions/inquiry";
 
@@ -110,6 +110,10 @@ export default function PreContactModal({
         </div>
 
         <form onSubmit={submit} className="px-6 pb-6 pt-4" noValidate>
+          <div className="mb-4 flex items-center gap-2 rounded-md border border-gold/40 bg-gold/10 px-3 py-2 text-sm font-semibold text-navy">
+            <MapPin className="size-4 shrink-0 text-gold" />
+            <span>Hotel Silver Sand, <span className="text-gold">Multan, Pakistan</span></span>
+          </div>
           <p className="text-xs font-semibold uppercase tracking-wide text-slate">You want to</p>
           <div className="mt-2 grid grid-cols-2 gap-2">
             {(["book", "inquiry"] as const).map((v) => (
