@@ -1,56 +1,115 @@
-import type { Metadata } from "next";
-import PageHero from "@/components/PageHero";
-import RoomCard from "@/components/RoomCard";
-import JsonLd from "@/components/JsonLd";
-import { rooms } from "@/data/rooms";
+import Image from "next/image";
+import Link from "next/link";
+import { Maximize, Users, Eye, ArrowRight } from "lucide-react";
+import SectionHeading from "@/components/SectionHeading";
+import RoomSearchBar from "@/components/RoomSearchBar";
+import BookNowButton from "@/components/BookNowButton";
+import { getRoomsStatic, roomPricing, featuredImage } from "@/lib/rooms";
 import { pageMeta } from "@/lib/seo";
-import { site } from "@/data/site";
+import { pkr } from "@/lib/format";
 
-export const metadata: Metadata = pageMeta({
-  title: "Rooms & Suites",
+export const revalidate = 60;
+
+export const metadata = pageMeta({
+  title: "Rooms & Suites in Multan",
   description:
-    "Explore comfortable, affordable rooms and suites at Hotel Silver Sand Multan — Deluxe King, Deluxe Triple, Executive Twin and Family rooms in Multan Cantt. Book direct.",
+    "Comfortable, affordable rooms at Hotel Silver Sand Multan Cantt — Deluxe King, Triple, Executive Twin & Family rooms. AC, WiFi, private bathroom. Book direct.",
   path: "/rooms",
 });
 
-export default function RoomsPage() {
+export default async function RoomsPage() {
+  const rooms = await getRoomsStatic();
+
   return (
     <>
-      <PageHero title="Our Rooms & Suites" subtitle="Comfort designed for every traveler" />
-
-      <section className="bg-cream">
-        <div className="container-site py-16 sm:py-20">
-          <div className="grid gap-6 md:grid-cols-2">
-            {rooms.map((room) => (
-              <RoomCard key={room.slug} room={room} />
-            ))}
+      {/* Hero + search */}
+      <section className="bg-navy">
+        <div className="container-site py-14 text-center text-white sm:py-16">
+          <h1 className="font-heading text-3xl font-bold sm:text-4xl">Hotel Rooms in Multan</h1>
+          <p className="subtitle-serif mt-2 text-lg text-gold">Comfort designed for every traveler</p>
+          <div className="mx-auto mt-8 max-w-4xl rounded-xl border border-white/10 bg-white/5 p-4">
+            <RoomSearchBar />
           </div>
         </div>
       </section>
 
-      <JsonLd
-        data={rooms.map((room) => ({
-          "@context": "https://schema.org",
-          "@type": "HotelRoom",
-          name: room.name,
-          url: `${site.url}/rooms`,
-          image: `${site.url}${room.image}`,
-          occupancy: { "@type": "QuantitativeValue", maxValue: room.maxAdults + room.maxChildren },
-          amenityFeature: room.features.map((f) => ({
-            "@type": "LocationFeatureSpecification",
-            name: f,
-            value: true,
-          })),
-          offers: {
-            "@type": "Offer",
-            price: room.price,
-            priceCurrency: "PKR",
-            availability: room.available
-              ? "https://schema.org/InStock"
-              : "https://schema.org/OutOfStock",
-          },
-        }))}
-      />
+      <section className="bg-cream">
+        <div className="container-site py-14 sm:py-20">
+          <SectionHeading title="Explore the Rooms & Suites" />
+
+          <div className="mt-10 space-y-8">
+            {rooms.map((room) => {
+              const { price, original, discountPct, gst } = roomPricing(room);
+              const tags = (room.amenities ?? []).slice(0, 4);
+              return (
+                <article
+                  key={room.id}
+                  className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-card"
+                >
+                  <div className="relative aspect-[16/9] w-full sm:aspect-[21/9]">
+                    <Image
+                      src={featuredImage(room)}
+                      alt={room.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 1200px"
+                      className="object-cover"
+                    />
+                  </div>
+
+                  <div className="p-6 text-center sm:p-8">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gold">Rooms &amp; Suites</p>
+                    <h2 className="mt-1 font-heading text-2xl font-bold text-navy">{room.name}</h2>
+
+                    <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+                      {original && <span className="text-gray-400 line-through">{pkr(original)}</span>}
+                      <span className="text-xl font-bold text-gold">{pkr(price)}</span>
+                      <span className="text-sm text-slate">/ night</span>
+                      {discountPct > 0 && (
+                        <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">
+                          Save {discountPct}%
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-0.5 text-xs text-slate">+ {pkr(gst)} GST per night (excluded)</p>
+
+                    {room.description && (
+                      <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate">{room.description}</p>
+                    )}
+
+                    {tags.length > 0 && (
+                      <div className="mt-4 flex flex-wrap items-center justify-center gap-2 rounded-lg bg-navy px-4 py-3">
+                        {tags.map((t) => (
+                          <span key={t} className="text-xs font-medium text-white/90">{t}</span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-6 text-sm text-slate">
+                      {room.size_sqft && (
+                        <span className="flex items-center gap-1.5"><Maximize className="size-4 text-gold" /> {room.size_sqft} sq ft</span>
+                      )}
+                      <span className="flex items-center gap-1.5"><Users className="size-4 text-gold" /> {room.capacity}</span>
+                      {room.view && (
+                        <span className="flex items-center gap-1.5"><Eye className="size-4 text-gold" /> {room.view}</span>
+                      )}
+                    </div>
+
+                    <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                      <Link
+                        href={`/rooms/${room.slug}`}
+                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border border-navy/20 px-6 py-3 text-sm font-semibold text-navy transition hover:bg-navy hover:text-white"
+                      >
+                        View Details <ArrowRight className="size-4" />
+                      </Link>
+                      <BookNowButton room={room.name}>Check Availability</BookNowButton>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
     </>
   );
 }

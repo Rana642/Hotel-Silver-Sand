@@ -7,9 +7,11 @@ import { roomTypeOptions, rooms } from "@/data/rooms";
 import { createBooking } from "@/app/actions/booking";
 import { previewCoupon } from "@/app/actions/coupon";
 
+type Prefill = { room?: string; checkIn?: string; checkOut?: string; guests?: string };
+
 type Props = {
   onClose: () => void;
-  presetRoom?: string;
+  prefill?: Prefill;
 };
 
 type Errors = Partial<Record<string, string>>;
@@ -26,8 +28,15 @@ const empty = {
   requests: "",
 };
 
-export default function BookingModal({ onClose, presetRoom }: Props) {
-  const [form, setForm] = useState(() => ({ ...empty, roomType: presetRoom ?? "" }));
+export default function BookingModal({ onClose, prefill }: Props) {
+  const presetRoom = prefill?.room;
+  const [form, setForm] = useState(() => ({
+    ...empty,
+    roomType: prefill?.room ?? "",
+    checkIn: prefill?.checkIn ?? "",
+    checkOut: prefill?.checkOut ?? "",
+    guests: prefill?.guests ?? "",
+  }));
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
