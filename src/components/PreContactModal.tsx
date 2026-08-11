@@ -21,6 +21,8 @@ export default function PreContactModal({
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
+  const [confirmed, setConfirmed] = useState(false);
+  const [confirmError, setConfirmError] = useState(false);
   const [busy, setBusy] = useState(false);
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -63,6 +65,10 @@ export default function PreContactModal({
     if (!name.trim()) err.name = "Please enter your name";
     if (!/^[+()\d\s-]{7,}$/.test(phone)) err.phone = "Enter a valid phone number";
     setErrors(err);
+    if (!confirmed) {
+      setConfirmError(true);
+      return;
+    }
     if (Object.keys(err).length) return;
 
     setBusy(true);
@@ -169,10 +175,28 @@ export default function PreContactModal({
             </div>
           )}
 
+          <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-sm text-navy">
+            <input
+              type="checkbox"
+              checked={confirmed}
+              onChange={(e) => {
+                setConfirmed(e.target.checked);
+                if (e.target.checked) setConfirmError(false);
+              }}
+              className="mt-0.5 size-4 shrink-0 accent-[#d9a928]"
+            />
+            <span>
+              I confirm this is for <strong>Hotel Silver Sand, Multan, Pakistan</strong>.
+            </span>
+          </label>
+          {confirmError && (
+            <p className="mt-1.5 text-xs text-red-500">Please confirm the hotel location to continue.</p>
+          )}
+
           <button
             type="submit"
             disabled={busy}
-            className={`mt-5 flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold text-white transition disabled:opacity-70 ${
+            className={`mt-4 flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold text-white transition disabled:opacity-70 ${
               isCall ? "bg-navy hover:bg-navy-dark" : "bg-[#25D366] hover:brightness-95"
             }`}
           >
