@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarCheck, Clock, CheckCircle2, TrendingUp } from "lucide-react";
+import { CalendarCheck, Clock, CheckCircle2, TrendingUp, Inbox } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { statusMeta, type Booking } from "@/types";
 
@@ -7,28 +7,31 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("bookings")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const [{ data }, { count: newInquiries }] = await Promise.all([
+    supabase.from("bookings").select("*").order("created_at", { ascending: false }),
+    supabase.from("inquiries").select("id", { count: "exact", head: true }).eq("status", "new"),
+  ]);
 
   const bookings = (data ?? []) as Booking[];
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
 
   const stats = [
-    { label: "Total Bookings", value: bookings.length, icon: CalendarCheck },
-    { label: "Pending", value: bookings.filter((b) => b.status === "pending").length, icon: Clock },
+    { label: "Total Bookings", value: bookings.length, icon: CalendarCheck, href: "/admin/bookings" },
+    { label: "Pending", value: bookings.filter((b) => b.status === "pending").length, icon: Clock, href: "/admin/bookings" },
     {
       label: "Confirmed",
       value: bookings.filter((b) => b.status === "confirmed" || b.status === "checked_in").length,
       icon: CheckCircle2,
+      href: "/admin/bookings",
     },
     {
       label: "This Month",
       value: bookings.filter((b) => b.created_at.slice(0, 10) >= monthStart).length,
       icon: TrendingUp,
+      href: "/admin/bookings",
     },
+    { label: "New Inquiries", value: newInquiries ?? 0, icon: Inbox, href: "/admin/inquiries" },
   ];
 
   const recent = bookings.slice(0, 8);
@@ -37,13 +40,17 @@ export default async function DashboardPage() {
     <div>
       <h1 className="font-heading text-2xl font-bold text-navy">Dashboard</h1>
 
-      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {stats.map(({ label, value, icon: Icon }) => (
-          <div key={label} className="rounded-lg border border-gray-100 bg-white p-5 shadow-card">
+      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-5">
+        {stats.map(({ label, value, icon: Icon, href }) => (
+          <Link
+            key={label}
+            href={href}
+            className="rounded-lg border border-gray-100 bg-white p-5 shadow-card transition hover:border-gold/40 hover:shadow-pop"
+          >
             <Icon className="size-6 text-gold" />
             <p className="mt-3 font-heading text-3xl font-bold text-navy">{value}</p>
             <p className="text-sm text-slate">{label}</p>
-          </div>
+          </Link>
         ))}
       </div>
 

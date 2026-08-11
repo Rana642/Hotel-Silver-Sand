@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Phone, MessageCircle, Mail, Printer } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getRole } from "@/lib/auth";
 import BookingActions from "@/components/admin/BookingActions";
 import { statusMeta, type Booking } from "@/types";
 import { fmtDate, fmtDateTime, pkr } from "@/lib/format";
@@ -22,7 +23,10 @@ export default async function BookingDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data } = await supabase.from("bookings").select("*").eq("id", id).maybeSingle();
+  const [{ data }, role] = await Promise.all([
+    supabase.from("bookings").select("*").eq("id", id).maybeSingle(),
+    getRole(),
+  ]);
   if (!data) notFound();
   const b = data as Booking;
 
@@ -128,7 +132,7 @@ export default async function BookingDetailPage({
           )}
         </div>
 
-        <BookingActions id={b.id} current={b.status} checkOut={b.check_out} notes={b.admin_notes} />
+        <BookingActions id={b.id} current={b.status} checkOut={b.check_out} notes={b.admin_notes} isAdmin={role === "admin"} />
       </div>
     </div>
   );

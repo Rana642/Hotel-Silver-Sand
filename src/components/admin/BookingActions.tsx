@@ -21,11 +21,13 @@ export default function BookingActions({
   current,
   checkOut,
   notes,
+  isAdmin = true,
 }: {
   id: string;
   current: BookingStatus;
   checkOut: string;
   notes: string | null;
+  isAdmin?: boolean;
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -119,6 +121,7 @@ export default function BookingActions({
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {/* Danger */}
+      {isAdmin && (
       <div className="rounded-lg border border-red-200 bg-red-50 p-5">
         <p className="text-sm font-semibold text-red-700">Danger Zone</p>
         <p className="mt-1 text-sm text-red-600">Deleting removes the booking and frees its dates.</p>
@@ -133,6 +136,7 @@ export default function BookingActions({
           <Trash2 className="size-4" /> Delete Booking
         </button>
       </div>
+      )}
     </div>
   );
 }

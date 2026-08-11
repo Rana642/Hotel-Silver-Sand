@@ -7,20 +7,35 @@ import { createBooking } from "@/app/actions/booking";
 const field = "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
 const label = "mb-1 block text-xs font-semibold text-navy";
 
-export default function NewBookingForm({ roomNames }: { roomNames: string[] }) {
+export type BookingPrefill = {
+  name?: string;
+  phone?: string;
+  email?: string;
+  checkIn?: string;
+  checkOut?: string;
+  room?: string;
+};
+
+export default function NewBookingForm({
+  roomNames,
+  prefill,
+}: {
+  roomNames: string[];
+  prefill?: BookingPrefill;
+}) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const today = new Date().toISOString().slice(0, 10);
   const [f, setF] = useState({
-    roomType: roomNames[0] ?? "",
-    checkIn: "",
-    checkOut: "",
+    roomType: (prefill?.room && roomNames.includes(prefill.room) ? prefill.room : roomNames[0]) ?? "",
+    checkIn: prefill?.checkIn ?? "",
+    checkOut: prefill?.checkOut ?? "",
     guests: "1",
     roomsCount: "1",
-    name: "",
-    phone: "",
-    email: "",
+    name: prefill?.name ?? "",
+    phone: prefill?.phone ?? "",
+    email: prefill?.email ?? "",
     requests: "",
     source: "walkin" as "walkin" | "phone",
   });

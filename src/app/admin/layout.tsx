@@ -3,12 +3,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, CalendarCheck, BedDouble, CalendarRange, LogOut, ExternalLink } from "lucide-react";
+import { LayoutDashboard, CalendarCheck, Inbox, BedDouble, CalendarRange, LogOut, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
+  { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
   { href: "/admin/rooms", label: "Rooms", icon: BedDouble },
   { href: "/admin/calendar", label: "Calendar", icon: CalendarRange },
 ];
@@ -93,7 +94,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Mobile bottom tabs */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-gray-200 bg-white print:hidden lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-gray-200 bg-white print:hidden lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         {navItems.map(({ href, label, icon: Icon }) => (

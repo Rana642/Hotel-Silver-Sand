@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Send, CheckCircle2 } from "lucide-react";
 import { waLink } from "@/data/site";
+import { createInquiry } from "@/app/actions/inquiry";
 
 const empty = { name: "", email: "", phone: "", message: "" };
 
@@ -10,6 +11,7 @@ export default function ContactForm() {
   const [form, setForm] = useState({ ...empty });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
+  const [, startTransition] = useTransition();
 
   const set = (k: keyof typeof empty, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -27,6 +29,16 @@ export default function ContactForm() {
     const e = validate();
     setErrors(e);
     if (Object.keys(e).length) return;
+    // Save the lead to the admin inbox (fire-and-forget — never blocks the guest).
+    const payload = { ...form };
+    startTransition(() => {
+      void createInquiry({
+        name: payload.name,
+        phone: payload.phone,
+        email: payload.email,
+        message: payload.message,
+      });
+    });
     const msg = [
       `*Contact enquiry — Hotel Silver Sand Multan*`,
       "",
