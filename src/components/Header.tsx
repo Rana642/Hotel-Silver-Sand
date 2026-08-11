@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Menu, X, Phone } from "lucide-react";
 import Logo from "@/components/Logo";
 import { Button } from "@/components/Button";
-import { nav, site, tel } from "@/data/site";
+import { nav, site } from "@/data/site";
 import { useBooking } from "@/components/BookingProvider";
 
 export default function Header() {
@@ -46,13 +46,14 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-4 xl:flex">
-          <a
-            href={tel}
+          <button
+            type="button"
+            onClick={() => booking.openContact("call")}
             className="flex items-center gap-2 text-sm font-semibold text-navy hover:text-gold"
           >
             <Phone className="size-4 text-gold" />
             {site.phone}
-          </a>
+          </button>
           <Button variant="gold" onClick={() => booking.open()} className="px-5 py-2.5">
             Book Now
           </Button>
@@ -99,12 +100,16 @@ export default function Header() {
           ))}
         </ul>
         <div className="flex flex-col gap-3 border-t border-gray-100 p-4">
-          <a
-            href={tel}
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(false);
+              booking.openContact("call");
+            }}
             className="flex items-center justify-center gap-2 rounded-md border border-navy/20 px-4 py-3 font-semibold text-navy"
           >
             <Phone className="size-4 text-gold" /> {site.phone}
-          </a>
+          </button>
           <Button
             variant="gold"
             onClick={() => {

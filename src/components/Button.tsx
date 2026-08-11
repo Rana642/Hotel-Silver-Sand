@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 
-type Variant = "gold" | "navy" | "outline" | "outline-light" | "whatsapp";
+export type Variant = "gold" | "navy" | "outline" | "outline-light" | "whatsapp";
 
 const variants: Record<Variant, string> = {
   gold: "bg-gold text-navy-dark hover:brightness-95",
@@ -13,6 +13,10 @@ const variants: Record<Variant, string> = {
 
 const base =
   "inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-semibold transition min-h-[44px]";
+
+export function buttonClasses(variant: Variant = "gold", className = "") {
+  return `${base} ${variants[variant]} ${className}`;
+}
 
 type BaseProps = { variant?: Variant; className?: string; children: ReactNode };
 

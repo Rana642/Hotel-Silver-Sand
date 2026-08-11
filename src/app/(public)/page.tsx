@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Phone, MapPin, Mail, ArrowRight, MessageCircle } from "lucide-react";
 import { ButtonLink } from "@/components/Button";
+import ContactButton from "@/components/ContactButton";
 import SectionHeading from "@/components/SectionHeading";
 import RoomCard from "@/components/RoomCard";
 import AmenityCard from "@/components/AmenityCard";
@@ -43,9 +44,9 @@ export default function HomePage() {
             <ButtonLink href="/rooms" variant="gold">
               Explore Rooms
             </ButtonLink>
-            <ButtonLink href={tel} variant="outline-light">
+            <ContactButton mode="call" variant="outline-light">
               <Phone className="size-4" /> Call Now
-            </ButtonLink>
+            </ContactButton>
           </div>
         </div>
       </section>

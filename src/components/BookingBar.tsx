@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Phone, MessageCircle, CalendarDays, ExternalLink } from "lucide-react";
-import { site, tel, waLink } from "@/data/site";
+import { site, waLink } from "@/data/site";
 import { useBooking } from "@/components/BookingProvider";
 
 export default function BookingBar() {
@@ -26,22 +26,22 @@ export default function BookingBar() {
         </div>
 
         <div className="flex w-full items-center gap-2 lg:w-auto">
-          <a
-            href={tel}
+          <button
+            type="button"
+            onClick={() => booking.openContact("call")}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-white px-3 py-2.5 text-sm font-semibold text-navy transition hover:bg-cream lg:flex-none"
           >
             <Phone className="size-4" />
             <span className="hidden xs:inline">Call Now</span>
-          </a>
-          <a
-            href={waLink()}
-            target="_blank"
-            rel="noopener noreferrer"
+          </button>
+          <button
+            type="button"
+            onClick={() => booking.openContact("whatsapp")}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-[#25D366] px-3 py-2.5 text-sm font-semibold text-white transition hover:brightness-95 lg:flex-none"
           >
             <MessageCircle className="size-4" />
             <span className="hidden xs:inline">WhatsApp</span>
-          </a>
+          </button>
           <button
             type="button"
             onClick={() => booking.open()}

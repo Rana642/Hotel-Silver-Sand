@@ -13,6 +13,7 @@ export type InquiryInput = {
   checkIn?: string;
   checkOut?: string;
   message?: string;
+  source?: string;
 };
 
 export type InquiryResult = { success: true } | { success: false; error: string };
@@ -31,7 +32,7 @@ export async function createInquiry(input: InquiryInput): Promise<InquiryResult>
     check_in: input.checkIn || null,
     check_out: input.checkOut || null,
     message: input.message?.trim() || null,
-    source: "contact_form",
+    source: input.source?.trim() || "contact_form",
     status: "new",
   });
   if (error) return { success: false, error: "Could not send your message. Please try WhatsApp or call us." };
