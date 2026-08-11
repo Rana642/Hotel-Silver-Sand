@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { logActivity } from "@/app/actions/activity";
 import type { BookingStatus } from "@/types";
 
 type Res = { ok: true } | { ok: false; error: string };
@@ -25,6 +26,7 @@ export async function setBookingStatus(id: string, status: BookingStatus): Promi
   if (status === "cancelled" || status === "no_show") {
     await supabase.from("availability_blocks").delete().eq("booking_id", id);
   }
+  await logActivity("booking.status", "booking", id, `→ ${status}`);
   revalidatePath(`/admin/bookings/${id}`);
   revalidatePath("/admin/bookings");
   return { ok: true };
@@ -37,6 +39,7 @@ export async function saveBookingNotes(id: string, notes: string): Promise<Res> 
     .update({ admin_notes: notes.trim() || null })
     .eq("id", id);
   if (error) return { ok: false, error: error.message };
+  await logActivity("booking.notes", "booking", id);
   revalidatePath(`/admin/bookings/${id}`);
   return { ok: true };
 }
@@ -75,6 +78,7 @@ export async function extendStay(id: string, newCheckOut: string): Promise<Res> 
     .eq("id", id);
   if (error) return { ok: false, error: error.message };
 
+  await logActivity("booking.extend", "booking", id, `check-out → ${newCheckOut}`);
   revalidatePath(`/admin/bookings/${id}`);
   return { ok: true };
 }
@@ -85,6 +89,7 @@ export async function deleteBooking(id: string): Promise<Res> {
   await supabase.from("availability_blocks").delete().eq("booking_id", id);
   const { error } = await supabase.from("bookings").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
+  await logActivity("booking.delete", "booking", id);
   revalidatePath("/admin/bookings");
   return { ok: true };
 }

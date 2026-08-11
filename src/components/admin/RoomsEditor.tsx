@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { logActivity } from "@/app/actions/activity";
 import type { RoomRow } from "@/types";
 
 function RoomRowEditor({ room }: { room: RoomRow }) {
@@ -32,6 +33,7 @@ function RoomRowEditor({ room }: { room: RoomRow }) {
       return;
     }
     setMsg("Saved ✓");
+    void logActivity("room.update", "room", room.id, `price ${price}${original ? `, was ${original}` : ""}, active ${active}`);
     router.refresh();
     setTimeout(() => setMsg(null), 2500);
   }

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { logActivity } from "@/app/actions/activity";
 import type { RoomRow } from "@/types";
 
 type Block = { date: string; reason: string; booking_id: string | null };
@@ -81,6 +82,7 @@ export default function CalendarView({
     }
     const blocked = count ?? 0;
     setMsg(`Blocked ${blocked} — ${dates.length - blocked} already taken/skipped.`);
+    void logActivity("availability.block", "availability", roomId, `${from} → ${to} (${reason})`);
     setFrom("");
     setTo("");
     router.refresh();
@@ -101,6 +103,7 @@ export default function CalendarView({
       setMsg("Error: " + error.message);
       return;
     }
+    void logActivity("availability.unblock", "availability", roomId, date);
     router.refresh();
   }
 

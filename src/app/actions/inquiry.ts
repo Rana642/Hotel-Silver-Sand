@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/service";
 import { createClient } from "@/lib/supabase/server";
+import { logActivity } from "@/app/actions/activity";
 
 export type InquiryInput = {
   name: string;
@@ -43,6 +44,7 @@ export async function setInquiryStatus(id: string, status: string): Promise<Res>
   const supabase = await createClient();
   const { error } = await supabase.from("inquiries").update({ status }).eq("id", id);
   if (error) return { ok: false, error: error.message };
+  await logActivity("inquiry.status", "inquiry", id, `→ ${status}`);
   revalidatePath("/admin/inquiries");
   return { ok: true };
 }
@@ -51,6 +53,7 @@ export async function deleteInquiry(id: string): Promise<Res> {
   const supabase = await createClient();
   const { error } = await supabase.from("inquiries").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
+  await logActivity("inquiry.delete", "inquiry", id);
   revalidatePath("/admin/inquiries");
   return { ok: true };
 }
