@@ -22,6 +22,8 @@ export type Booking = {
   nights: number;
   unit_price: number;
   original_price: number | null;
+  discount: number;
+  coupon_code: string | null;
   total: number;
   special_request: string | null;
   admin_notes: string | null;

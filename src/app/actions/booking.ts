@@ -12,6 +12,7 @@ export type BookingInput = {
   phone: string;
   email: string;
   requests?: string;
+  couponCode?: string;
   source?: "website" | "walkin" | "phone";
 };
 
@@ -35,6 +36,21 @@ function eachDate(start: string, end: string) {
     d.setDate(d.getDate() + 1);
   }
   return dates;
+}
+
+// Give a consumed coupon use back when a booking fails after redemption.
+async function rollbackCoupon(
+  supabase: ReturnType<typeof createServiceClient>,
+  code: string
+) {
+  const { data } = await supabase
+    .from("coupons")
+    .select("id, used_count")
+    .ilike("code", code)
+    .maybeSingle();
+  if (data && data.used_count > 0) {
+    await supabase.from("coupons").update({ used_count: data.used_count - 1 }).eq("id", data.id);
+  }
 }
 
 export async function createBooking(input: BookingInput): Promise<BookingResult> {
@@ -68,7 +84,24 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
 
   const roomsCount = Math.max(1, Number(input.roomsCount) || 1);
   const unitPrice = Number(room.price_per_night) || 0;
-  const total = unitPrice * nights * roomsCount;
+  const roomTotal = unitPrice * nights * roomsCount;
+
+  // --- coupon (atomic redeem) ---
+  let discount = 0;
+  let couponCode: string | null = null;
+  if (input.couponCode?.trim()) {
+    const { data: redeem, error: rErr } = await supabase.rpc("redeem_coupon", {
+      p_code: input.couponCode.trim(),
+      p_total: roomTotal,
+    });
+    const row = Array.isArray(redeem) ? redeem[0] : redeem;
+    if (rErr || !row) return { success: false, error: "Could not apply coupon. Please try again." };
+    if (!row.valid) return { success: false, error: row.message as string };
+    discount = Number(row.discount) || 0;
+    couponCode = input.couponCode.trim().toUpperCase();
+  }
+
+  const total = Math.max(0, roomTotal - discount);
 
   // --- availability check ---
   const nightsList = eachDate(input.checkIn, input.checkOut);
@@ -103,6 +136,8 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
       nights,
       unit_price: unitPrice,
       original_price: room.original_price ?? null,
+      discount,
+      coupon_code: couponCode,
       total,
       special_request: input.requests?.trim() || null,
       status: "pending",
@@ -112,6 +147,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     .single();
 
   if (insertError || !booking) {
+    if (couponCode) await rollbackCoupon(supabase, couponCode);
     return { success: false, error: "Could not save your booking. Please try again or contact us." };
   }
 
@@ -129,6 +165,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   if (blockError) {
     // roll back so we never leave a half-booked state
     await supabase.from("bookings").delete().eq("id", booking.id);
+    if (couponCode) await rollbackCoupon(supabase, couponCode);
     return { success: false, error: "Those dates were just taken. Please pick different dates." };
   }
 

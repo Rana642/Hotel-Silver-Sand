@@ -3,8 +3,9 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { X, CalendarDays, Users, Home, User, Phone, Mail, MessageSquare, CheckCircle2 } from "lucide-react";
 import { site, waLink } from "@/data/site";
-import { roomTypeOptions } from "@/data/rooms";
+import { roomTypeOptions, rooms } from "@/data/rooms";
 import { createBooking } from "@/app/actions/booking";
+import { previewCoupon } from "@/app/actions/coupon";
 
 type Props = {
   onClose: () => void;
@@ -32,6 +33,10 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [bookingRef, setBookingRef] = useState<string | null>(null);
+  const [coupon, setCoupon] = useState("");
+  const [couponMsg, setCouponMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [discount, setDiscount] = useState(0);
+  const [checkingCoupon, setCheckingCoupon] = useState(false);
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -50,6 +55,37 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
 
   const set = (k: keyof typeof empty, v: string) =>
     setForm((f) => ({ ...f, [k]: v }));
+
+  function nightsBetween() {
+    if (!form.checkIn || !form.checkOut) return 0;
+    const a = new Date(form.checkIn + "T00:00:00").getTime();
+    const b = new Date(form.checkOut + "T00:00:00").getTime();
+    return Math.max(0, Math.round((b - a) / 86400000));
+  }
+  function roomTotal() {
+    const r = rooms.find((x) => x.name === form.roomType);
+    const cnt = Math.max(1, Number(form.roomsCount) || 1);
+    return r ? r.price * nightsBetween() * cnt : 0;
+  }
+  const pkr = (n: number) => "PKR " + Math.round(n).toLocaleString("en-PK");
+
+  async function applyCoupon() {
+    const total = roomTotal();
+    if (!total) {
+      setCouponMsg({ ok: false, text: "Select a room and dates first." });
+      return;
+    }
+    setCheckingCoupon(true);
+    const res = await previewCoupon(coupon, total);
+    setCheckingCoupon(false);
+    if (res.valid) {
+      setDiscount(res.discount);
+      setCouponMsg({ ok: true, text: `Applied — you save ${pkr(res.discount)}` });
+    } else {
+      setDiscount(0);
+      setCouponMsg({ ok: false, text: res.message });
+    }
+  }
 
   function validate(): Errors {
     const e: Errors = {};
@@ -79,6 +115,7 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
       `Name: ${form.name}`,
       `Phone: ${form.phone}`,
       `Email: ${form.email}`,
+      coupon.trim() && discount > 0 ? `Coupon: ${coupon.trim().toUpperCase()} (− ${pkr(discount)})` : "",
       form.requests ? `Special requests: ${form.requests}` : "",
     ]
       .filter(Boolean)
@@ -105,6 +142,7 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
         phone: form.phone,
         email: form.email,
         requests: form.requests,
+        couponCode: coupon.trim() || undefined,
       });
 
       if (!result.success) {
@@ -286,6 +324,52 @@ export default function BookingModal({ onClose, presetRoom }: Props) {
                 className={inputCls() + " resize-y"}
               />
             </Field>
+
+            {/* Coupon */}
+            <div className="mt-4 rounded-md border border-gray-200 bg-cream/50 p-3">
+              <span className="mb-1.5 block text-sm font-semibold text-navy">Coupon Code (Optional)</span>
+              <div className="flex gap-2">
+                <input
+                  value={coupon}
+                  onChange={(e) => {
+                    setCoupon(e.target.value);
+                    setDiscount(0);
+                    setCouponMsg(null);
+                  }}
+                  placeholder="Enter code"
+                  className={inputCls() + " uppercase"}
+                />
+                <button
+                  type="button"
+                  onClick={applyCoupon}
+                  disabled={checkingCoupon || !coupon.trim()}
+                  className="shrink-0 rounded-md bg-navy px-4 py-2.5 text-sm font-semibold text-white hover:bg-navy-dark disabled:opacity-50"
+                >
+                  {checkingCoupon ? "Checking…" : "Apply"}
+                </button>
+              </div>
+              {couponMsg && (
+                <p className={`mt-2 text-sm ${couponMsg.ok ? "text-green-600" : "text-red-600"}`}>{couponMsg.text}</p>
+              )}
+              {roomTotal() > 0 && (
+                <div className="mt-3 space-y-1 border-t border-gray-200 pt-2 text-sm">
+                  <div className="flex justify-between text-slate">
+                    <span>Room total ({nightsBetween()} night{nightsBetween() !== 1 ? "s" : ""})</span>
+                    <span>{pkr(roomTotal())}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Coupon discount</span>
+                      <span>− {pkr(discount)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-bold text-navy">
+                    <span>Total</span>
+                    <span className="text-gold">{pkr(Math.max(0, roomTotal() - discount))}</span>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {serverError && (
               <p className="mt-4 rounded-md bg-red-50 px-4 py-3 text-sm text-red-600" role="alert">

@@ -14,10 +14,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
   if (!data) notFound();
   const b = data as Booking;
 
-  const savings =
-    b.original_price && b.original_price > b.unit_price
-      ? (b.original_price - b.unit_price) * b.nights * b.rooms_count
-      : 0;
+  const roomSub = b.unit_price * b.nights * b.rooms_count;
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -73,12 +70,12 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
                 {b.room_name} — {pkr(b.unit_price)} × {b.nights} night{b.nights > 1 ? "s" : ""}
                 {b.rooms_count > 1 ? ` × ${b.rooms_count} rooms` : ""}
               </td>
-              <td className="py-2 text-right">{pkr(b.total)}</td>
+              <td className="py-2 text-right">{pkr(roomSub)}</td>
             </tr>
-            {savings > 0 && (
+            {b.discount > 0 && (
               <tr className="border-b border-gray-100 text-green-600">
-                <td className="py-2">Discount</td>
-                <td className="py-2 text-right">− {pkr(savings)}</td>
+                <td className="py-2">Coupon {b.coupon_code ? `(${b.coupon_code})` : ""}</td>
+                <td className="py-2 text-right">− {pkr(b.discount)}</td>
               </tr>
             )}
           </tbody>

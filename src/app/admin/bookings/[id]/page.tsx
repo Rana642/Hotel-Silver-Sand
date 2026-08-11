@@ -30,6 +30,7 @@ export default async function BookingDetailPage({
   if (!data) notFound();
   const b = data as Booking;
 
+  const roomSub = b.unit_price * b.nights * b.rooms_count;
   const savings =
     b.original_price && b.original_price > b.unit_price
       ? (b.original_price - b.unit_price) * b.nights * b.rooms_count
@@ -109,11 +110,17 @@ export default async function BookingDetailPage({
             <div className="mt-3 space-y-2 text-sm">
               <div className="flex justify-between text-slate">
                 <span>{pkr(b.unit_price)} × {b.nights} night{b.nights > 1 ? "s" : ""}{b.rooms_count > 1 ? ` × ${b.rooms_count} rooms` : ""}</span>
-                <span className="text-navy">{pkr(b.total)}</span>
+                <span className="text-navy">{pkr(roomSub)}</span>
               </div>
-              {savings > 0 && (
+              {b.discount > 0 && (
                 <div className="flex justify-between text-green-600">
-                  <span>Discount applied</span>
+                  <span>Coupon {b.coupon_code ? `(${b.coupon_code})` : ""}</span>
+                  <span>− {pkr(b.discount)}</span>
+                </div>
+              )}
+              {savings > 0 && (
+                <div className="flex justify-between text-slate/70">
+                  <span>List savings</span>
                   <span>− {pkr(savings)}</span>
                 </div>
               )}
