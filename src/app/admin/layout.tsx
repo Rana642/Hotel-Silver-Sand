@@ -35,7 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-dvh bg-cream">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-gray-200 bg-navy lg:flex">
+      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-gray-200 bg-navy print:hidden lg:flex">
         <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
           <Image src="/images/logo.svg" alt="" width={36} height={36} className="size-9 rounded-full" />
           <div className="leading-tight">
@@ -75,7 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Mobile top header */}
-      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-navy px-4 lg:hidden">
+      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-navy px-4 print:hidden lg:hidden">
         <div className="flex items-center gap-2">
           <Image src="/images/logo.svg" alt="" width={28} height={28} className="size-7 rounded-full" />
           <div className="leading-none">
@@ -89,11 +89,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </header>
 
       {/* Content */}
-      <main className="mt-14 px-4 pb-24 pt-4 lg:ml-60 lg:mt-0 lg:p-8">{children}</main>
+      <main className="mt-14 px-4 pb-24 pt-4 print:m-0 print:p-0 lg:ml-60 lg:mt-0 lg:p-8">{children}</main>
 
       {/* Mobile bottom tabs */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-gray-200 bg-white lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-gray-200 bg-white print:hidden lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         {navItems.map(({ href, label, icon: Icon }) => (

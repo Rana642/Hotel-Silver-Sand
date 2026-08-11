@@ -55,16 +55,20 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return { success: false, error: "Stay cannot exceed 90 nights." };
   }
 
-  // --- resolve room (server-authoritative) ---
+  // --- resolve room (server-authoritative price) ---
   const { data: room } = await supabase
     .from("rooms")
-    .select("id, name, max_adults, max_children")
+    .select("id, name, price_per_night, original_price, max_adults, max_children")
     .eq("name", input.roomType)
     .maybeSingle();
 
   if (!room) {
     return { success: false, error: "Selected room type was not found." };
   }
+
+  const roomsCount = Math.max(1, Number(input.roomsCount) || 1);
+  const unitPrice = Number(room.price_per_night) || 0;
+  const total = unitPrice * nights * roomsCount;
 
   // --- availability check ---
   const nightsList = eachDate(input.checkIn, input.checkOut);
@@ -95,8 +99,11 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
       check_in: input.checkIn,
       check_out: input.checkOut,
       guests: Math.max(1, Number(input.guests) || 1),
-      rooms_count: Math.max(1, Number(input.roomsCount) || 1),
+      rooms_count: roomsCount,
       nights,
+      unit_price: unitPrice,
+      original_price: room.original_price ?? null,
+      total,
       special_request: input.requests?.trim() || null,
       status: "pending",
       source: input.source ?? "website",

@@ -3,7 +3,9 @@ export type BookingStatus =
   | "confirmed"
   | "checked_in"
   | "completed"
-  | "cancelled";
+  | "cancelled"
+  | "no_show"
+  | "unreachable";
 
 export type Booking = {
   id: string;
@@ -18,7 +20,11 @@ export type Booking = {
   guests: number;
   rooms_count: number;
   nights: number;
+  unit_price: number;
+  original_price: number | null;
+  total: number;
   special_request: string | null;
+  admin_notes: string | null;
   status: BookingStatus;
   source: "website" | "walkin" | "phone";
   created_at: string;
@@ -44,4 +50,6 @@ export const statusMeta: Record<BookingStatus, { label: string; cls: string }> =
   checked_in: { label: "Checked In", cls: "bg-indigo-100 text-indigo-700" },
   completed: { label: "Completed", cls: "bg-green-100 text-green-700" },
   cancelled: { label: "Cancelled", cls: "bg-red-100 text-red-700" },
+  no_show: { label: "No Show", cls: "bg-gray-200 text-gray-700" },
+  unreachable: { label: "Unreachable", cls: "bg-orange-100 text-orange-700" },
 };

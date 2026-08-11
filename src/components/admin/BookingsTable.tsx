@@ -12,6 +12,8 @@ const filters: { key: BookingStatus | "all"; label: string }[] = [
   { key: "checked_in", label: "Checked In" },
   { key: "completed", label: "Completed" },
   { key: "cancelled", label: "Cancelled" },
+  { key: "no_show", label: "No Show" },
+  { key: "unreachable", label: "Unreachable" },
 ];
 
 export default function BookingsTable({ bookings }: { bookings: Booking[] }) {
