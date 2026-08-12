@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Maximize, Users, Eye, Check, MapPin, ArrowRight } from "lucide-react";
 import RoomGallery from "@/components/RoomGallery";
 import RoomBookingForm from "@/components/RoomBookingForm";
+import ViewTracker from "@/components/ViewTracker";
 import JsonLd from "@/components/JsonLd";
 import { getRoomsStatic, getRoomBySlugStatic, roomPricing, featuredImage } from "@/lib/rooms";
 import { pageMeta } from "@/lib/seo";
@@ -74,6 +75,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ slu
   return (
     <>
       <JsonLd data={jsonLd} />
+      <ViewTracker event="view_item" params={{ item_name: room.name, item_id: room.slug, price, currency: "PKR" }} />
 
       {/* Hero banner */}
       <section className="relative h-56 w-full sm:h-72">

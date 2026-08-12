@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Phone, MapPin, Mail, ArrowRight, MessageCircle } from "lucide-react";
 import { ButtonLink } from "@/components/Button";
 import ContactButton from "@/components/ContactButton";
+import TrackedLink from "@/components/TrackedLink";
 import SectionHeading from "@/components/SectionHeading";
 import RoomCard from "@/components/RoomCard";
 import AmenityCard from "@/components/AmenityCard";
@@ -173,9 +174,16 @@ export default function HomePage() {
                 </span>
               </li>
             </ul>
-            <ButtonLink href={site.mapDirections} variant="gold" className="mt-7" external>
+            <TrackedLink
+              href={site.mapDirections}
+              event="directions_click"
+              params={{ location: "home" }}
+              variant="gold"
+              className="mt-7"
+              external
+            >
               Get Directions
-            </ButtonLink>
+            </TrackedLink>
           </div>
         </div>
       </section>

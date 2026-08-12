@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Send, CheckCircle2 } from "lucide-react";
 import { waLink } from "@/data/site";
 import { createInquiry } from "@/app/actions/inquiry";
+import { trackEvent } from "@/lib/analytics";
 
 const empty = { name: "", email: "", phone: "", message: "" };
 
@@ -31,6 +32,7 @@ export default function ContactForm() {
     if (Object.keys(e).length) return;
     // Save the lead to the admin inbox (fire-and-forget — never blocks the guest).
     const payload = { ...form };
+    trackEvent("contact_form_submit", { location: "contact_page" });
     startTransition(() => {
       void createInquiry({
         name: payload.name,

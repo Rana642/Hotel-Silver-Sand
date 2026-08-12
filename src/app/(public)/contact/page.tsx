@@ -4,6 +4,7 @@ import PageHero from "@/components/PageHero";
 import ContactForm from "@/components/ContactForm";
 import SectionHeading from "@/components/SectionHeading";
 import { ButtonLink } from "@/components/Button";
+import TrackedLink from "@/components/TrackedLink";
 import { site, tel, waLink, mapEmbedUrl } from "@/data/site";
 import { pageMeta } from "@/lib/seo";
 
@@ -97,9 +98,15 @@ export default function ContactPage() {
             />
           </div>
           <div className="mt-6 text-center">
-            <ButtonLink href={site.mapDirections} variant="gold" external>
+            <TrackedLink
+              href={site.mapDirections}
+              event="directions_click"
+              params={{ location: "contact_page" }}
+              variant="gold"
+              external
+            >
               <MapPin className="size-4" /> Get Directions on Google Maps
-            </ButtonLink>
+            </TrackedLink>
           </div>
         </div>
       </section>

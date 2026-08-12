@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,6 +15,7 @@ import {
 } from "lucide-react";
 import type { Room } from "@/data/rooms";
 import { bookingComLink } from "@/data/site";
+import { trackEvent } from "@/lib/analytics";
 
 const featureIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   "Air Conditioning": Wind,
@@ -108,6 +111,7 @@ export default function RoomCard({ room }: { room: Room }) {
               href={bookingComHref}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackEvent("bookingcom_click", { location: "room_card", room: room.name })}
               className="flex items-center justify-center gap-1.5 rounded-md bg-navy px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-dark"
             >
               Book on Booking.com <ExternalLink className="size-3.5" />

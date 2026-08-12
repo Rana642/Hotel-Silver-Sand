@@ -7,6 +7,7 @@ import { createBooking } from "@/app/actions/booking";
 import { previewCoupon } from "@/app/actions/coupon";
 import { site, waLink } from "@/data/site";
 import { pkr } from "@/lib/format";
+import { trackEvent } from "@/lib/analytics";
 
 export default function RoomBookingForm({
   roomName,
@@ -63,6 +64,7 @@ export default function RoomBookingForm({
     setError(v);
     if (v) return;
     setLoading(true);
+    trackEvent("begin_checkout", { room: roomName, value: total, currency: "PKR" });
     const wa = window.open("", "_blank", "noopener");
     try {
       const res = await createBooking({
@@ -79,6 +81,12 @@ export default function RoomBookingForm({
         coupon.trim() && discount > 0 ? `Coupon: ${coupon.trim().toUpperCase()} (− ${pkr(discount)})` : "",
       ].filter(Boolean).join("\n");
       if (wa) wa.location.href = waLink(msg); else window.open(waLink(msg), "_blank", "noopener");
+      trackEvent("booking_confirmed", {
+        booking_ref: res.bookingRef,
+        room: roomName,
+        value: total,
+        currency: "PKR",
+      });
       setDone(res.bookingRef);
     } catch {
       setError("Something went wrong. Please try WhatsApp or call us.");

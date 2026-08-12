@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Maximize, Users, Eye, ArrowRight } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import RoomSearchBar from "@/components/RoomSearchBar";
+import ViewTracker from "@/components/ViewTracker";
 import { getRoomsStatic, roomPricing, featuredImage } from "@/lib/rooms";
 import { pageMeta } from "@/lib/seo";
 import { pkr } from "@/lib/format";
@@ -21,6 +22,7 @@ export default async function RoomsPage() {
 
   return (
     <>
+      <ViewTracker event="view_item_list" params={{ list_name: "rooms", items: rooms.length }} />
       {/* Hero + search */}
       <section className="bg-navy">
         <div className="container-site py-14 text-center text-white sm:py-16">

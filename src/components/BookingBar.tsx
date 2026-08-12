@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Phone, MessageCircle, CalendarDays, ExternalLink } from "lucide-react";
 import { bookingComLink } from "@/data/site";
+import { trackEvent } from "@/lib/analytics";
 import { useBooking } from "@/components/BookingProvider";
 
 export default function BookingBar() {
@@ -54,6 +55,7 @@ export default function BookingBar() {
             href={bookingComLink("booking_bar")}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent("bookingcom_click", { location: "booking_bar" })}
             className="hidden items-center justify-center gap-1.5 rounded-md border border-white/40 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 sm:flex"
           >
             <ExternalLink className="size-4" />
