@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarDays, Phone, MessageCircle, CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CalendarDays, Phone, MessageCircle } from "lucide-react";
 import { useBooking } from "@/components/BookingProvider";
 import { createBooking } from "@/app/actions/booking";
 import { previewCoupon } from "@/app/actions/coupon";
-import { site, waLink } from "@/data/site";
 import { pkr } from "@/lib/format";
 import { trackEvent } from "@/lib/analytics";
 
@@ -23,6 +23,7 @@ export default function RoomBookingForm({
   gstPercent: number;
 }) {
   const booking = useBooking();
+  const router = useRouter();
   const today = new Date().toISOString().slice(0, 10);
   const [f, setF] = useState({ checkIn: "", checkOut: "", guests: "2", name: "", phone: "", email: "" });
   const [coupon, setCoupon] = useState("");
@@ -32,7 +33,6 @@ export default function RoomBookingForm({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [checkingCoupon, setCheckingCoupon] = useState(false);
-  const [done, setDone] = useState<string | null>(null);
 
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }));
   const nights = f.checkIn && f.checkOut ? Math.max(0, Math.round((+new Date(f.checkOut) - +new Date(f.checkIn)) / 86400000)) : 0;
@@ -65,7 +65,6 @@ export default function RoomBookingForm({
     if (v) return;
     setLoading(true);
     trackEvent("begin_checkout", { room: roomName, value: total, currency: "PKR" });
-    const wa = window.open("", "_blank", "noopener");
     try {
       const res = await createBooking({
         roomType: roomName, checkIn: f.checkIn, checkOut: f.checkOut,
@@ -73,38 +72,13 @@ export default function RoomBookingForm({
         name: f.name, phone: f.phone, email: f.email,
         couponCode: coupon.trim() || undefined,
       });
-      if (!res.success) { setError(res.error); wa?.close(); return; }
-      const msg = [
-        `*Booking Request — ${site.name}*`, `Booking Ref: ${res.bookingRef}`, "",
-        `Room: ${roomName}`, `Check-in: ${f.checkIn}`, `Check-out: ${f.checkOut}`,
-        `Guests: ${f.guests}`, `Name: ${f.name}`, `Phone: ${f.phone}`, f.email ? `Email: ${f.email}` : "",
-        coupon.trim() && discount > 0 ? `Coupon: ${coupon.trim().toUpperCase()} (− ${pkr(discount)})` : "",
-      ].filter(Boolean).join("\n");
-      if (wa) wa.location.href = waLink(msg); else window.open(waLink(msg), "_blank", "noopener");
-      trackEvent("booking_confirmed", {
-        booking_ref: res.bookingRef,
-        room: roomName,
-        value: total,
-        currency: "PKR",
-      });
-      setDone(res.bookingRef);
+      if (!res.success) { setError(res.error); setLoading(false); return; }
+      // Redirect to the thank-you page — that URL is what GA4/Meta funnels track.
+      router.push(`/thank-you?ref=${encodeURIComponent(res.bookingRef)}`);
     } catch {
       setError("Something went wrong. Please try WhatsApp or call us.");
-      wa?.close();
-    } finally {
       setLoading(false);
     }
-  }
-
-  if (done) {
-    return (
-      <div className="rounded-xl border border-gray-100 bg-white p-6 text-center shadow-card lg:sticky lg:top-24">
-        <CheckCircle2 className="mx-auto size-12 text-green-500" />
-        <p className="mt-3 font-heading text-lg font-semibold text-navy">Booking request received!</p>
-        <p className="mt-1 text-sm text-slate">Reference: <span className="font-bold text-navy">{done}</span></p>
-        <p className="mt-2 text-sm text-slate">We&apos;ve opened WhatsApp with your details. Our team will confirm shortly.</p>
-      </div>
-    );
   }
 
   return (
