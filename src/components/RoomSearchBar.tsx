@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import { CalendarDays, Users, Search } from "lucide-react";
-import { useBooking } from "@/components/BookingProvider";
 
 export default function RoomSearchBar() {
-  const booking = useBooking();
   const today = new Date().toISOString().slice(0, 10);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
@@ -29,7 +27,7 @@ export default function RoomSearchBar() {
       </label>
       <button
         type="button"
-        onClick={() => booking.open({ checkIn, checkOut, guests })}
+        onClick={() => document.getElementById("room-list")?.scrollIntoView({ behavior: "smooth" })}
         className="mt-auto flex items-center justify-center gap-2 rounded-md bg-gold px-6 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95"
       >
         <Search className="size-4" /> Search

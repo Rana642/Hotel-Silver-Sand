@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Maximize, Users, Eye, ArrowRight } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import RoomSearchBar from "@/components/RoomSearchBar";
-import BookNowButton from "@/components/BookNowButton";
 import { getRoomsStatic, roomPricing, featuredImage } from "@/lib/rooms";
 import { pageMeta } from "@/lib/seo";
 import { pkr } from "@/lib/format";
@@ -37,7 +36,7 @@ export default async function RoomsPage() {
         <div className="container-site py-14 sm:py-20">
           <SectionHeading title="Explore the Rooms & Suites" />
 
-          <div className="mt-10 space-y-8">
+          <div id="room-list" className="mt-10 scroll-mt-24 space-y-8">
             {rooms.map((room) => {
               const { price, original, discountPct, gst } = roomPricing(room);
               const tags = (room.amenities ?? []).slice(0, 4);
@@ -101,7 +100,12 @@ export default async function RoomsPage() {
                       >
                         View Details <ArrowRight className="size-4" />
                       </Link>
-                      <BookNowButton room={room.name}>Check Availability</BookNowButton>
+                      <Link
+                        href={`/rooms/${room.slug}`}
+                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-navy-dark transition hover:brightness-95"
+                      >
+                        Check Availability
+                      </Link>
                     </div>
                   </div>
                 </article>

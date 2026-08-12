@@ -1,6 +1,5 @@
-"use client";
-
 import Image from "next/image";
+import Link from "next/link";
 import {
   Users,
   Wind,
@@ -13,7 +12,6 @@ import {
   ExternalLink,
 } from "lucide-react";
 import type { Room } from "@/data/rooms";
-import { useBooking } from "@/components/BookingProvider";
 import { site, waLink } from "@/data/site";
 
 const featureIcons: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -30,8 +28,6 @@ function fmt(n: number) {
 }
 
 export default function RoomCard({ room }: { room: Room }) {
-  const booking = useBooking();
-
   const bookingComHref =
     room.bookingUrl ||
     site.bookingDotComUrl ||
@@ -98,21 +94,19 @@ export default function RoomCard({ room }: { room: Room }) {
         </div>
 
         <div className="mt-4 space-y-2.5">
-          <button
-            type="button"
-            onClick={() => booking.open(room.name)}
-            className="w-full rounded-md border border-navy/20 px-4 py-2.5 text-sm font-semibold text-navy transition hover:bg-navy hover:text-white"
+          <Link
+            href={`/rooms/${room.slug}`}
+            className="block w-full rounded-md border border-navy/20 px-4 py-2.5 text-center text-sm font-semibold text-navy transition hover:bg-navy hover:text-white"
           >
             View Details
-          </button>
+          </Link>
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => booking.open(room.name)}
+            <Link
+              href={`/rooms/${room.slug}`}
               className="flex items-center justify-center gap-1.5 rounded-md bg-gold px-4 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95"
             >
               <CalendarDays className="size-4" /> Book Direct
-            </button>
+            </Link>
             <a
               href={bookingComHref}
               target="_blank"

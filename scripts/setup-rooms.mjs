@@ -46,7 +46,7 @@ const content = {
       "8 minutes from Multan International Airport",
       "24-hour front desk and room service",
     ],
-    good_to_know: { "Check-in": "24 hours", "Check-out": "12:00 noon", "Breakfast": "Available on request", "Parking": "Free private parking on site", "WiFi": "Free in all areas", "Payment": "Cash / card — paid at hotel", "Advance payment": "None required to book" },
+    good_to_know: { "Check-in": "24 hours", "Check-out": "12:00 noon", "Breakfast": "Available on request", "Parking": "Free private parking on site", "WiFi": "Free in all areas", "Payment": "Cash / card accepted", "Advance payment": "None required to book" },
     nearby: [
       { place: "Multan International Airport", distance: "8 min", category: "Airport" },
       { place: "Multan Cantt Railway Station", distance: "Nearby", category: "Transport" },
@@ -64,7 +64,7 @@ const content = {
     amenities: ["Air Conditioning", "High-Speed WiFi", "Mini Fridge", "Smart/Flat-screen TV", "Attached Private Bathroom", "Room Service", "Hot & Cold Water"],
     ideal_for: "Best for small families and groups of up to three adults.",
     why_book: ["Sleeps up to 3 adults comfortably", "Air-conditioned with premium bedding", "Free WiFi and 24-hour room service", "Close to Multan Airport and Railway Station"],
-    good_to_know: { "Check-in": "24 hours", "Check-out": "12:00 noon", "Breakfast": "Available on request", "Parking": "Free private parking on site", "WiFi": "Free in all areas", "Payment": "Cash / card — paid at hotel", "Advance payment": "None required to book" },
+    good_to_know: { "Check-in": "24 hours", "Check-out": "12:00 noon", "Breakfast": "Available on request", "Parking": "Free private parking on site", "WiFi": "Free in all areas", "Payment": "Cash / card accepted", "Advance payment": "None required to book" },
     nearby: [
       { place: "Multan International Airport", distance: "8 min", category: "Airport" },
       { place: "Multan Cantt Railway Station", distance: "Nearby", category: "Transport" },
@@ -78,7 +78,7 @@ const content = {
     amenities: ["Air Conditioning", "High-Speed WiFi", "Mini Fridge", "Smart/Flat-screen TV", "Attached Private Bathroom", "Room Service", "Hot & Cold Water"],
     ideal_for: "Best for colleagues or friends who need separate beds.",
     why_book: ["Two comfortable single beds", "Air-conditioned executive room", "Free WiFi and room service", "Minutes from the airport and Cantt"],
-    good_to_know: { "Check-in": "24 hours", "Check-out": "12:00 noon", "Breakfast": "Available on request", "Parking": "Free private parking on site", "WiFi": "Free in all areas", "Payment": "Cash / card — paid at hotel", "Advance payment": "None required to book" },
+    good_to_know: { "Check-in": "24 hours", "Check-out": "12:00 noon", "Breakfast": "Available on request", "Parking": "Free private parking on site", "WiFi": "Free in all areas", "Payment": "Cash / card accepted", "Advance payment": "None required to book" },
     nearby: [
       { place: "Multan International Airport", distance: "8 min", category: "Airport" },
       { place: "Multan Cantt Railway Station", distance: "Nearby", category: "Transport" },
@@ -91,7 +91,7 @@ const content = {
     amenities: ["Air Conditioning", "High-Speed WiFi", "Mini Fridge", "Smart/Flat-screen TV", "Attached Private Bathroom", "Room Service", "Hot & Cold Water", "Family-Friendly"],
     ideal_for: "Best for families travelling with children.",
     why_book: ["Sleeps 4 adults + 2 children", "Spacious, air-conditioned family room", "Free WiFi, parking and 24-hour reception", "8 minutes from Multan Airport"],
-    good_to_know: { "Check-in": "24 hours", "Check-out": "12:00 noon", "Breakfast": "Available on request", "Parking": "Free private parking on site", "WiFi": "Free in all areas", "Payment": "Cash / card — paid at hotel", "Advance payment": "None required to book" },
+    good_to_know: { "Check-in": "24 hours", "Check-out": "12:00 noon", "Breakfast": "Available on request", "Parking": "Free private parking on site", "WiFi": "Free in all areas", "Payment": "Cash / card accepted", "Advance payment": "None required to book" },
     nearby: [
       { place: "Multan International Airport", distance: "8 min", category: "Airport" },
       { place: "Multan Cantt Railway Station", distance: "Nearby", category: "Transport" },

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Phone, MessageCircle, CalendarDays, ExternalLink } from "lucide-react";
 import { site, waLink } from "@/data/site";
 import { useBooking } from "@/components/BookingProvider";
@@ -42,14 +43,13 @@ export default function BookingBar() {
             <MessageCircle className="size-4" />
             <span className="hidden xs:inline">WhatsApp</span>
           </button>
-          <button
-            type="button"
-            onClick={() => booking.open()}
+          <Link
+            href="/rooms"
             className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95 lg:flex-none"
           >
             <CalendarDays className="size-4" />
             <span className="hidden xs:inline">Book Now</span>
-          </button>
+          </Link>
           <a
             href={
               site.bookingDotComUrl ||

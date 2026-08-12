@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X, Phone } from "lucide-react";
 import Logo from "@/components/Logo";
-import { Button } from "@/components/Button";
+import { buttonClasses } from "@/components/Button";
 import { nav, site } from "@/data/site";
 import { useBooking } from "@/components/BookingProvider";
 
@@ -54,9 +54,9 @@ export default function Header() {
             <Phone className="size-4 text-gold" />
             {site.phone}
           </button>
-          <Button variant="gold" onClick={() => booking.open()} className="px-5 py-2.5">
+          <Link href="/rooms" className={buttonClasses("gold", "px-5 py-2.5")}>
             Book Now
-          </Button>
+          </Link>
         </div>
 
         <button
@@ -110,15 +110,9 @@ export default function Header() {
           >
             <Phone className="size-4 text-gold" /> {site.phone}
           </button>
-          <Button
-            variant="gold"
-            onClick={() => {
-              setOpen(false);
-              booking.open();
-            }}
-          >
+          <Link href="/rooms" onClick={() => setOpen(false)} className={buttonClasses("gold")}>
             Book Now
-          </Button>
+          </Link>
         </div>
       </nav>
     </header>
