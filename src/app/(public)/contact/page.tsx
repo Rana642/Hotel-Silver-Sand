@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { MapPin, Phone, MessageCircle, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, MessageCircle, Mail, Clock, Star } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import ContactForm from "@/components/ContactForm";
 import SectionHeading from "@/components/SectionHeading";
@@ -27,6 +27,13 @@ const cards = [
   },
   { icon: Mail, title: "Email", lines: [site.email], href: `mailto:${site.email}` },
   { icon: Clock, title: "Front Desk Hours", lines: ["24/7 — We're always here for you"] },
+  {
+    icon: Star,
+    title: "Leave a Google Review",
+    lines: ["Loved your stay? Share your experience"],
+    href: site.reviewUrl,
+    external: true,
+  },
 ];
 
 export default function ContactPage() {

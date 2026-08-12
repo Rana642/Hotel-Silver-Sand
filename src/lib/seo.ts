@@ -55,7 +55,17 @@ export const hotelSchema = {
     postalCode: site.address.postalCode,
     addressCountry: "PK",
   },
-  geo: { "@type": "GeoCoordinates", latitude: 30.1984, longitude: 71.4687 },
+  geo: { "@type": "GeoCoordinates", latitude: site.geo.lat, longitude: site.geo.lng },
+  hasMap: `https://www.google.com/maps/place/?q=place_id:${site.placeId}`,
+  sameAs: [
+    site.social.facebook,
+    site.social.instagram,
+    site.social.youtube,
+    site.social.tiktok,
+    site.social.linkedin,
+    site.googleBusinessUrl,
+    site.bookingDotComUrl,
+  ],
   checkinTime: "14:00",
   checkoutTime: "12:00",
   amenityFeature: [

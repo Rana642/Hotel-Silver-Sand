@@ -12,7 +12,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import type { Room } from "@/data/rooms";
-import { site, waLink } from "@/data/site";
+import { bookingComLink } from "@/data/site";
 
 const featureIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   "Air Conditioning": Wind,
@@ -28,10 +28,7 @@ function fmt(n: number) {
 }
 
 export default function RoomCard({ room }: { room: Room }) {
-  const bookingComHref =
-    room.bookingUrl ||
-    site.bookingDotComUrl ||
-    waLink(`Hi, I'd like to book the ${room.name} at Hotel Silver Sand Multan.`);
+  const bookingComHref = room.bookingUrl || bookingComLink(`room_card_${room.slug}`);
 
   return (
     <article className="flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-card transition hover:shadow-pop">

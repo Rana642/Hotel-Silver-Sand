@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Phone, MessageCircle, CalendarDays, ExternalLink } from "lucide-react";
-import { site, waLink } from "@/data/site";
+import { bookingComLink } from "@/data/site";
 import { useBooking } from "@/components/BookingProvider";
 
 export default function BookingBar() {
@@ -51,10 +51,7 @@ export default function BookingBar() {
             <span className="hidden xs:inline">Book Now</span>
           </Link>
           <a
-            href={
-              site.bookingDotComUrl ||
-              waLink("Hi, I'd like to check availability and book a room at Hotel Silver Sand Multan.")
-            }
+            href={bookingComLink("booking_bar")}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden items-center justify-center gap-1.5 rounded-md border border-white/40 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 sm:flex"
