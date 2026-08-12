@@ -25,8 +25,6 @@ export const site = {
   geo: { lat: 30.182376, lng: 71.4422921 },
   placeId: "ChIJXz1OzmQxOzkR0D8_sKCUClw",
   mapQuery: "Hotel Silver Sand Multan, 514 Akbar Road, Cantt, Multan, Pakistan",
-  mapEmbed:
-    "https://www.google.com/maps?q=Hotel+Silver+Sand+Multan,+514+Akbar+Road,+Cantt,+Multan&ll=30.182376,71.4422921&z=16&output=embed",
   mapDirections:
     "https://www.google.com/maps/dir/?api=1&destination=Hotel+Silver+Sand+Multan&destination_place_id=ChIJXz1OzmQxOzkR0D8_sKCUClw",
   reviewUrl: "https://g.page/r/CdA_P7CglApcEBM/review",
@@ -40,6 +38,17 @@ export const site = {
     linkedin: "https://www.linkedin.com/company/hotelsilversandmultan",
   },
 } as const;
+
+/** Google Maps Embed API URL (place mode, uses placeId — pin is always
+ * exact). Falls back to the free query embed if no API key is configured. */
+export function mapEmbedUrl(zoom = 16) {
+  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  if (key) {
+    const p = new URLSearchParams({ key, q: `place_id:${site.placeId}`, zoom: String(zoom) });
+    return `https://www.google.com/maps/embed/v1/place?${p.toString()}`;
+  }
+  return `https://www.google.com/maps?q=${encodeURIComponent(site.mapQuery)}&ll=${site.geo.lat},${site.geo.lng}&z=${zoom}&output=embed`;
+}
 
 /** Add UTM parameters to the Booking.com link so we can see how many
  * bookings originate from the website. */

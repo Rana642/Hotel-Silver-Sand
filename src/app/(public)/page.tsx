@@ -9,7 +9,7 @@ import ReviewsCarousel from "@/components/ReviewsCarousel";
 import JsonLd from "@/components/JsonLd";
 import { rooms } from "@/data/rooms";
 import { amenities } from "@/data/amenities";
-import { site, tel } from "@/data/site";
+import { site, tel, mapEmbedUrl } from "@/data/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -136,7 +136,7 @@ export default function HomePage() {
         <div className="container-site grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-2">
           <div className="overflow-hidden rounded-xl border border-gray-100 shadow-card">
             <iframe
-              src={site.mapEmbed}
+              src={mapEmbedUrl()}
               title="Hotel Silver Sand Multan location on Google Maps"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

@@ -4,7 +4,7 @@ import PageHero from "@/components/PageHero";
 import ContactForm from "@/components/ContactForm";
 import SectionHeading from "@/components/SectionHeading";
 import { ButtonLink } from "@/components/Button";
-import { site, tel, waLink } from "@/data/site";
+import { site, tel, waLink, mapEmbedUrl } from "@/data/site";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = pageMeta({
@@ -89,7 +89,7 @@ export default function ContactPage() {
           <SectionHeading title="Find Us on the Map" />
           <div className="mt-8 overflow-hidden rounded-xl border border-gray-100 shadow-card">
             <iframe
-              src={site.mapEmbed}
+              src={mapEmbedUrl()}
               title="Hotel Silver Sand Multan location on Google Maps"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
