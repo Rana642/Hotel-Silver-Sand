@@ -6,11 +6,12 @@ export default function Logo({ dark = false }: { dark?: boolean }) {
   return (
     <Link href="/" className="flex items-center gap-3" aria-label={`${site.name} home`}>
       <Image
-        src="/images/logo.svg"
+        src={dark ? "/images/logo-transparent.png" : "/images/logo-dark.png"}
         alt={`${site.name} logo`}
         width={48}
         height={48}
-        className="size-11 shrink-0 rounded-full"
+        className="size-11 shrink-0 rounded-full object-contain"
+        priority
       />
       <span className="leading-tight">
         <span

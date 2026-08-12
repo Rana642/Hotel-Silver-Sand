@@ -61,5 +61,5 @@ export function roomPricing(room: Pick<DbRoom, "price_per_night" | "original_pri
 }
 
 export function featuredImage(room: DbRoom) {
-  return room.room_images?.[0]?.url ?? "/images/rooms/deluxe-king.svg";
+  return room.room_images?.[0]?.url ?? "/images/gallery/851976912.jpg";
 }

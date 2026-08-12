@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="container-site grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-2">
           <Image
-            src="/images/logo.svg"
+            src="/images/logo-transparent.png"
             alt={`${site.name} logo`}
             width={64}
             height={64}

@@ -34,7 +34,7 @@ export default function FacilitiesPage() {
         <div className="container-site grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-2">
           <div className="relative aspect-[5/4] overflow-hidden rounded-xl shadow-card">
             <Image
-              src="/images/facilities/hallway.svg"
+              src="/images/facilities/hallway.webp"
               alt="Clean, well-lit hallway at Hotel Silver Sand Multan"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"

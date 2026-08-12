@@ -51,7 +51,7 @@ export default function AboutPage() {
           <div className="grid items-center gap-10 lg:grid-cols-2">
             <div className="relative aspect-[5/4] overflow-hidden rounded-xl shadow-card">
               <Image
-                src="/images/about/story.svg"
+                src="/images/about/story.png"
                 alt="Hotel Silver Sand Multan building"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -119,7 +119,7 @@ export default function AboutPage() {
           </div>
           <div className="relative aspect-[5/4] overflow-hidden rounded-xl shadow-card">
             <Image
-              src="/images/about/mission.svg"
+              src="/images/about/mission.jpg"
               alt="Staff assisting guests at Hotel Silver Sand Multan"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"

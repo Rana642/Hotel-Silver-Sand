@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
     <div className="flex min-h-dvh items-center justify-center bg-navy px-4">
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-pop">
         <div className="flex flex-col items-center">
-          <Image src="/images/logo.svg" alt="" width={56} height={56} className="size-14 rounded-full" />
+          <Image src="/images/logo-dark.png" alt="" width={56} height={56} className="size-14 rounded-full" />
           <h1 className="mt-4 font-heading text-xl font-bold text-navy">Admin Login</h1>
           <p className="mt-1 text-sm text-slate">Hotel Silver Sand Multan</p>
         </div>

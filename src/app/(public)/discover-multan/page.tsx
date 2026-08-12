@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import PageHero from "@/components/PageHero";
 import CTASection from "@/components/CTASection";
-import { destinations } from "@/data/destinations";
 import { pageMeta } from "@/lib/seo";
+import { createServiceClient } from "@/lib/supabase/service";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = pageMeta({
   title: "Discover Multan | Places to Visit Near Hotel Silver Sand",
@@ -13,7 +15,15 @@ export const metadata: Metadata = pageMeta({
   absoluteTitle: true,
 });
 
-export default function DiscoverMultanPage() {
+export default async function DiscoverMultanPage() {
+  const supabase = createServiceClient();
+  const { data } = await supabase
+    .from("destinations")
+    .select("slug, title, description, image")
+    .eq("is_active", true)
+    .order("sort_order");
+  const destinations = (data ?? []) as { slug: string; title: string; description: string; image: string | null }[];
+
   return (
     <>
       <PageHero
@@ -33,17 +43,19 @@ export default function DiscoverMultanPage() {
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {destinations.map((d) => (
               <article
-                key={d.title}
+                key={d.slug}
                 className="flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-card transition hover:shadow-pop"
               >
-                <div className="relative aspect-[16/10] w-full overflow-hidden">
-                  <Image
-                    src={d.image}
-                    alt={d.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover"
-                  />
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-cream">
+                  {d.image && (
+                    <Image
+                      src={d.image}
+                      alt={d.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover"
+                    />
+                  )}
                 </div>
                 <div className="flex flex-1 flex-col p-6">
                   <h2 className="font-heading text-xl font-bold text-navy">{d.title}</h2>

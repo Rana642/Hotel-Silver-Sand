@@ -1,17 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { gallery, galleryCategories } from "@/data/gallery";
 
-const filters = ["All", ...galleryCategories] as const;
+type GalleryItem = { src: string; alt: string; category: string };
 
-export default function GalleryGrid() {
-  const [filter, setFilter] = useState<(typeof filters)[number]>("All");
+export default function GalleryGrid({ images }: { images: GalleryItem[] }) {
+  const categories = useMemo(
+    () => Array.from(new Set(images.map((g) => g.category))),
+    [images]
+  );
+  const filters = ["All", ...categories];
+  const [filter, setFilter] = useState<string>("All");
   const [lightbox, setLightbox] = useState<number | null>(null);
 
-  const items = gallery.filter((g) => filter === "All" || g.category === filter);
+  const items = images.filter((g) => filter === "All" || g.category === filter);
 
   const close = useCallback(() => setLightbox(null), []);
   const move = useCallback(

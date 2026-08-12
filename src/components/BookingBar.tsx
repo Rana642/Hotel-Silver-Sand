@@ -14,7 +14,7 @@ export default function BookingBar() {
       <div className="container-site flex items-center justify-between gap-3 py-2.5">
         <div className="hidden items-center gap-3 lg:flex">
           <Image
-            src="/images/logo.svg"
+            src="/images/logo-transparent.png"
             alt=""
             width={36}
             height={36}

@@ -33,7 +33,7 @@ export const rooms: Room[] = [
     originalPrice: 6500,
     save: 2500,
     available: true,
-    image: "/images/rooms/deluxe-king.svg",
+    image: "/images/gallery/851976912.jpg",
     features: roomFeatures,
   },
   {
@@ -46,7 +46,7 @@ export const rooms: Room[] = [
     originalPrice: 7500,
     save: 1500,
     available: true,
-    image: "/images/rooms/deluxe-triple.svg",
+    image: "/images/gallery/851976923.jpg",
     features: roomFeatures,
   },
   {
@@ -57,7 +57,7 @@ export const rooms: Room[] = [
     maxChildren: 0,
     price: 9000,
     available: true,
-    image: "/images/rooms/executive-twin.svg",
+    image: "/images/gallery/851976968.jpg",
     features: roomFeatures,
   },
   {
@@ -68,7 +68,7 @@ export const rooms: Room[] = [
     maxChildren: 2,
     price: 11000,
     available: true,
-    image: "/images/rooms/executive-family.svg",
+    image: "/images/gallery/851976974.jpg",
     features: roomFeatures,
   },
 ];

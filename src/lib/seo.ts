@@ -87,6 +87,6 @@ export const websiteSchema = {
   publisher: {
     "@type": "Organization",
     name: site.name,
-    logo: { "@type": "ImageObject", url: `${site.url}/images/logo.svg` },
+    logo: { "@type": "ImageObject", url: `${site.url}/images/logo-transparent.png` },
   },
 };

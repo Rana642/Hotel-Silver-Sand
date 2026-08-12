@@ -6,7 +6,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, CalendarCheck, Inbox, BedDouble, CalendarRange,
-  BarChart3, ScrollText, Tag, LogOut, ExternalLink, MoreHorizontal, X,
+  BarChart3, ScrollText, Tag, Images, MapPin, LogOut, ExternalLink, MoreHorizontal, X,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -18,6 +18,8 @@ const primary = [
 ];
 const secondary = [
   { href: "/admin/rooms", label: "Rooms", icon: BedDouble },
+  { href: "/admin/gallery", label: "Gallery", icon: Images },
+  { href: "/admin/discover", label: "Discover", icon: MapPin },
   { href: "/admin/coupons", label: "Coupons", icon: Tag },
   { href: "/admin/reports", label: "Reports", icon: BarChart3 },
   { href: "/admin/activity", label: "Activity Log", icon: ScrollText },
@@ -55,7 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-gray-200 bg-navy print:hidden lg:flex">
         <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
-          <Image src="/images/logo.svg" alt="" width={36} height={36} className="size-9 rounded-full" />
+          <Image src="/images/logo-transparent.png" alt="" width={36} height={36} className="size-9 rounded-full" />
           <div className="leading-tight">
             <p className="text-xs font-semibold uppercase tracking-wider text-gold">Admin Panel</p>
             <p className="text-sm font-bold text-white">Silver Sand</p>
@@ -87,7 +89,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile top header */}
       <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-navy px-4 print:hidden lg:hidden">
         <div className="flex items-center gap-2">
-          <Image src="/images/logo.svg" alt="" width={28} height={28} className="size-7 rounded-full" />
+          <Image src="/images/logo-transparent.png" alt="" width={28} height={28} className="size-7 rounded-full" />
           <div className="leading-none">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-gold">Admin Panel</p>
             <p className="text-sm font-bold text-white">{title}</p>

@@ -6,6 +6,9 @@ import GalleryGrid from "@/components/GalleryGrid";
 import { ButtonLink } from "@/components/Button";
 import { videos, youtubeChannel } from "@/data/gallery";
 import { pageMeta } from "@/lib/seo";
+import { createServiceClient } from "@/lib/supabase/service";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = pageMeta({
   title: "Hotel Silver Sand Multan | Photo Gallery",
@@ -15,14 +18,26 @@ export const metadata: Metadata = pageMeta({
   absoluteTitle: true,
 });
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const supabase = createServiceClient();
+  const { data } = await supabase
+    .from("gallery_images")
+    .select("url, alt, category")
+    .eq("is_visible", true)
+    .order("sort_order");
+  const images = (data ?? []).map((r) => ({
+    src: r.url as string,
+    alt: (r.alt as string) ?? "Hotel Silver Sand Multan",
+    category: (r.category as string) ?? "Exterior",
+  }));
+
   return (
     <>
       <PageHero title="Photo Gallery" subtitle="Explore our hotel through images" />
 
       <section className="bg-cream">
         <div className="container-site py-14 sm:py-16">
-          <GalleryGrid />
+          <GalleryGrid images={images} />
         </div>
       </section>
 

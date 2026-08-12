@@ -24,14 +24,14 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative flex min-h-[560px] items-center overflow-hidden">
         <Image
-          src="/images/hero.svg"
+          src="/images/hero.png"
           alt="Hotel Silver Sand Multan building exterior"
           fill
           priority
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-dark/80 via-navy/70 to-navy-dark/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-navy-dark/70 via-navy-dark/55 to-navy-dark/80" />
         <div className="container-site relative py-20 text-center text-white">
           <h1 className="mx-auto max-w-4xl font-heading text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             Hotel Silver Sand Multan
@@ -56,7 +56,7 @@ export default function HomePage() {
         <div className="container-site grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-2">
           <div className="relative aspect-[5/4] overflow-hidden rounded-xl shadow-card">
             <Image
-              src="/images/welcome.svg"
+              src="/images/welcome.jpg"
               alt="Reception at Hotel Silver Sand Multan"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
