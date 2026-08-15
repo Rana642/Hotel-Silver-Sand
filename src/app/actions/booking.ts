@@ -171,8 +171,9 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return { success: false, error: "Those dates were just taken. Please pick different dates." };
   }
 
-  // --- Meta Conversions API (fire-and-forget, deduped with browser Pixel via event_id) ---
-  void sendMetaEvent({
+  // --- Meta Conversions API (awaited so the serverless fn doesn't freeze
+  // before the request lands; deduped with the browser Pixel via event_id) ---
+  await sendMetaEvent({
     name: "Lead",
     eventId: bookingRef,
     eventSourceUrl: `${site.url}/thank-you?ref=${bookingRef}`,

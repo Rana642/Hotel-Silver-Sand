@@ -88,6 +88,9 @@ export async function sendMetaEvent(evt: CapiEvent): Promise<{ ok: boolean; erro
     ],
   };
 
+  // Bound the request so a slow Meta endpoint never blocks the booking response.
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 4000);
   try {
     const res = await fetch(
       `https://graph.facebook.com/${GRAPH_VERSION}/${pixelId}/events?access_token=${encodeURIComponent(token)}`,
@@ -95,8 +98,8 @@ export async function sendMetaEvent(evt: CapiEvent): Promise<{ ok: boolean; erro
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-        // don't cache; also don't let this hang forever
         cache: "no-store",
+        signal: controller.signal,
       }
     );
     if (!res.ok) {
@@ -108,5 +111,7 @@ export async function sendMetaEvent(evt: CapiEvent): Promise<{ ok: boolean; erro
   } catch (e) {
     console.error("[meta-capi] fetch failed:", (e as Error).message);
     return { ok: false, error: (e as Error).message };
+  } finally {
+    clearTimeout(timeout);
   }
 }
