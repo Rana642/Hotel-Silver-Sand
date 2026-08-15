@@ -25,10 +25,10 @@ export default function HeroBookingBar() {
 
   const label = "mb-1 flex items-center gap-1 text-xs font-semibold text-white/85";
   const cell =
-    "w-full rounded-none border border-white/20 bg-white px-3 py-2.5 text-sm text-navy shadow-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
+    "w-full border border-white/20 bg-white px-3 py-2.5 text-sm text-navy shadow-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
 
   return (
-    <div className="mx-auto mt-8 max-w-4xl rounded-none border border-white/15 bg-navy-dark/60 p-4 text-left shadow-pop backdrop-blur-md sm:p-5">
+    <div className="mx-auto max-w-5xl border border-white/15 bg-navy-dark/80 p-4 text-left shadow-pop sm:p-5">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_0.7fr_1fr_auto]">
         <label className="block">
           <span className={label}><CalendarDays className="size-3.5 text-gold" /> Check In</span>
@@ -42,10 +42,15 @@ export default function HeroBookingBar() {
           <span className={label}><Users className="size-3.5 text-gold" /> Guests</span>
           <input type="number" min={1} value={guests} onChange={(e) => setGuests(e.target.value)} className={cell} />
         </label>
-        <label className="block">
-          <span className={label}><TicketPercent className="size-3.5 text-gold" /> Coupon Code</span>
-          <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Optional" className={cell + " uppercase placeholder:normal-case placeholder:text-gray-400"} />
-        </label>
+        <div className="block">
+          <label className="block">
+            <span className={label}><TicketPercent className="size-3.5 text-gold" /> Coupon Code</span>
+            <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Optional" className={cell + " uppercase placeholder:normal-case placeholder:text-gray-400"} />
+          </label>
+          <div className="mt-1.5">
+            <WhyBookDirect light />
+          </div>
+        </div>
         <div className="flex flex-col items-stretch justify-end gap-1 text-center">
           <span className="text-xs text-white/80">
             From <span className="font-semibold text-white">PKR {startingFrom.toLocaleString("en-PK")}</span>/night
@@ -53,7 +58,7 @@ export default function HeroBookingBar() {
           <button
             type="button"
             onClick={search}
-            className="flex min-h-[46px] items-center justify-center gap-2 rounded-none bg-gold px-6 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95"
+            className="flex min-h-[46px] items-center justify-center gap-2 bg-gold px-6 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95"
           >
             <Search className="size-4" /> Book Now
           </button>
@@ -64,9 +69,6 @@ export default function HeroBookingBar() {
             Manage Booking
           </Link>
         </div>
-      </div>
-      <div className="mt-3 flex items-center justify-start px-0.5">
-        <WhyBookDirect light />
       </div>
     </div>
   );
