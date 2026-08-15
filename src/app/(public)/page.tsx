@@ -23,27 +23,25 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero — clean full-bleed building shot, no text overlay */}
-      <section className="relative h-[48vh] min-h-[340px] w-full overflow-hidden sm:h-[58vh] lg:h-[66vh]">
-        <Image
-          src="/images/hero.png"
-          alt="Hotel Silver Sand Multan building exterior"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/30 to-transparent" />
-      </section>
-
-      {/* Booking bar strip — its own section right below the hero */}
-      <section className="bg-navy-dark">
-        <div className="container-site py-6 sm:py-8">
+      {/* Hero — clean building shot with the booking widget floating over its lower edge */}
+      <section className="relative bg-cream">
+        <div className="relative h-[52vh] min-h-[360px] w-full overflow-hidden sm:h-[62vh] lg:h-[72vh]">
+          <Image
+            src="/images/hero.png"
+            alt="Hotel Silver Sand Multan building exterior"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/45 via-transparent to-transparent" />
+        </div>
+        <div className="container-site relative z-10 -mt-24 pb-2 sm:-mt-28">
           <HeroBookingBar />
         </div>
       </section>
 
-      {/* Hotel name / intro band — moved out of the hero for a clean building shot */}
+      {/* Hotel name / intro band */}
       <section className="bg-cream">
         <div className="container-site py-12 text-center sm:py-16">
           <h1 className="font-heading text-4xl font-bold text-navy sm:text-5xl lg:text-6xl">
