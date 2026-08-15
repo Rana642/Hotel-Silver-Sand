@@ -23,7 +23,6 @@ export default function BookingBar() {
           />
           <div className="leading-tight">
             <p className="text-sm font-bold text-white">Ready to book?</p>
-            <p className="text-xs text-gold">Best price guaranteed directly</p>
           </div>
         </div>
 

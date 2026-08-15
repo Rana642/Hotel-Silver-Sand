@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { CalendarDays, Users, Search, TicketPercent } from "lucide-react";
 import { saveIntent } from "@/lib/bookingIntent";
 import WhyBookDirect from "@/components/WhyBookDirect";
+import { rooms } from "@/data/rooms";
+
+const startingFrom = Math.min(...rooms.map((r) => r.price));
 
 export default function HeroBookingBar() {
   const router = useRouter();
@@ -22,10 +25,10 @@ export default function HeroBookingBar() {
 
   const label = "mb-1 flex items-center gap-1 text-xs font-semibold text-white/85";
   const cell =
-    "w-full rounded-lg border border-white/20 bg-white px-3 py-2.5 text-sm text-navy shadow-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
+    "w-full rounded-none border border-white/20 bg-white px-3 py-2.5 text-sm text-navy shadow-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
 
   return (
-    <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-white/15 bg-navy-dark/55 p-4 text-left shadow-pop backdrop-blur-md sm:p-5">
+    <div className="mx-auto mt-8 max-w-4xl rounded-none border border-white/15 bg-navy-dark/60 p-4 text-left shadow-pop backdrop-blur-md sm:p-5">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_0.7fr_1fr_auto]">
         <label className="block">
           <span className={label}><CalendarDays className="size-3.5 text-gold" /> Check In</span>
@@ -43,22 +46,27 @@ export default function HeroBookingBar() {
           <span className={label}><TicketPercent className="size-3.5 text-gold" /> Coupon Code</span>
           <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Optional" className={cell + " uppercase placeholder:normal-case placeholder:text-gray-400"} />
         </label>
-        <button
-          type="button"
-          onClick={search}
-          className="mt-auto flex min-h-[46px] items-center justify-center gap-2 rounded-lg bg-gold px-6 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95"
-        >
-          <Search className="size-4" /> Book Now
-        </button>
-      </div>
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-0.5">
-        <div className="flex items-center gap-4">
-          <WhyBookDirect light />
-          <Link href="/manage-booking" className="text-xs font-semibold text-white/70 underline decoration-white/30 underline-offset-2 hover:text-gold">
+        <div className="flex flex-col items-stretch justify-end gap-1 text-center">
+          <span className="text-xs text-white/80">
+            From <span className="font-semibold text-white">PKR {startingFrom.toLocaleString("en-PK")}</span>/night
+          </span>
+          <button
+            type="button"
+            onClick={search}
+            className="flex min-h-[46px] items-center justify-center gap-2 rounded-none bg-gold px-6 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95"
+          >
+            <Search className="size-4" /> Book Now
+          </button>
+          <Link
+            href="/manage-booking"
+            className="text-xs font-semibold text-white/80 underline decoration-white/30 underline-offset-2 hover:text-gold"
+          >
             Manage Booking
           </Link>
         </div>
-        <span className="text-xs text-white/70">Best price guaranteed directly</span>
+      </div>
+      <div className="mt-3 flex items-center justify-start px-0.5">
+        <WhyBookDirect light />
       </div>
     </div>
   );

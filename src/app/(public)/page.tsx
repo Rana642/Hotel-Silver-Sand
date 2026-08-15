@@ -23,8 +23,8 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative flex min-h-[560px] items-center overflow-hidden">
+      {/* Hero — building visible, subtle bottom gradient only, text pushed down */}
+      <section className="relative min-h-[620px] overflow-hidden sm:min-h-[700px] lg:min-h-[780px]">
         <Image
           src="/images/hero.png"
           alt="Hotel Silver Sand Multan building exterior"
@@ -33,16 +33,16 @@ export default function HomePage() {
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-dark/70 via-navy-dark/55 to-navy-dark/80" />
-        <div className="container-site relative py-20 text-center text-white">
-          <h1 className="mx-auto max-w-4xl font-heading text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/75 via-transparent to-transparent" />
+        <div className="container-site relative flex min-h-[620px] flex-col justify-end pb-6 pt-40 text-center text-white sm:min-h-[700px] sm:pt-56 lg:min-h-[780px] lg:pt-64">
+          <h1 className="mx-auto max-w-4xl font-heading text-4xl font-bold tracking-tight [text-shadow:0_2px_18px_rgba(0,0,0,0.55)] sm:text-5xl lg:text-6xl">
             Hotel Silver Sand Multan
           </h1>
-          <p className="subtitle-serif mt-3 text-xl sm:text-2xl">40 Years of Trusted Comfort</p>
-          <p className="mx-auto mt-4 max-w-2xl text-sm text-white/80 sm:text-base">
+          <p className="subtitle-serif mt-3 text-xl [text-shadow:0_2px_10px_rgba(0,0,0,0.5)] sm:text-2xl">40 Years of Trusted Comfort</p>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-white/90 [text-shadow:0_1px_6px_rgba(0,0,0,0.5)] sm:text-base">
             8 Minutes from Multan Airport • Prime Location in Cantt • Established 1986
           </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             <ButtonLink href="/rooms" variant="gold">
               Explore Rooms
             </ButtonLink>
