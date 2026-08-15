@@ -23,45 +23,49 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero — clean building shot, minimal overlay, text centered */}
-      <section className="relative flex min-h-[560px] items-center overflow-hidden sm:min-h-[640px] lg:min-h-[720px]">
+      {/* Hero — clean full-bleed building shot, no text overlay */}
+      <section className="relative h-[48vh] min-h-[340px] w-full overflow-hidden sm:h-[58vh] lg:h-[66vh]">
         <Image
           src="/images/hero.png"
           alt="Hotel Silver Sand Multan building exterior"
           fill
           priority
           sizes="100vw"
-          className="object-cover"
+          className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-dark/45 via-navy-dark/20 to-navy-dark/55" />
-        <div className="container-site relative py-16 text-center text-white sm:py-20">
-          <h1 className="mx-auto max-w-4xl font-heading text-4xl font-bold tracking-tight [text-shadow:0_2px_18px_rgba(0,0,0,0.6)] sm:text-5xl lg:text-6xl">
-            Hotel Silver Sand Multan
-          </h1>
-          <p className="subtitle-serif mt-3 text-xl [text-shadow:0_2px_10px_rgba(0,0,0,0.55)] sm:text-2xl">40 Years of Trusted Comfort</p>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-white/90 [text-shadow:0_1px_6px_rgba(0,0,0,0.55)] sm:text-base">
-            8 Minutes from Multan Airport • Prime Location in Cantt • Established 1986
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <ButtonLink href="/rooms" variant="gold">
-              Explore Rooms
-            </ButtonLink>
-            <ContactButton mode="call" variant="outline-light">
-              <Phone className="size-4" /> Call Now
-            </ContactButton>
-          </div>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/30 to-transparent" />
       </section>
 
-      {/* Booking bar section — its own strip below the hero */}
+      {/* Booking bar strip — its own section right below the hero */}
       <section className="bg-navy-dark">
         <div className="container-site py-6 sm:py-8">
           <HeroBookingBar />
         </div>
       </section>
 
-      {/* Welcome */}
+      {/* Hotel name / intro band — moved out of the hero for a clean building shot */}
       <section className="bg-cream">
+        <div className="container-site py-12 text-center sm:py-16">
+          <h1 className="font-heading text-4xl font-bold text-navy sm:text-5xl lg:text-6xl">
+            Hotel Silver Sand Multan
+          </h1>
+          <p className="subtitle-serif mt-3 text-xl sm:text-2xl">40 Years of Trusted Comfort</p>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate sm:text-base">
+            8 Minutes from Multan Airport • Prime Location in Cantt • Established 1986
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <ButtonLink href="/rooms" variant="gold">
+              Explore Rooms
+            </ButtonLink>
+            <ContactButton mode="call" variant="outline">
+              <Phone className="size-4" /> Call Now
+            </ContactButton>
+          </div>
+        </div>
+      </section>
+
+      {/* Welcome */}
+      <section className="bg-white">
         <div className="container-site grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-2">
           <div className="relative aspect-[5/4] overflow-hidden rounded-xl shadow-card">
             <Image
