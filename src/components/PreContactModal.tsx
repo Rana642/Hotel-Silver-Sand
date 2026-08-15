@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { X, MessageSquare, Phone, MapPin } from "lucide-react";
 import { site, tel, waLink } from "@/data/site";
 import { createInquiry } from "@/app/actions/inquiry";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackAdsConversion } from "@/lib/analytics";
 
 export type ContactMode = "whatsapp" | "call";
 
@@ -43,6 +43,11 @@ export default function PreContactModal({
 
   function proceed() {
     trackEvent(isCall ? "call_click" : "whatsapp_click", { location: "quick_details_modal", intent });
+    trackAdsConversion(
+      isCall
+        ? process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_CALL
+        : process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_WHATSAPP
+    );
     if (isCall) {
       window.location.href = tel;
     } else {
