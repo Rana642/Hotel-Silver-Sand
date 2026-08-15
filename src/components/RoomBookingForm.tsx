@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Phone, MessageCircle } from "lucide-react";
 import { useBooking } from "@/components/BookingProvider";
@@ -8,15 +8,18 @@ import { createBooking } from "@/app/actions/booking";
 import { previewCoupon } from "@/app/actions/coupon";
 import { pkr } from "@/lib/format";
 import { trackEvent } from "@/lib/analytics";
+import { getIntent, saveIntent, clearIntent } from "@/lib/bookingIntent";
 
 export default function RoomBookingForm({
   roomName,
+  roomSlug,
   price,
   original,
   discountPct,
   gstPercent,
 }: {
   roomName: string;
+  roomSlug: string;
   price: number;
   original: number | null;
   discountPct: number;
@@ -26,6 +29,28 @@ export default function RoomBookingForm({
   const router = useRouter();
   const today = new Date().toISOString().slice(0, 10);
   const [f, setF] = useState({ checkIn: "", checkOut: "", guests: "2", name: "", phone: "", email: "" });
+
+  // Prefill dates from a hero search / earlier session, once on mount.
+  useEffect(() => {
+    const intent = getIntent();
+    if (intent && (intent.checkIn || intent.checkOut)) {
+      setF((p) => ({
+        ...p,
+        checkIn: intent.checkIn || p.checkIn,
+        checkOut: intent.checkOut || p.checkOut,
+        guests: intent.guests || p.guests,
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist intent so the "Continue your Booking" banner can offer to resume.
+  useEffect(() => {
+    if (f.checkIn || f.checkOut || f.name) {
+      saveIntent({ room: roomName, roomSlug, checkIn: f.checkIn, checkOut: f.checkOut, guests: f.guests });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [f.checkIn, f.checkOut, f.guests, f.name]);
   const [coupon, setCoupon] = useState("");
   const [couponMsg, setCouponMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [discount, setDiscount] = useState(0);
@@ -73,6 +98,7 @@ export default function RoomBookingForm({
         couponCode: coupon.trim() || undefined,
       });
       if (!res.success) { setError(res.error); setLoading(false); return; }
+      clearIntent(); // booking done — stop the "Continue your Booking" banner
       // Redirect to the thank-you page — that URL is what GA4/Meta funnels track.
       router.push(`/thank-you?ref=${encodeURIComponent(res.bookingRef)}`);
     } catch {

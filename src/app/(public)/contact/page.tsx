@@ -5,6 +5,7 @@ import ContactForm from "@/components/ContactForm";
 import SectionHeading from "@/components/SectionHeading";
 import { ButtonLink } from "@/components/Button";
 import TrackedLink from "@/components/TrackedLink";
+import MapDirections from "@/components/MapDirections";
 import { site, tel, waLink, mapEmbedUrl } from "@/data/site";
 import { pageMeta } from "@/lib/seo";
 
@@ -88,25 +89,38 @@ export default function ContactPage() {
       <section className="bg-white">
         <div className="container-site py-16 sm:py-20">
           <SectionHeading title="Find Us on the Map" />
-          <div className="mt-8 overflow-hidden rounded-xl border border-gray-100 shadow-card">
-            <iframe
-              src={mapEmbedUrl()}
-              title="Hotel Silver Sand Multan location on Google Maps"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="aspect-[16/9] w-full"
-            />
-          </div>
-          <div className="mt-6 text-center">
-            <TrackedLink
-              href={site.mapDirections}
-              event="directions_click"
-              params={{ location: "contact_page" }}
-              variant="gold"
-              external
-            >
-              <MapPin className="size-4" /> Get Directions on Google Maps
-            </TrackedLink>
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_340px]">
+            <div className="overflow-hidden rounded-xl border border-gray-100 shadow-card">
+              <iframe
+                src={mapEmbedUrl()}
+                title="Hotel Silver Sand Multan location on Google Maps"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="aspect-[16/10] w-full lg:aspect-auto lg:h-full lg:min-h-[380px]"
+              />
+            </div>
+            <div className="rounded-xl border border-gray-100 bg-cream p-6 shadow-card">
+              <h3 className="font-heading text-lg font-bold text-navy">Get Directions</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate">
+                Hotel Silver Sand is in the heart of Multan Cantt — 8 minutes from Multan International
+                Airport and close to the Railway Station, Aziz Hotel Chowk and the city&apos;s major
+                landmarks.
+              </p>
+              <div className="mt-4">
+                <MapDirections />
+              </div>
+              <div className="mt-4 border-t border-gray-200 pt-4">
+                <TrackedLink
+                  href={site.mapDirections}
+                  event="directions_click"
+                  params={{ location: "contact_page" }}
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-gold"
+                  external
+                >
+                  <MapPin className="size-4 text-gold" /> Open in Google Maps
+                </TrackedLink>
+              </div>
+            </div>
           </div>
         </div>
       </section>

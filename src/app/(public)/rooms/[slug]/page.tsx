@@ -204,6 +204,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ slu
             <div>
               <RoomBookingForm
                 roomName={room.name}
+                roomSlug={room.slug}
                 price={price}
                 original={original}
                 discountPct={discountPct}

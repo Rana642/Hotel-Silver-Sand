@@ -4,6 +4,7 @@ import BookingProvider from "@/components/BookingProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BookingBar from "@/components/BookingBar";
+import ContinueBookingBanner from "@/components/ContinueBookingBanner";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,6 +15,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <main className="flex-1 pb-[68px]">{children}</main>
         <Footer />
         <BookingBar />
+        <ContinueBookingBanner />
       </BookingProvider>
     </>
   );

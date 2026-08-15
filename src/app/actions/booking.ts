@@ -4,6 +4,47 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { sendMetaEvent } from "@/lib/meta-capi";
 import { site } from "@/data/site";
 
+export type ManageBookingResult =
+  | {
+      found: true;
+      booking: {
+        booking_ref: string;
+        room_name: string;
+        guest_name: string;
+        check_in: string;
+        check_out: string;
+        nights: number;
+        guests: number;
+        total: number;
+        status: string;
+      };
+    }
+  | { found: false };
+
+/** Look up a booking for the guest — requires the ref AND a matching email/phone. */
+export async function lookupBooking(ref: string, contact: string): Promise<ManageBookingResult> {
+  const code = ref.trim().toUpperCase();
+  const c = contact.trim().toLowerCase();
+  if (!code || !c) return { found: false };
+  const supabase = createServiceClient();
+  const { data } = await supabase
+    .from("bookings")
+    .select("booking_ref, room_name, guest_name, guest_email, guest_phone, check_in, check_out, nights, guests, total, status")
+    .eq("booking_ref", code)
+    .maybeSingle();
+  if (!data) return { found: false };
+  const emailOk = (data.guest_email ?? "").toLowerCase() === c;
+  const phoneDigits = (data.guest_phone ?? "").replace(/\D/g, "");
+  const contactDigits = c.replace(/\D/g, "");
+  const phoneOk =
+    contactDigits.length >= 7 && phoneDigits.length >= 7 && phoneDigits.endsWith(contactDigits.slice(-10));
+  if (!emailOk && !phoneOk) return { found: false };
+  const { guest_email, guest_phone, ...safe } = data;
+  void guest_email;
+  void guest_phone;
+  return { found: true, booking: safe };
+}
+
 export type BookingInput = {
   roomType: string;
   checkIn: string;

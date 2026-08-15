@@ -3,6 +3,7 @@ import { Phone, MapPin, Mail, ArrowRight, MessageCircle } from "lucide-react";
 import { ButtonLink } from "@/components/Button";
 import ContactButton from "@/components/ContactButton";
 import TrackedLink from "@/components/TrackedLink";
+import HeroBookingBar from "@/components/HeroBookingBar";
 import SectionHeading from "@/components/SectionHeading";
 import RoomCard from "@/components/RoomCard";
 import AmenityCard from "@/components/AmenityCard";
@@ -41,7 +42,7 @@ export default function HomePage() {
           <p className="mx-auto mt-4 max-w-2xl text-sm text-white/80 sm:text-base">
             8 Minutes from Multan Airport • Prime Location in Cantt • Established 1986
           </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <ButtonLink href="/rooms" variant="gold">
               Explore Rooms
             </ButtonLink>
@@ -49,6 +50,8 @@ export default function HomePage() {
               <Phone className="size-4" /> Call Now
             </ContactButton>
           </div>
+
+          <HeroBookingBar />
         </div>
       </section>
 
