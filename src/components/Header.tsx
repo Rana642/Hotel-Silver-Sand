@@ -70,20 +70,26 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer (wrapper clips the off-canvas panel so it never
+          adds horizontal page overflow) */}
       <div
-        className={`fixed inset-0 top-[70px] z-40 bg-black/40 transition-opacity xl:hidden ${
-          open ? "opacity-100" : "pointer-events-none opacity-0"
+        className={`fixed inset-x-0 bottom-0 top-[70px] z-40 overflow-hidden xl:hidden ${
+          open ? "" : "pointer-events-none"
         }`}
-        onClick={() => setOpen(false)}
-        aria-hidden="true"
-      />
-      <nav
-        className={`fixed right-0 top-[70px] z-40 h-[calc(100dvh-70px)] w-[min(85vw,320px)] overflow-y-auto bg-white shadow-pop transition-transform xl:hidden ${
-          open ? "translate-x-0" : "translate-x-full"
-        }`}
-        aria-label="Mobile"
       >
+        <div
+          className={`absolute inset-0 bg-black/40 transition-opacity ${
+            open ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+        <nav
+          className={`absolute right-0 top-0 h-full w-[min(85vw,320px)] overflow-y-auto bg-white shadow-pop transition-transform ${
+            open ? "translate-x-0" : "translate-x-full"
+          }`}
+          aria-label="Mobile"
+        >
         <ul className="flex flex-col p-4">
           {nav.map((item) => (
             <li key={item.href}>
@@ -114,7 +120,8 @@ export default function Header() {
             Book Now
           </Link>
         </div>
-      </nav>
+        </nav>
+      </div>
     </header>
   );
 }
