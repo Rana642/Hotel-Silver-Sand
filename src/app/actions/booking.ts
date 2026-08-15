@@ -1,6 +1,8 @@
 "use server";
 
 import { createServiceClient } from "@/lib/supabase/service";
+import { sendMetaEvent } from "@/lib/meta-capi";
+import { site } from "@/data/site";
 
 export type BookingInput = {
   roomType: string;
@@ -168,6 +170,24 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     if (couponCode) await rollbackCoupon(supabase, couponCode);
     return { success: false, error: "Those dates were just taken. Please pick different dates." };
   }
+
+  // --- Meta Conversions API (fire-and-forget, deduped with browser Pixel via event_id) ---
+  void sendMetaEvent({
+    name: "Lead",
+    eventId: bookingRef,
+    eventSourceUrl: `${site.url}/thank-you?ref=${bookingRef}`,
+    user: {
+      email: input.email,
+      phone: input.phone,
+      name: input.name,
+    },
+    custom: {
+      currency: "PKR",
+      value: total,
+      content_name: room.name,
+      content_ids: [room.id],
+    },
+  });
 
   return { success: true, bookingRef };
 }

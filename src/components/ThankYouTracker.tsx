@@ -21,6 +21,7 @@ export default function ThankYouTracker({
     } catch {}
     trackEvent("booking_confirmed", {
       booking_ref: bookingRef,
+      event_id: bookingRef, // same id server-side CAPI uses → Meta dedupes browser + server
       room,
       value,
       currency: "PKR",
