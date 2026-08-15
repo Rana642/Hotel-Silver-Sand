@@ -23,9 +23,9 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero — clean building shot with the booking widget floating over its lower edge */}
+      {/* Hero — building shot with the booking widget floating over its lower-middle */}
       <section className="relative bg-cream">
-        <div className="relative h-[52vh] min-h-[360px] w-full overflow-hidden sm:h-[62vh] lg:h-[72vh]">
+        <div className="relative h-[54vh] min-h-[380px] w-full overflow-hidden sm:h-[72vh] lg:h-[80vh]">
           <Image
             src="/images/hero.png"
             alt="Hotel Silver Sand Multan building exterior"
@@ -34,10 +34,13 @@ export default function HomePage() {
             sizes="100vw"
             className="object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/45 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/40 via-transparent to-transparent" />
         </div>
-        <div className="container-site relative z-10 -mt-24 pb-2 sm:-mt-28">
-          <HeroBookingBar />
+        {/* mobile: floats just over the image bottom; desktop: sits higher on the building */}
+        <div className="relative z-10 -mt-24 pb-2 sm:absolute sm:inset-x-0 sm:bottom-20 sm:mt-0 sm:pb-0 lg:bottom-28">
+          <div className="container-site">
+            <HeroBookingBar />
+          </div>
         </div>
       </section>
 
