@@ -13,7 +13,7 @@ const points = [
   { icon: Users, text: "Family-friendly rooms in the heart of Multan Cantt" },
 ];
 
-export default function WhyBookDirect() {
+export default function WhyBookDirect({ light = false }: { light?: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -36,7 +36,9 @@ export default function WhyBookDirect() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1 text-xs font-semibold text-navy underline decoration-gold/60 underline-offset-2 hover:text-gold"
+        className={`flex items-center gap-1 text-xs font-semibold underline decoration-gold/60 underline-offset-2 hover:text-gold ${
+          light ? "text-white/90" : "text-navy"
+        }`}
       >
         <Info className="size-3.5" /> Why Book Direct?
       </button>

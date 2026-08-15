@@ -12,6 +12,7 @@ export type BookingIntent = {
   checkIn?: string;
   checkOut?: string;
   guests?: string;
+  coupon?: string;
   updatedAt: number;
 };
 

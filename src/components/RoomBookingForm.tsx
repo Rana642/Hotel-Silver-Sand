@@ -30,16 +30,19 @@ export default function RoomBookingForm({
   const today = new Date().toISOString().slice(0, 10);
   const [f, setF] = useState({ checkIn: "", checkOut: "", guests: "2", name: "", phone: "", email: "" });
 
-  // Prefill dates from a hero search / earlier session, once on mount.
+  // Prefill dates/coupon from a hero search / earlier session, once on mount.
   useEffect(() => {
     const intent = getIntent();
-    if (intent && (intent.checkIn || intent.checkOut)) {
-      setF((p) => ({
-        ...p,
-        checkIn: intent.checkIn || p.checkIn,
-        checkOut: intent.checkOut || p.checkOut,
-        guests: intent.guests || p.guests,
-      }));
+    if (intent) {
+      if (intent.checkIn || intent.checkOut) {
+        setF((p) => ({
+          ...p,
+          checkIn: intent.checkIn || p.checkIn,
+          checkOut: intent.checkOut || p.checkOut,
+          guests: intent.guests || p.guests,
+        }));
+      }
+      if (intent.coupon) setCoupon(intent.coupon);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
