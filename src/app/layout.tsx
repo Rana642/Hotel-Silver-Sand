@@ -5,6 +5,7 @@ import "./globals.css";
 import { site } from "@/data/site";
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
+const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID; // e.g. AW-123456789
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -59,6 +60,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script id="gtm" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`}
         </Script>
+      )}
+      {/* Google Ads — direct global site tag (independent of GTM/GA4 for fast conversion signals) */}
+      {GOOGLE_ADS_ID && (
+        <>
+          <Script
+            id="google-ads-lib"
+            strategy="afterInteractive"
+            src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+          />
+          <Script id="google-ads-init" strategy="afterInteractive">
+            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=window.gtag||gtag;gtag('js',new Date());gtag('config','${GOOGLE_ADS_ID}');`}
+          </Script>
+        </>
       )}
       <body className="flex min-h-dvh flex-col bg-white">
         {GTM_ID && (

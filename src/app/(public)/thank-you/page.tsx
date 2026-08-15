@@ -5,6 +5,7 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { site, tel, waLink } from "@/data/site";
 import { fmtDate, pkr } from "@/lib/format";
 import ThankYouTracker from "@/components/ThankYouTracker";
+import GoogleAdsConversion from "@/components/GoogleAdsConversion";
 import type { Booking } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -43,11 +44,19 @@ export default async function ThankYouPage({
   return (
     <>
       {booking && (
-        <ThankYouTracker
-          bookingRef={booking.booking_ref}
-          room={booking.room_name}
-          value={Number(booking.total)}
-        />
+        <>
+          <ThankYouTracker
+            bookingRef={booking.booking_ref}
+            room={booking.room_name}
+            value={Number(booking.total)}
+          />
+          <GoogleAdsConversion
+            bookingRef={booking.booking_ref}
+            value={Number(booking.total)}
+            email={booking.guest_email}
+            phone={booking.guest_phone}
+          />
+        </>
       )}
       <section className="bg-cream">
         <div className="container-site max-w-2xl py-14 sm:py-20">
