@@ -10,12 +10,21 @@ import { rooms } from "@/data/rooms";
 
 const startingFrom = Math.min(...rooms.map((r) => r.price));
 
+function localDate(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export default function HeroBookingBar() {
   const router = useRouter();
-  const today = new Date().toISOString().slice(0, 10);
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState("2");
+  const today = localDate(0);
+  const [checkIn, setCheckIn] = useState(today);
+  const [checkOut, setCheckOut] = useState(localDate(1));
+  const [guests, setGuests] = useState("1");
   const [coupon, setCoupon] = useState("");
 
   function search() {

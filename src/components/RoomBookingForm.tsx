@@ -27,8 +27,13 @@ export default function RoomBookingForm({
 }) {
   const booking = useBooking();
   const router = useRouter();
-  const today = new Date().toISOString().slice(0, 10);
-  const [f, setF] = useState({ checkIn: "", checkOut: "", guests: "2", name: "", phone: "", email: "" });
+  const ld = (o = 0) => {
+    const d = new Date();
+    d.setDate(d.getDate() + o);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
+  const today = ld(0);
+  const [f, setF] = useState({ checkIn: today, checkOut: ld(1), guests: "1", name: "", phone: "", email: "" });
 
   // Prefill dates/coupon from a hero search / earlier session, once on mount.
   useEffect(() => {
