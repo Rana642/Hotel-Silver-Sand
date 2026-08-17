@@ -71,6 +71,7 @@ export function waLink(message?: string) {
 export const nav = [
   { label: "Home", href: "/" },
   { label: "Rooms & Suites", href: "/rooms" },
+  { label: "Promotions", href: "/promotions" },
   { label: "Facilities", href: "/facilities" },
   { label: "Discover Multan", href: "/discover-multan" },
   { label: "Gallery", href: "/gallery" },

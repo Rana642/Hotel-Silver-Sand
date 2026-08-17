@@ -6,7 +6,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, CalendarCheck, Inbox, BedDouble, CalendarRange,
-  BarChart3, ScrollText, Tag, Images, MapPin, LogOut, ExternalLink, MoreHorizontal, X,
+  BarChart3, ScrollText, Tag, Images, MapPin, Megaphone, LogOut, ExternalLink, MoreHorizontal, X,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -20,6 +20,7 @@ const secondary = [
   { href: "/admin/rooms", label: "Rooms", icon: BedDouble },
   { href: "/admin/gallery", label: "Gallery", icon: Images },
   { href: "/admin/discover", label: "Discover", icon: MapPin },
+  { href: "/admin/promotions", label: "Promotions", icon: Megaphone },
   { href: "/admin/coupons", label: "Coupons", icon: Tag },
   { href: "/admin/reports", label: "Reports", icon: BarChart3 },
   { href: "/admin/activity", label: "Activity Log", icon: ScrollText },
