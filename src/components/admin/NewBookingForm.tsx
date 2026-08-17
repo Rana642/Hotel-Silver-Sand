@@ -3,6 +3,14 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createBooking } from "@/app/actions/booking";
+import DateRangePicker from "@/components/booking/DateRangePicker";
+import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyPicker";
+
+function localDate(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
 
 const field = "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
 const label = "mb-1 block text-xs font-semibold text-navy";
@@ -26,19 +34,18 @@ export default function NewBookingForm({
   const router = useRouter();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDate(0);
   const [f, setF] = useState({
     roomType: (prefill?.room && roomNames.includes(prefill.room) ? prefill.room : roomNames[0]) ?? "",
-    checkIn: prefill?.checkIn ?? "",
-    checkOut: prefill?.checkOut ?? "",
-    guests: "1",
-    roomsCount: "1",
+    checkIn: prefill?.checkIn ?? today,
+    checkOut: prefill?.checkOut ?? localDate(1),
     name: prefill?.name ?? "",
     phone: prefill?.phone ?? "",
     email: prefill?.email ?? "",
     requests: "",
     source: "walkin" as "walkin" | "phone",
   });
+  const [occ, setOcc] = useState<Occupancy>({ adults: 1, children: 0, rooms: 1 });
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }));
 
   function submit(e: React.FormEvent) {
@@ -49,8 +56,8 @@ export default function NewBookingForm({
         roomType: f.roomType,
         checkIn: f.checkIn,
         checkOut: f.checkOut,
-        guests: Number(f.guests),
-        roomsCount: Number(f.roomsCount),
+        guests: occ.adults + occ.children,
+        roomsCount: occ.rooms,
         name: f.name,
         phone: f.phone,
         email: f.email,
@@ -84,22 +91,14 @@ export default function NewBookingForm({
             <option value="phone">Phone</option>
           </select>
         </label>
-        <label className="block">
-          <span className={label}>Check-in</span>
-          <input type="date" min={today} value={f.checkIn} onChange={(e) => set("checkIn", e.target.value)} className={field} required />
-        </label>
-        <label className="block">
-          <span className={label}>Check-out</span>
-          <input type="date" min={f.checkIn || today} value={f.checkOut} onChange={(e) => set("checkOut", e.target.value)} className={field} required />
-        </label>
-        <label className="block">
-          <span className={label}>Guests</span>
-          <input type="number" min={1} value={f.guests} onChange={(e) => set("guests", e.target.value)} className={field} />
-        </label>
-        <label className="block">
-          <span className={label}>Rooms</span>
-          <input type="number" min={1} value={f.roomsCount} onChange={(e) => set("roomsCount", e.target.value)} className={field} />
-        </label>
+        <div className="sm:col-span-2">
+          <span className={label}>Dates</span>
+          <DateRangePicker checkIn={f.checkIn} checkOut={f.checkOut} min={today} onChange={(ci, co) => setF((p) => ({ ...p, checkIn: ci, checkOut: co }))} />
+        </div>
+        <div className="sm:col-span-2">
+          <span className={label}>Occupancy</span>
+          <OccupancyPicker value={occ} onChange={setOcc} />
+        </div>
         <label className="block">
           <span className={label}>Guest name</span>
           <input value={f.name} onChange={(e) => set("name", e.target.value)} className={field} required />

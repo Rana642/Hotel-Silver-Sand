@@ -11,7 +11,10 @@ export type BookingIntent = {
   roomSlug?: string;
   checkIn?: string;
   checkOut?: string;
-  guests?: string;
+  guests?: string; // total headcount (adults + children) — kept for the server
+  adults?: number;
+  children?: number;
+  rooms?: number;
   coupon?: string;
   updatedAt: number;
 };

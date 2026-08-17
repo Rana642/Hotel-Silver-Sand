@@ -9,6 +9,8 @@ import { previewCoupon } from "@/app/actions/coupon";
 import { pkr } from "@/lib/format";
 import { trackEvent } from "@/lib/analytics";
 import { getIntent, saveIntent, clearIntent } from "@/lib/bookingIntent";
+import DateRangePicker from "@/components/booking/DateRangePicker";
+import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyPicker";
 
 export default function RoomBookingForm({
   roomName,
@@ -33,9 +35,10 @@ export default function RoomBookingForm({
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   };
   const today = ld(0);
-  const [f, setF] = useState({ checkIn: today, checkOut: ld(1), guests: "1", name: "", phone: "", email: "" });
+  const [f, setF] = useState({ checkIn: today, checkOut: ld(1), name: "", phone: "", email: "" });
+  const [occ, setOcc] = useState<Occupancy>({ adults: 1, children: 0, rooms: 1 });
 
-  // Prefill dates/coupon from a hero search / earlier session, once on mount.
+  // Prefill dates/occupancy/coupon from a hero search / earlier session, once on mount.
   useEffect(() => {
     const intent = getIntent();
     if (intent) {
@@ -44,9 +47,13 @@ export default function RoomBookingForm({
           ...p,
           checkIn: intent.checkIn || p.checkIn,
           checkOut: intent.checkOut || p.checkOut,
-          guests: intent.guests || p.guests,
         }));
       }
+      setOcc((p) => ({
+        adults: intent.adults ?? (intent.guests ? Math.max(1, Number(intent.guests)) : p.adults),
+        children: intent.children ?? p.children,
+        rooms: intent.rooms ?? p.rooms,
+      }));
       if (intent.coupon) setCoupon(intent.coupon);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,10 +62,19 @@ export default function RoomBookingForm({
   // Persist intent so the "Continue your Booking" banner can offer to resume.
   useEffect(() => {
     if (f.checkIn || f.checkOut || f.name) {
-      saveIntent({ room: roomName, roomSlug, checkIn: f.checkIn, checkOut: f.checkOut, guests: f.guests });
+      saveIntent({
+        room: roomName,
+        roomSlug,
+        checkIn: f.checkIn,
+        checkOut: f.checkOut,
+        guests: String(occ.adults + occ.children),
+        adults: occ.adults,
+        children: occ.children,
+        rooms: occ.rooms,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [f.checkIn, f.checkOut, f.guests, f.name]);
+  }, [f.checkIn, f.checkOut, f.name, occ.adults, occ.children, occ.rooms]);
   const [coupon, setCoupon] = useState("");
   const [couponMsg, setCouponMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [discount, setDiscount] = useState(0);
@@ -69,7 +85,7 @@ export default function RoomBookingForm({
 
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }));
   const nights = f.checkIn && f.checkOut ? Math.max(0, Math.round((+new Date(f.checkOut) - +new Date(f.checkIn)) / 86400000)) : 0;
-  const subtotal = price * (nights || 1);
+  const subtotal = price * (nights || 1) * occ.rooms;
   const total = Math.max(0, subtotal - discount);
   const gst = Math.round((total * gstPercent) / 100);
   const cell = "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
@@ -101,7 +117,7 @@ export default function RoomBookingForm({
     try {
       const res = await createBooking({
         roomType: roomName, checkIn: f.checkIn, checkOut: f.checkOut,
-        guests: Number(f.guests) || 1, roomsCount: 1,
+        guests: occ.adults + occ.children, roomsCount: occ.rooms,
         name: f.name, phone: f.phone, email: f.email,
         couponCode: coupon.trim() || undefined,
       });
@@ -124,14 +140,12 @@ export default function RoomBookingForm({
       </div>
       {discountPct > 0 && <span className="mt-1 inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">Save {discountPct}%</span>}
 
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <label className="block"><span className="mb-1 block text-xs font-semibold text-navy">Check-in</span>
-          <input type="date" min={today} value={f.checkIn} onChange={(e) => set("checkIn", e.target.value)} className={cell} /></label>
-        <label className="block"><span className="mb-1 block text-xs font-semibold text-navy">Check-out</span>
-          <input type="date" min={f.checkIn || today} value={f.checkOut} onChange={(e) => set("checkOut", e.target.value)} className={cell} /></label>
-        <label className="block"><span className="mb-1 block text-xs font-semibold text-navy">Guests</span>
-          <input type="number" min={1} value={f.guests} onChange={(e) => set("guests", e.target.value)} className={cell} /></label>
-        <label className="block"><span className="mb-1 block text-xs font-semibold text-navy">Full name</span>
+      <div className="mt-4 space-y-2">
+        <DateRangePicker checkIn={f.checkIn} checkOut={f.checkOut} min={today} onChange={(ci, co) => setF((p) => ({ ...p, checkIn: ci, checkOut: co }))} />
+        <OccupancyPicker value={occ} onChange={setOcc} />
+      </div>
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <label className="block col-span-2"><span className="mb-1 block text-xs font-semibold text-navy">Full name</span>
           <input value={f.name} onChange={(e) => set("name", e.target.value)} placeholder="Your name" className={cell} /></label>
         <label className="block"><span className="mb-1 block text-xs font-semibold text-navy">Phone</span>
           <input value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder="03xx-xxxxxxx" className={cell} /></label>
@@ -146,7 +160,7 @@ export default function RoomBookingForm({
       {couponMsg && <p className={`mt-1 text-xs ${couponMsg.ok ? "text-green-600" : "text-red-600"}`}>{couponMsg.text}</p>}
 
       <div className="mt-4 space-y-1.5 border-t border-gray-100 pt-3 text-sm">
-        <div className="flex justify-between text-slate"><span>{pkr(price)} × {nights || 1} night{(nights || 1) > 1 ? "s" : ""}</span><span className="text-navy">{pkr(subtotal)}</span></div>
+        <div className="flex justify-between text-slate"><span>{pkr(price)} × {nights || 1} night{(nights || 1) > 1 ? "s" : ""}{occ.rooms > 1 ? ` × ${occ.rooms} rooms` : ""}</span><span className="text-navy">{pkr(subtotal)}</span></div>
         {discount > 0 && <div className="flex justify-between text-green-600"><span>Coupon</span><span>− {pkr(discount)}</span></div>}
         <div className="flex justify-between font-bold text-navy"><span>Est. Total</span><span className="text-gold">{pkr(total)}</span></div>
         <p className="text-xs text-slate">+ {pkr(gst)} GST ({gstPercent}%) — excluded</p>
