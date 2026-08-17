@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { MapPin, Phone, MessageCircle, Mail, Clock, Star } from "lucide-react";
 import PageHero from "@/components/PageHero";
-import ContactForm from "@/components/ContactForm";
 import SectionHeading from "@/components/SectionHeading";
 import { ButtonLink } from "@/components/Button";
 import TrackedLink from "@/components/TrackedLink";
@@ -82,7 +81,35 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <ContactForm />
+          <div className="flex h-full flex-col justify-center rounded-xl border border-gray-100 bg-white p-6 shadow-card sm:p-8">
+            <h2 className="font-heading text-2xl font-bold text-navy">Talk to Us Directly</h2>
+            <p className="mt-3 leading-relaxed text-slate">
+              The fastest way to reach us is a quick call or WhatsApp — our front desk is available
+              24/7 for reservations and questions.
+            </p>
+            <div className="mt-6 space-y-3">
+              <a
+                href={tel}
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-navy px-6 py-3 font-semibold text-white transition hover:bg-navy-dark"
+              >
+                <Phone className="size-5" /> Call {site.phone}
+              </a>
+              <a
+                href={waLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-[#25D366] px-6 py-3 font-semibold text-white transition hover:brightness-95"
+              >
+                <MessageCircle className="size-5" /> Chat on WhatsApp
+              </a>
+              <a
+                href={`mailto:${site.email}`}
+                className="flex w-full items-center justify-center gap-2 rounded-md border border-navy/20 px-6 py-3 font-semibold text-navy transition hover:bg-navy hover:text-white"
+              >
+                <Mail className="size-5" /> Email Us
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 

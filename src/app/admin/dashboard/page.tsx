@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarCheck, Clock, CheckCircle2, TrendingUp, Inbox } from "lucide-react";
+import { CalendarCheck, Clock, CheckCircle2, TrendingUp, Contact } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { statusMeta, type Booking } from "@/types";
 
@@ -7,14 +7,21 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const [{ data }, { count: newInquiries }] = await Promise.all([
-    supabase.from("bookings").select("*").order("created_at", { ascending: false }),
-    supabase.from("inquiries").select("id", { count: "exact", head: true }).eq("status", "new"),
-  ]);
+  const { data } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
 
   const bookings = (data ?? []) as Booking[];
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+
+  // Unique guests (contacts) merged by phone digits, else email, else name.
+  const contactKeys = new Set(
+    bookings.map((b) => {
+      const digits = (b.guest_phone ?? "").replace(/\D/g, "");
+      if (digits.length >= 7) return "p:" + digits.slice(-10);
+      if (b.guest_email) return "e:" + b.guest_email.trim().toLowerCase();
+      return "n:" + (b.guest_name ?? "").trim().toLowerCase();
+    })
+  );
 
   const stats = [
     { label: "Total Bookings", value: bookings.length, icon: CalendarCheck, href: "/admin/bookings" },
@@ -31,7 +38,7 @@ export default async function DashboardPage() {
       icon: TrendingUp,
       href: "/admin/bookings",
     },
-    { label: "New Inquiries", value: newInquiries ?? 0, icon: Inbox, href: "/admin/inquiries" },
+    { label: "Contacts", value: contactKeys.size, icon: Contact, href: "/admin/contacts" },
   ];
 
   const recent = bookings.slice(0, 8);

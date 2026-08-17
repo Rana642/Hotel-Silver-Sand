@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard, CalendarCheck, Inbox, BedDouble, CalendarRange,
+  LayoutDashboard, CalendarCheck, Contact, BedDouble, CalendarRange,
   BarChart3, ScrollText, Tag, Images, MapPin, Megaphone, Settings, LogOut, ExternalLink, MoreHorizontal, X,
   PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
@@ -14,7 +14,7 @@ import { createClient } from "@/lib/supabase/client";
 const primary = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
-  { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
+  { href: "/admin/contacts", label: "Contact", icon: Contact },
   { href: "/admin/availability", label: "Availability", icon: CalendarRange },
 ];
 const secondary = [

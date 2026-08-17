@@ -9,6 +9,15 @@ import {
   type ReactNode,
 } from "react";
 import PreContactModal, { type ContactMode } from "@/components/PreContactModal";
+import { tel, waLink } from "@/data/site";
+import { trackEvent, trackAdsConversion } from "@/lib/analytics";
+
+/**
+ * Pre-contact "Quick details" lead form on Call/WhatsApp.
+ * Deactivated for now — Call/WhatsApp act directly. Flip to `true` to bring the
+ * lead-capture form back (nothing else needs to change).
+ */
+const CONTACT_FORM_ENABLED = false;
 
 type BookingContextValue = {
   openContact: (mode: ContactMode) => void;
@@ -24,13 +33,32 @@ export function useBooking() {
 
 export default function BookingProvider({ children }: { children: ReactNode }) {
   const [contactMode, setContactMode] = useState<ContactMode | null>(null);
-  const openContact = useCallback((mode: ContactMode) => setContactMode(mode), []);
+
+  const openContact = useCallback((mode: ContactMode) => {
+    if (CONTACT_FORM_ENABLED) {
+      setContactMode(mode);
+      return;
+    }
+    // Direct action — no form.
+    const isCall = mode === "call";
+    trackEvent(isCall ? "call_click" : "whatsapp_click", { location: "direct" });
+    trackAdsConversion(
+      isCall
+        ? process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_CALL
+        : process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_WHATSAPP
+    );
+    if (isCall) window.location.href = tel;
+    else window.open(waLink(), "_blank", "noopener");
+  }, []);
+
   const value = useMemo(() => ({ openContact }), [openContact]);
 
   return (
     <BookingContext.Provider value={value}>
       {children}
-      {contactMode && <PreContactModal mode={contactMode} onClose={() => setContactMode(null)} />}
+      {CONTACT_FORM_ENABLED && contactMode && (
+        <PreContactModal mode={contactMode} onClose={() => setContactMode(null)} />
+      )}
     </BookingContext.Provider>
   );
 }
