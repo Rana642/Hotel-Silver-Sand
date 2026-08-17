@@ -33,9 +33,10 @@ export default async function HomePage() {
         <div className="relative h-[54vh] min-h-[380px] w-full overflow-hidden sm:h-[72vh] lg:h-[80vh]">
           <HeroSlider images={heroImages} />
         </div>
-        {/* One consistent in-flow overlap at every size (no absolute/relative
-            mode switch) so zooming never jumps the layout. */}
-        <div className="relative z-10 -mt-24 pb-2 sm:-mt-40 lg:-mt-60">
+        {/* Booking bar floats over the hero at every size via absolute
+            positioning (section height stays = image height, so zooming never
+            jumps the layout and the section below never overlaps the image). */}
+        <div className="absolute inset-x-0 bottom-4 z-10 sm:bottom-16 lg:bottom-24">
           <div className="container-site">
             <HeroBookingBar />
           </div>
