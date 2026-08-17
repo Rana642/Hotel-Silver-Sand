@@ -46,24 +46,26 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-3 xl:flex">
-            <button
-              type="button"
-              onClick={() => booking.openContact("call")}
-              className="flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-gold"
-            >
-              <Phone className="size-4 text-gold" />
-              {site.phone}
-            </button>
-            <button
-              type="button"
-              onClick={() => booking.openContact("whatsapp")}
-              aria-label="WhatsApp us"
-              className="flex size-8 items-center justify-center rounded-full bg-[#25D366] text-white transition hover:brightness-95"
-            >
-              <MessageCircle className="size-4" />
-            </button>
-            <Link href="/rooms" className={buttonClasses("gold", "px-5 py-2.5")}>
+          <div className="hidden flex-col items-end gap-1.5 xl:flex">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => booking.openContact("call")}
+                className="flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-gold"
+              >
+                <Phone className="size-4 text-gold" />
+                {site.phone}
+              </button>
+              <button
+                type="button"
+                onClick={() => booking.openContact("whatsapp")}
+                aria-label="WhatsApp us"
+                className="flex size-6 items-center justify-center rounded-full bg-[#25D366] text-white transition hover:brightness-95"
+              >
+                <MessageCircle className="size-3.5" />
+              </button>
+            </div>
+            <Link href="/rooms" className={buttonClasses("gold", "px-6 py-2")}>
               Book Now
             </Link>
           </div>
