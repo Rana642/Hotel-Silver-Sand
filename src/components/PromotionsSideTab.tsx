@@ -47,7 +47,7 @@ export default function PromotionsSideTab() {
   return (
     <div className="fixed left-0 top-28 z-40 hidden items-stretch lg:flex print:hidden">
       {/* Left strip / tab */}
-      <div className="flex w-9 flex-col items-center bg-navy text-gold">
+      <div className="flex w-9 flex-col items-center bg-navy-dark/70 text-gold backdrop-blur-md">
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
@@ -66,7 +66,7 @@ export default function PromotionsSideTab() {
 
       {/* Panel */}
       {open && promo && (
-        <div className="w-72 border-l border-gold/30 bg-navy/95 p-4 text-white shadow-pop backdrop-blur-sm">
+        <div className="w-72 border border-white/15 border-l-gold/40 bg-navy-dark/55 p-4 text-white shadow-pop backdrop-blur-lg">
           {promo.badge && (
             <span className="inline-block bg-gold px-2 py-0.5 text-xs font-bold text-navy-dark">
               {promo.badge}
