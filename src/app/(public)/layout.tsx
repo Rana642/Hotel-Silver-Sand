@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BookingBar from "@/components/BookingBar";
 import ContinueBookingBanner from "@/components/ContinueBookingBanner";
+import PromotionsSideTab from "@/components/PromotionsSideTab";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,6 +17,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <Footer />
         <BookingBar />
         <ContinueBookingBanner />
+        <PromotionsSideTab />
       </BookingProvider>
     </>
   );
