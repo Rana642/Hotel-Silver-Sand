@@ -40,8 +40,8 @@ export default function ContinueBookingBanner() {
 
   return (
     <div className="fixed right-3 top-20 z-40 max-sm:inset-x-3 max-sm:bottom-[84px] max-sm:right-auto max-sm:top-auto print:hidden">
-      <div className="flex items-stretch overflow-hidden rounded-lg border border-gold/40 bg-navy text-white shadow-pop">
-        <Link href={href} className="flex flex-1 items-center gap-3 py-2.5 pl-4 pr-3 hover:bg-navy-dark">
+      <div className="flex items-stretch overflow-hidden border border-white/15 border-b-gold/40 bg-navy-dark/60 text-white shadow-pop backdrop-blur-lg">
+        <Link href={href} className="flex flex-1 items-center gap-3 py-2.5 pl-4 pr-3 transition hover:bg-white/10">
           <div className="leading-tight">
             <p className="text-sm font-bold text-gold">Continue your Booking</p>
             <p className="text-xs text-white/85">
