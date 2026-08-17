@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, CalendarCheck, Inbox, BedDouble, CalendarRange,
   BarChart3, ScrollText, Tag, Images, MapPin, Megaphone, LogOut, ExternalLink, MoreHorizontal, X,
+  PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -32,6 +33,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetIn, setSheetIn] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    try {
+      setCollapsed(localStorage.getItem("hss_admin_collapsed") === "1");
+    } catch {}
+  }, []);
+  const toggleCollapsed = () =>
+    setCollapsed((c) => {
+      const n = !c;
+      try {
+        localStorage.setItem("hss_admin_collapsed", n ? "1" : "0");
+      } catch {}
+      return n;
+    });
 
   useEffect(() => {
     if (sheetOpen) {
@@ -55,40 +71,58 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-dvh bg-cream">
-      {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-gray-200 bg-navy print:hidden lg:flex">
-        <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
-          <Image src="/images/logo-transparent.png" alt="" width={36} height={36} className="size-9 rounded-full" />
-          <div className="leading-tight">
-            <p className="text-xs font-semibold uppercase tracking-wider text-gold">Admin Panel</p>
-            <p className="text-sm font-bold text-white">Silver Sand</p>
-          </div>
+      {/* Desktop sidebar — glassy + collapsible */}
+      <aside
+        className={`fixed inset-y-0 left-0 hidden flex-col border-r border-white/10 bg-navy-dark/80 backdrop-blur-md transition-all duration-200 print:hidden lg:flex ${
+          collapsed ? "w-[68px]" : "w-60"
+        }`}
+      >
+        <div className={`flex items-center gap-3 border-b border-white/10 py-4 ${collapsed ? "justify-center px-2" : "px-5"}`}>
+          <Image src="/images/logo-transparent.png" alt="" width={36} height={36} className="size-9 shrink-0 rounded-full" />
+          {!collapsed && (
+            <div className="min-w-0 flex-1 leading-tight">
+              <p className="text-xs font-semibold uppercase tracking-wider text-gold">Admin Panel</p>
+              <p className="truncate text-sm font-bold text-white">Silver Sand</p>
+            </div>
+          )}
+          {!collapsed && (
+            <button onClick={toggleCollapsed} aria-label="Collapse sidebar" className="text-white/60 hover:text-gold">
+              <PanelLeftClose className="size-5" />
+            </button>
+          )}
         </div>
+        {collapsed && (
+          <button onClick={toggleCollapsed} aria-label="Expand sidebar" className="mx-auto mt-2 text-white/60 hover:text-gold">
+            <PanelLeftOpen className="size-5" />
+          </button>
+        )}
+
         <nav className="flex-1 space-y-1 p-3">
           {allNav.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition ${
-                isActive(href) ? "bg-gold text-navy-dark" : "text-white/80 hover:bg-white/10"
-              }`}
+              title={collapsed ? label : undefined}
+              className={`flex items-center gap-3 rounded-md py-2.5 text-sm font-medium transition ${
+                collapsed ? "justify-center px-2" : "px-3"
+              } ${isActive(href) ? "bg-gold text-navy-dark" : "text-white/80 hover:bg-white/10"}`}
             >
-              <Icon className="size-5" /> {label}
+              <Icon className="size-5 shrink-0" /> {!collapsed && label}
             </Link>
           ))}
         </nav>
         <div className="space-y-1 border-t border-white/10 p-3">
-          <a href="/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-white/80 hover:bg-white/10">
-            <ExternalLink className="size-5" /> View Website
+          <a href="/" target="_blank" rel="noopener noreferrer" title={collapsed ? "View Website" : undefined} className={`flex items-center gap-3 rounded-md py-2.5 text-sm font-medium text-white/80 hover:bg-white/10 ${collapsed ? "justify-center px-2" : "px-3"}`}>
+            <ExternalLink className="size-5 shrink-0" /> {!collapsed && "View Website"}
           </a>
-          <button onClick={signOut} className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-white/80 hover:bg-white/10">
-            <LogOut className="size-5" /> Sign Out
+          <button onClick={signOut} title={collapsed ? "Sign Out" : undefined} className={`flex w-full items-center gap-3 rounded-md py-2.5 text-sm font-medium text-white/80 hover:bg-white/10 ${collapsed ? "justify-center px-2" : "px-3"}`}>
+            <LogOut className="size-5 shrink-0" /> {!collapsed && "Sign Out"}
           </button>
         </div>
       </aside>
 
       {/* Mobile top header */}
-      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-navy px-4 print:hidden lg:hidden">
+      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-white/10 bg-navy-dark/85 px-4 backdrop-blur-md print:hidden lg:hidden">
         <div className="flex items-center gap-2">
           <Image src="/images/logo-transparent.png" alt="" width={28} height={28} className="size-7 rounded-full" />
           <div className="leading-none">
@@ -102,7 +136,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </header>
 
       {/* Content */}
-      <main className="mt-14 px-4 pb-24 pt-4 print:m-0 print:p-0 lg:ml-60 lg:mt-0 lg:p-8">{children}</main>
+      <main className={`mt-14 px-4 pb-24 pt-4 transition-all duration-200 print:m-0 print:p-0 lg:mt-0 lg:p-8 ${collapsed ? "lg:ml-[68px]" : "lg:ml-60"}`}>{children}</main>
 
       {/* Mobile bottom tabs */}
       <nav

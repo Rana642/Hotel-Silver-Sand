@@ -4,6 +4,7 @@ import { ArrowLeft, Phone, MessageCircle, Mail, Printer } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getRole } from "@/lib/auth";
 import BookingActions from "@/components/admin/BookingActions";
+import ShareBookingButton from "@/components/admin/ShareBookingButton";
 import { statusMeta, type Booking } from "@/types";
 import { fmtDate, fmtDateTime, pkr } from "@/lib/format";
 
@@ -30,6 +31,25 @@ export default async function BookingDetailPage({
   if (!data) notFound();
   const b = data as Booking;
 
+  const shareText = [
+    `*Booking — Hotel Silver Sand Multan*`,
+    `Ref: ${b.booking_ref}`,
+    `Status: ${statusMeta[b.status].label}`,
+    ``,
+    `Guest: ${b.guest_name}`,
+    `Phone: ${b.guest_phone}`,
+    b.guest_email ? `Email: ${b.guest_email}` : "",
+    ``,
+    `Room: ${b.room_name}`,
+    `Check-in: ${fmtDate(b.check_in)}`,
+    `Check-out: ${fmtDate(b.check_out)}`,
+    `Nights: ${b.nights} · Guests: ${b.guests} · Rooms: ${b.rooms_count}`,
+    b.special_request ? `Request: ${b.special_request}` : "",
+    `Total: ${pkr(b.total)}`,
+  ]
+    .filter((l) => l !== "")
+    .join("\n");
+
   const roomSub = b.unit_price * b.nights * b.rooms_count;
   const savings =
     b.original_price && b.original_price > b.unit_price
@@ -55,12 +75,15 @@ export default async function BookingDetailPage({
         <Link href="/admin/bookings" className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-gold">
           <ArrowLeft className="size-4" /> Back to bookings
         </Link>
-        <Link
-          href={`/admin/bookings/${b.id}/receipt`}
-          className="inline-flex items-center gap-1.5 rounded-md border border-navy/20 px-3 py-1.5 text-sm font-semibold text-navy hover:bg-navy hover:text-white"
-        >
-          <Printer className="size-4" /> Print Receipt
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <ShareBookingButton text={shareText} />
+          <Link
+            href={`/admin/bookings/${b.id}/receipt`}
+            className="inline-flex items-center gap-1.5 rounded-md border border-navy/20 px-3 py-1.5 text-sm font-semibold text-navy hover:bg-navy hover:text-white"
+          >
+            <Printer className="size-4" /> Print Receipt
+          </Link>
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
