@@ -30,13 +30,13 @@ export default async function HomePage() {
     <>
       {/* Hero — building shot with the booking widget floating over its lower-middle */}
       <section className="relative bg-cream">
-        <div className="relative h-[54vh] min-h-[470px] w-full overflow-hidden sm:h-[72vh] lg:h-[80vh]">
+        <div className="relative h-[45vh] min-h-[300px] w-full overflow-hidden sm:h-[72vh] lg:h-[80vh]">
           <HeroSlider images={heroImages} />
         </div>
-        {/* Booking bar floats over the hero at every size via absolute
-            positioning (section height stays = image height, so zooming never
-            jumps the layout and the section below never overlaps the image). */}
-        <div className="absolute inset-x-0 bottom-4 z-10 sm:bottom-16 lg:bottom-24">
+        {/* Mobile: the booking bar sits just below the hero so the photo stays
+            clean (the combined pickers make it too tall to overlay on a phone).
+            sm+ : it floats over the lower part of the image as before. */}
+        <div className="z-10 py-4 sm:absolute sm:inset-x-0 sm:bottom-16 sm:py-0 lg:bottom-24">
           <div className="container-site">
             <HeroBookingBar />
           </div>
