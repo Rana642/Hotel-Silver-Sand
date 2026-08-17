@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { logActivity } from "@/app/actions/activity";
+import { checkNightsAvailable } from "@/lib/availability";
 import type { BookingStatus } from "@/types";
 
 type Res = { ok: true } | { ok: false; error: string };
@@ -56,18 +57,9 @@ export async function extendStay(id: string, newCheckOut: string): Promise<Res> 
 
   const addedNights = eachNight(b.check_out, newCheckOut);
   if (b.room_id) {
-    // make sure the new nights are free
-    const { data: taken } = await supabase
-      .from("availability_blocks")
-      .select("date")
-      .eq("room_id", b.room_id)
-      .in("date", addedNights);
-    if (taken && taken.length) return { ok: false, error: "Those extra nights are already blocked." };
-
-    await supabase.from("availability_blocks").upsert(
-      addedNights.map((date) => ({ room_id: b.room_id, date, reason: "booking" as const, booking_id: id })),
-      { onConflict: "room_id,date", ignoreDuplicates: true }
-    );
+    // make sure the extra nights still have inventory free (multi-unit model)
+    const free = await checkNightsAvailable(b.room_id, addedNights, b.rooms_count || 1);
+    if (!free.ok) return { ok: false, error: "Those extra nights are sold out." };
   }
 
   const nights = eachNight(b.check_in, newCheckOut).length;

@@ -15,7 +15,7 @@ const primary = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
   { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
-  { href: "/admin/calendar", label: "Calendar", icon: CalendarRange },
+  { href: "/admin/availability", label: "Availability", icon: CalendarRange },
 ];
 const secondary = [
   { href: "/admin/rooms", label: "Rooms", icon: BedDouble },

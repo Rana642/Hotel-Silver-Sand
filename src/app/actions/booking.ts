@@ -1,6 +1,7 @@
 "use server";
 
 import { createServiceClient } from "@/lib/supabase/service";
+import { checkNightsAvailable } from "@/lib/availability";
 import { sendMetaEvent } from "@/lib/meta-capi";
 import { notifyBooking } from "@/lib/notify";
 import { site } from "@/data/site";
@@ -130,6 +131,16 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   const unitPrice = Number(room.price_per_night) || 0;
   const roomTotal = unitPrice * nights * roomsCount;
 
+  // --- availability check (multi-unit inventory) — before touching coupons ---
+  const nightsList = eachDate(input.checkIn, input.checkOut);
+  const avail = await checkNightsAvailable(room.id, nightsList, roomsCount);
+  if (!avail.ok) {
+    return {
+      success: false,
+      error: "Sorry, this room is sold out for the selected dates. Please try different dates or contact us.",
+    };
+  }
+
   // --- coupon (atomic redeem) ---
   let discount = 0;
   let couponCode: string | null = null;
@@ -146,21 +157,6 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   }
 
   const total = Math.max(0, roomTotal - discount);
-
-  // --- availability check ---
-  const nightsList = eachDate(input.checkIn, input.checkOut);
-  const { data: blocked } = await supabase
-    .from("availability_blocks")
-    .select("date")
-    .eq("room_id", room.id)
-    .in("date", nightsList);
-
-  if (blocked && blocked.length > 0) {
-    return {
-      success: false,
-      error: "Sorry, this room is not available for the selected dates. Please try different dates or contact us.",
-    };
-  }
 
   // --- insert booking ---
   const bookingRef = makeRef();
@@ -195,23 +191,8 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return { success: false, error: "Could not save your booking. Please try again or contact us." };
   }
 
-  // --- block the nights (skip any already taken) ---
-  const { error: blockError } = await supabase.from("availability_blocks").upsert(
-    nightsList.map((date) => ({
-      room_id: room.id,
-      date,
-      reason: "booking" as const,
-      booking_id: booking.id,
-    })),
-    { onConflict: "room_id,date", ignoreDuplicates: true }
-  );
-
-  if (blockError) {
-    // roll back so we never leave a half-booked state
-    await supabase.from("bookings").delete().eq("id", booking.id);
-    if (couponCode) await rollbackCoupon(supabase, couponCode);
-    return { success: false, error: "Those dates were just taken. Please pick different dates." };
-  }
+  // Note: web/direct booking usage is counted straight from the bookings table
+  // (see lib/availability.ts), so there is no separate block row to write here.
 
   // --- Meta Conversions API (awaited so the serverless fn doesn't freeze
   // before the request lands; deduped with the browser Pixel via event_id) ---

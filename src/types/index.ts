@@ -44,6 +44,7 @@ export type RoomRow = {
   image: string | null;
   is_active: boolean;
   sort_order: number;
+  total_units?: number;
 };
 
 export const statusMeta: Record<BookingStatus, { label: string; cls: string }> = {
