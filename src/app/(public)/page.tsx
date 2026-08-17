@@ -33,8 +33,9 @@ export default async function HomePage() {
         <div className="relative h-[54vh] min-h-[380px] w-full overflow-hidden sm:h-[72vh] lg:h-[80vh]">
           <HeroSlider images={heroImages} />
         </div>
-        {/* mobile: floats just over the image bottom; desktop: sits higher on the building */}
-        <div className="relative z-10 -mt-24 pb-2 sm:absolute sm:inset-x-0 sm:bottom-20 sm:mt-0 sm:pb-0 lg:bottom-28">
+        {/* One consistent in-flow overlap at every size (no absolute/relative
+            mode switch) so zooming never jumps the layout. */}
+        <div className="relative z-10 -mt-24 pb-2 sm:-mt-40 lg:-mt-60">
           <div className="container-site">
             <HeroBookingBar />
           </div>
