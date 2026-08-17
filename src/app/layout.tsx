@@ -45,9 +45,9 @@ export const metadata: Metadata = {
     locale: "en_PK",
     siteName: site.name,
     url: site.url,
-    images: [{ url: "/images/og.svg", width: 1200, height: 630, alt: site.name }],
+    images: [{ url: "/images/hero.png", width: 1672, height: 941, alt: site.name }],
   },
-  twitter: { card: "summary_large_image", images: ["/images/og.svg"] },
+  twitter: { card: "summary_large_image", images: ["/images/hero.png"] },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

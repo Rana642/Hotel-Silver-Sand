@@ -24,13 +24,13 @@ export function pageMeta({
       siteName: site.name,
       type: "website",
       locale: "en_PK",
-      images: [{ url: "/images/og.svg", width: 1200, height: 630, alt: site.name }],
+      images: [{ url: "/images/hero.png", width: 1672, height: 941, alt: site.name }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/images/og.svg"],
+      images: ["/images/hero.png"],
     },
   };
 }
@@ -44,7 +44,7 @@ export const hotelSchema = {
   url: site.url,
   telephone: site.phoneIntl,
   email: site.email,
-  image: `${site.url}/images/og.svg`,
+  image: `${site.url}/images/hero.png`,
   priceRange: "PKR 4,000 – 11,000",
   starRating: { "@type": "Rating", ratingValue: "3" },
   address: {
