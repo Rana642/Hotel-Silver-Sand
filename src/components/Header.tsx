@@ -46,8 +46,8 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="hidden flex-col items-end gap-1.5 xl:flex">
-            <div className="flex items-center gap-2">
+          <div className="hidden flex-col items-stretch gap-1.5 xl:flex">
+            <div className="flex items-center justify-end gap-2.5">
               <button
                 type="button"
                 onClick={() => booking.openContact("call")}
@@ -56,6 +56,7 @@ export default function Header() {
                 <Phone className="size-4 text-gold" />
                 {site.phone}
               </button>
+              <span className="h-4 w-px bg-gray-300" aria-hidden="true" />
               <button
                 type="button"
                 onClick={() => booking.openContact("whatsapp")}
@@ -65,7 +66,7 @@ export default function Header() {
                 <MessageCircle className="size-3.5" />
               </button>
             </div>
-            <Link href="/rooms" className={buttonClasses("gold", "px-6 py-2")}>
+            <Link href="/rooms" className={buttonClasses("gold", "w-full justify-center py-1.5 text-sm")}>
               Book Now
             </Link>
           </div>
