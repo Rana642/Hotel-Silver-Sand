@@ -6,7 +6,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, CalendarCheck, Inbox, BedDouble, CalendarRange,
-  BarChart3, ScrollText, Tag, Images, MapPin, Megaphone, LogOut, ExternalLink, MoreHorizontal, X,
+  BarChart3, ScrollText, Tag, Images, MapPin, Megaphone, Settings, LogOut, ExternalLink, MoreHorizontal, X,
   PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -25,6 +25,7 @@ const secondary = [
   { href: "/admin/coupons", label: "Coupons", icon: Tag },
   { href: "/admin/reports", label: "Reports", icon: BarChart3 },
   { href: "/admin/activity", label: "Activity Log", icon: ScrollText },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 const allNav = [...primary.slice(0, 3), secondary[0], primary[3], ...secondary.slice(1)];
 

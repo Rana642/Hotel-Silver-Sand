@@ -2,6 +2,7 @@
 
 import { createServiceClient } from "@/lib/supabase/service";
 import { sendMetaEvent } from "@/lib/meta-capi";
+import { notifyBooking } from "@/lib/notify";
 import { site } from "@/data/site";
 
 export type ManageBookingResult =
@@ -229,6 +230,22 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
       content_name: room.name,
       content_ids: [room.id],
     },
+  });
+
+  // --- Email notifications (admin + guest confirmation) — never blocks success ---
+  await notifyBooking({
+    booking_ref: bookingRef,
+    guest_name: input.name,
+    guest_phone: input.phone,
+    guest_email: input.email || null,
+    room_name: room.name,
+    check_in: input.checkIn,
+    check_out: input.checkOut,
+    nights,
+    guests: input.guests,
+    rooms_count: input.roomsCount,
+    total,
+    special_request: input.requests?.trim() || null,
   });
 
   return { success: true, bookingRef };

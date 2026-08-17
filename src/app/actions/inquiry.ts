@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/service";
 import { createClient } from "@/lib/supabase/server";
 import { logActivity } from "@/app/actions/activity";
+import { notifyInquiry } from "@/lib/notify";
 
 export type InquiryInput = {
   name: string;
@@ -36,6 +37,15 @@ export async function createInquiry(input: InquiryInput): Promise<InquiryResult>
     status: "new",
   });
   if (error) return { success: false, error: "Could not send your message. Please try WhatsApp or call us." };
+
+  await notifyInquiry({
+    name: input.name.trim(),
+    phone: input.phone.trim(),
+    email: input.email?.trim() || null,
+    message: input.message?.trim() || null,
+    source: input.source?.trim() || "contact_form",
+  });
+
   return { success: true };
 }
 
