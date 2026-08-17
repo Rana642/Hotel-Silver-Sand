@@ -30,7 +30,7 @@ export default async function HomePage() {
     <>
       {/* Hero — building shot with the booking widget floating over its lower-middle */}
       <section className="relative bg-cream">
-        <div className="relative h-[54vh] min-h-[380px] w-full overflow-hidden sm:h-[72vh] lg:h-[80vh]">
+        <div className="relative h-[54vh] min-h-[470px] w-full overflow-hidden sm:h-[72vh] lg:h-[80vh]">
           <HeroSlider images={heroImages} />
         </div>
         {/* Booking bar floats over the hero at every size via absolute
