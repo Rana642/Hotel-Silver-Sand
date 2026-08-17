@@ -4,6 +4,8 @@ import { ButtonLink } from "@/components/Button";
 import ContactButton from "@/components/ContactButton";
 import TrackedLink from "@/components/TrackedLink";
 import HeroBookingBar from "@/components/HeroBookingBar";
+import HeroSlider from "@/components/HeroSlider";
+import { getHeroImagesStatic } from "@/lib/hero";
 import SectionHeading from "@/components/SectionHeading";
 import RoomCard from "@/components/RoomCard";
 import AmenityCard from "@/components/AmenityCard";
@@ -18,23 +20,18 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export default function HomePage() {
+export const revalidate = 60;
+
+export default async function HomePage() {
   const featured = rooms.slice(0, 4);
+  const heroImages = await getHeroImagesStatic();
 
   return (
     <>
       {/* Hero — building shot with the booking widget floating over its lower-middle */}
       <section className="relative bg-cream">
         <div className="relative h-[54vh] min-h-[380px] w-full overflow-hidden sm:h-[72vh] lg:h-[80vh]">
-          <Image
-            src="/images/hero.png"
-            alt="Hotel Silver Sand Multan building exterior"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/40 via-transparent to-transparent" />
+          <HeroSlider images={heroImages} />
         </div>
         {/* mobile: floats just over the image bottom; desktop: sits higher on the building */}
         <div className="relative z-10 -mt-24 pb-2 sm:absolute sm:inset-x-0 sm:bottom-20 sm:mt-0 sm:pb-0 lg:bottom-28">
