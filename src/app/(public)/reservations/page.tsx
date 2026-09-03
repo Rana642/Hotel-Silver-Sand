@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import ReservationsFlow, { type RoomVM } from "@/components/reservations/ReservationsFlow";
 import { getRoomsStatic, roomPricing } from "@/lib/rooms";
 import { availabilityForStay, pktToday, addDays } from "@/lib/availability";
+import { getActiveDeals, pickDeal, applyDeal } from "@/lib/deals";
 import { pageMeta } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -43,10 +44,16 @@ export default async function ReservationsPage({
   const promo = sp.promo?.trim() || "";
   const nights = nightsBetween(checkIn, checkOut);
 
-  const [dbRooms, avail] = await Promise.all([getRoomsStatic(), availabilityForStay(checkIn, nights)]);
+  const [dbRooms, avail, deals] = await Promise.all([
+    getRoomsStatic(),
+    availabilityForStay(checkIn, nights),
+    getActiveDeals(),
+  ]);
 
   const rooms: RoomVM[] = dbRooms.map((r) => {
     const p = roomPricing(r);
+    const deal = pickDeal(deals, r.id, checkIn);
+    const price = applyDeal(p.price, deal);
     return {
       id: r.id,
       slug: r.slug,
@@ -58,11 +65,15 @@ export default async function ReservationsPage({
       description: r.description ?? "",
       amenities: r.amenities ?? [],
       images: (r.room_images ?? []).map((i) => i.url).slice(0, 8),
-      price: p.price,
+      basePrice: p.price,
+      price,
       original: p.original,
-      discountPct: p.discountPct,
       gstPercent: Number(r.gst_percent) || 0,
       unitsLeft: avail[r.id] ?? 0,
+      dealName: deal?.name ?? null,
+      dealPct: deal?.discountPct ?? 0,
+      refundable: deal?.refundable ?? false,
+      freeCancelDays: deal?.freeCancelDays ?? 0,
     };
   });
 

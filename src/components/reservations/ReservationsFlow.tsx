@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
-  Users, BedDouble, Wifi, Car, Wind, Utensils, ShieldCheck, Check,
+  Users, BedDouble, Wifi, Car, Bus, Clock, Sparkles, Info, Check,
   ChevronLeft, ChevronRight, Pencil, X, Tag, CalendarDays,
 } from "lucide-react";
 import DateRangePicker from "@/components/booking/DateRangePicker";
@@ -27,11 +27,15 @@ export type RoomVM = {
   description: string;
   amenities: string[];
   images: string[];
-  price: number;
-  original: number | null;
-  discountPct: number;
+  basePrice: number; // room's normal nightly price (pre-deal)
+  price: number; // effective nightly price after any active deal
+  original: number | null; // rack rate (struck through)
   gstPercent: number;
   unitsLeft: number;
+  dealName: string | null; // active deal name for the selected check-in, if any
+  dealPct: number; // deal discount % (0 if none)
+  refundable: boolean; // from the active deal
+  freeCancelDays: number;
 };
 
 type Search = { checkIn: string; checkOut: string; adults: number; children: number; rooms: number; promo: string };
@@ -41,18 +45,23 @@ const FALLBACK_IMG = "/images/gallery/851976912.jpg";
 /** Inclusions shown on the rate plan (real, pay-at-hotel model). */
 const INCLUSIONS = [
   { icon: BedDouble, label: "Book Now, Pay at Hotel" },
-  { icon: ShieldCheck, label: "Free Cancellation (subject to policy)" },
-  { icon: Wind, label: "Air-Conditioned Room" },
-  { icon: Car, label: "Free Parking" },
-  { icon: Utensils, label: "24/7 Room Service" },
+  { icon: Clock, label: "Early Check-in & Check-out (subject to availability)" },
+  { icon: Sparkles, label: "Room Upgrade (subject to availability)" },
+  { icon: Car, label: "Free Parking Available" },
+  { icon: Bus, label: "Pick-up & Drop Service (chargeable)" },
   { icon: Wifi, label: "Free Wi-Fi" },
 ];
 
 function fmtLong(ymd: string) {
   return new Date(ymd + "T00:00:00").toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
 }
-function fmtShort(ymd: string) {
-  return new Date(ymd + "T00:00:00").toLocaleDateString("en-US", { day: "2-digit", month: "short", weekday: "short" });
+
+/** Cancellation policy text for a room's active deal. */
+function cancellation(refundable: boolean, days: number, checkIn: string): { free: boolean; text: string } {
+  if (!refundable) return { free: false, text: "Non-Refundable" };
+  const d = new Date(checkIn + "T00:00:00");
+  d.setDate(d.getDate() - Math.max(0, days));
+  return { free: true, text: `Book Risk Free! Cancel for free on or before ${fmtLong(d.toISOString().slice(0, 10))}` };
 }
 
 export default function ReservationsFlow({
@@ -149,7 +158,7 @@ export default function ReservationsFlow({
         {!selected && (
           <div className="border-x border-gray-100 bg-cream">
             {rooms.map((room) => (
-              <RoomRow key={room.slug} room={room} nights={nights} roomsWanted={occ.rooms} guests={guests} onBook={() => selectRoom(room.slug)} />
+              <RoomRow key={room.slug} room={room} nights={nights} roomsWanted={occ.rooms} guests={guests} checkIn={checkIn} onBook={() => selectRoom(room.slug)} />
             ))}
           </div>
         )}
@@ -179,15 +188,18 @@ export default function ReservationsFlow({
 /* ---------------------------------------------------------------- Room row */
 
 function RoomRow({
-  room, nights, roomsWanted, guests, onBook,
+  room, nights, roomsWanted, guests, checkIn, onBook,
 }: {
-  room: RoomVM; nights: number; roomsWanted: number; guests: number; onBook: () => void;
+  room: RoomVM; nights: number; roomsWanted: number; guests: number; checkIn: string; onBook: () => void;
 }) {
   const [tab, setTab] = useState<"rates" | "amenities" | "photos">("rates");
   const total = room.price * nights * roomsWanted;
   const soldOut = room.unitsLeft <= 0;
   const lowStock = room.unitsLeft > 0 && room.unitsLeft <= 3;
   const tooSmall = guests > (room.maxAdults + room.maxChildren) * roomsWanted;
+  const dealName = room.dealName ?? "Best Available Rate";
+  const strike = room.original && room.original > room.price ? room.original : room.basePrice > room.price ? room.basePrice : null;
+  const cancel = cancellation(room.refundable, room.freeCancelDays, checkIn);
 
   return (
     <div className="border-b border-gray-200 last:border-0">
@@ -209,7 +221,7 @@ function RoomRow({
           ) : (
             <>
               {lowStock && <span className="mb-1 rounded bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">In high demand! Only {room.unitsLeft} room{room.unitsLeft > 1 ? "s" : ""} left</span>}
-              {room.original && <span className="text-sm text-gray-400 line-through">{pkr(room.original)}</span>}
+              {strike && <span className="text-sm text-gray-400 line-through">{pkr(strike)}</span>}
               <div><span className="text-sm text-slate">From </span><span className="font-heading text-xl font-bold text-navy">{pkr(room.price)}</span><span className="text-sm text-slate">/night</span></div>
               <span className="text-xs text-slate">+ {room.gstPercent}% GST</span>
               <span className="mt-0.5 text-xs text-slate">Total {pkr(total)} for {nights} night{nights > 1 ? "s" : ""} + tax</span>
@@ -235,16 +247,22 @@ function RoomRow({
             {tooSmall && <p className="mb-2 text-xs text-amber-700">This room fits up to {room.maxAdults + room.maxChildren} guest(s). Add more rooms for your group.</p>}
             <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
-                <p className="font-semibold text-navy">Best Available Rate {room.discountPct > 0 && <span className="ml-1 text-sm font-semibold text-red-600">{room.discountPct}% off</span>}</p>
+                <p className="font-semibold text-navy">
+                  {dealName}
+                  {room.dealPct > 0 && <span className="ml-2 inline-flex items-center gap-1 text-sm font-semibold text-red-600"><Tag className="size-3.5" /> {room.dealPct}% Off On Room Price</span>}
+                </p>
                 <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
                   {INCLUSIONS.map(({ icon: Icon, label }) => (
                     <li key={label} className="flex items-center gap-2 text-sm text-slate"><Icon className="size-4 shrink-0 text-gold" /> {label}</li>
                   ))}
                 </ul>
                 <p className="mt-2 text-sm text-slate">Best direct rate — no payment now, pay when you arrive.</p>
+                <p className={`mt-1 flex items-center gap-1.5 text-sm font-medium ${cancel.free ? "text-green-600" : "text-slate"}`}>
+                  <Info className="size-4 shrink-0" /> {cancel.text}
+                </p>
               </div>
               <div className="text-left sm:text-right">
-                {room.original && <span className="block text-sm text-gray-400 line-through">{pkr(room.original)}</span>}
+                {strike && <span className="block text-sm text-gray-400 line-through">{pkr(strike)}</span>}
                 <span className="font-heading text-xl font-bold text-navy">{pkr(room.price)}</span><span className="text-sm text-slate">/night</span>
                 <p className="text-xs text-slate">Total {pkr(total)} for {nights} night{nights > 1 ? "s" : ""}</p>
                 <button onClick={onBook} disabled={soldOut}
@@ -317,7 +335,9 @@ function GuestInformation({
   const [couponMsg, setCouponMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   const subtotal = room.price * nights * search.rooms;
-  const savings = room.original ? (room.original - room.price) * nights * search.rooms : 0;
+  const strike = room.original && room.original > room.price ? room.original : room.basePrice > room.price ? room.basePrice : null;
+  const savings = strike ? (strike - room.price) * nights * search.rooms : 0;
+  const cancel = cancellation(room.refundable, room.freeCancelDays, search.checkIn);
   const afterDiscount = Math.max(0, subtotal - discount);
   const gst = Math.round((afterDiscount * room.gstPercent) / 100);
   const grandTotal = afterDiscount + gst;
@@ -417,7 +437,8 @@ function GuestInformation({
           </div>
           <div className="border-b border-gray-100 py-3 text-sm">
             <div className="flex justify-between"><span className="font-semibold text-navy">Room — {room.name}</span><span className="text-navy">{pkr(room.price)}</span></div>
-            <p className="text-slate">{search.adults} Adult{search.adults > 1 ? "s" : ""}{search.children ? `, ${search.children} Child${search.children > 1 ? "ren" : ""}` : ""} · Pay at Hotel</p>
+            <p className="text-slate">{room.dealName ?? "Best Available Rate"} · {search.adults} Adult{search.adults > 1 ? "s" : ""}{search.children ? `, ${search.children} Child${search.children > 1 ? "ren" : ""}` : ""} · Pay at Hotel</p>
+            <p className={`text-xs ${cancel.free ? "text-green-600" : "text-slate"}`}>{cancel.text}</p>
           </div>
           <div className="space-y-1.5 py-3 text-sm">
             <div className="flex justify-between text-slate"><span>Sub Total ({pkr(room.price)} × {nights}n × {search.rooms})</span><span className="text-navy">{pkr(subtotal)}</span></div>

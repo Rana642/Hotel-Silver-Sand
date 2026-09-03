@@ -2,6 +2,7 @@
 
 import { createServiceClient } from "@/lib/supabase/service";
 import { checkNightsAvailable } from "@/lib/availability";
+import { dealForRoomOnDate, applyDeal } from "@/lib/deals";
 import { sendMetaEvent } from "@/lib/meta-capi";
 import { notifyBooking } from "@/lib/notify";
 import { site } from "@/data/site";
@@ -128,7 +129,11 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   }
 
   const roomsCount = Math.max(1, Number(input.roomsCount) || 1);
-  const unitPrice = Number(room.price_per_night) || 0;
+  // Apply any active dashboard deal for the check-in date (server-authoritative,
+  // so the saved price matches what the guest was shown on /reservations).
+  const baseUnit = Number(room.price_per_night) || 0;
+  const deal = await dealForRoomOnDate(room.id, input.checkIn);
+  const unitPrice = applyDeal(baseUnit, deal);
   const roomTotal = unitPrice * nights * roomsCount;
 
   // --- availability check (multi-unit inventory) — before touching coupons ---
