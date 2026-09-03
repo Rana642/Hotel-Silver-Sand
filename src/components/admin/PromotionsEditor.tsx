@@ -103,8 +103,8 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
       lead_time_type: f.trigger === "early_bird" || f.trigger === "last_minute" ? f.trigger : "none",
       lead_time_days: Number(f.lead_time_days) || 0,
       min_nights: f.trigger === "long_stay" ? Number(f.min_nights) || 0 : 0,
-      start_time: f.trigger === "last_minute" ? f.start_time || null : null,
-      end_time: f.trigger === "last_minute" ? f.end_time || null : null,
+      start_time: f.trigger === "range" || f.trigger === "last_minute" ? f.start_time || null : null,
+      end_time: f.trigger === "range" || f.trigger === "last_minute" ? f.end_time || null : null,
       refundable: f.refundable,
       free_cancel_days: Number(f.free_cancel_days) || 0,
       priority: Number(f.priority) || 0,
@@ -193,19 +193,6 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
                     ? `Applies when the guest books ${f.lead_time_days || "N"}+ days before check-in.`
                     : `Applies when check-in is within ${f.lead_time_days || "N"} day(s) of booking. (0 = same day only.)`}
                 </p>
-                {f.trigger === "last_minute" && (
-                  <div className="mt-3">
-                    <span className={lbl}>Active hours (optional — leave blank = all day)</span>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <input type="time" value={f.start_time} onChange={(e) => set("start_time", e.target.value)} className={field + " w-36"} />
-                      <span className="text-sm text-slate">to</span>
-                      <input type="time" value={f.end_time} onChange={(e) => set("end_time", e.target.value)} className={field + " w-36"} />
-                    </div>
-                    <p className="mt-1 text-xs text-slate">
-                      Deal is available only during these hours (Pakistan time). Overnight windows like 22:00 → 02:00 are supported.
-                    </p>
-                  </div>
-                )}
               </div>
             )}
             {f.trigger === "long_stay" && (
@@ -218,6 +205,17 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
             )}
             {f.trigger === "any" && (
               <p className="mt-2 text-xs text-slate">Applies to every check-in date — narrow it with the Days of week and room filters below.</p>
+            )}
+            {(f.trigger === "range" || f.trigger === "last_minute") && (
+              <div className="mt-3">
+                <span className={lbl}>Active hours (optional — leave blank = all day)</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <input type="time" value={f.start_time} onChange={(e) => set("start_time", e.target.value)} className={field + " w-36"} />
+                  <span className="text-sm text-slate">to</span>
+                  <input type="time" value={f.end_time} onChange={(e) => set("end_time", e.target.value)} className={field + " w-36"} />
+                </div>
+                <p className="mt-1 text-xs text-slate">Deal is available only during these hours (Pakistan time). Overnight windows like 22:00 → 02:00 supported.</p>
+              </div>
             )}
             <div className="mt-3">
               <span className={lbl}>Applies to (tick rooms — leave all unticked = all rooms)</span>

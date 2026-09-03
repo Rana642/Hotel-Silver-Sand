@@ -47,8 +47,8 @@ export async function upsertPromotion(id: string | null, input: PromotionInput):
     lead_time_type: ["early_bird", "last_minute"].includes(input.lead_time_type) ? input.lead_time_type : "none",
     lead_time_days: Math.max(0, Math.floor(Number(input.lead_time_days) || 0)),
     min_nights: Math.max(0, Math.floor(Number(input.min_nights) || 0)),
-    start_time: input.lead_time_type === "last_minute" ? input.start_time || null : null,
-    end_time: input.lead_time_type === "last_minute" ? input.end_time || null : null,
+    start_time: input.start_time || null,
+    end_time: input.end_time || null,
     free_cancel_days: Math.max(0, Math.floor(Number(input.free_cancel_days) || 0)),
     priority: Math.floor(Number(input.priority) || 0),
   };

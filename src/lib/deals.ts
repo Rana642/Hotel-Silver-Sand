@@ -79,8 +79,8 @@ function dealApplies(d: RateDeal, roomId: string, checkIn: string, today: string
   // Long Stay: minimum nights.
   if (d.min_nights > 0 && nights < d.min_nights) return false;
 
-  // Last Minute active-hours window (based on the current booking time).
-  if (d.lead_time_type === "last_minute" && d.start_time && d.end_time) {
+  // Active-hours window (based on the current booking time) — for any deal type.
+  if (d.start_time && d.end_time) {
     if (!timeInWindow(nowTime, d.start_time, d.end_time)) return false;
   }
 
