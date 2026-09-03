@@ -66,7 +66,7 @@ export default function Header() {
                 <MessageCircle className="size-3.5" />
               </button>
             </div>
-            <Link href="/rooms" className={buttonClasses("gold", "w-full justify-center py-1.5 text-sm")}>
+            <Link href="/reservations" className={buttonClasses("gold", "w-full justify-center py-1.5 text-sm")}>
               Book Now
             </Link>
           </div>
@@ -138,7 +138,7 @@ export default function Header() {
             >
               <MessageCircle className="size-4" /> WhatsApp
             </button>
-            <Link href="/rooms" onClick={() => setOpen(false)} className={buttonClasses("gold")}>
+            <Link href="/reservations" onClick={() => setOpen(false)} className={buttonClasses("gold")}>
               Book Now
             </Link>
           </div>

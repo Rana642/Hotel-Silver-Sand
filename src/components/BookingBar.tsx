@@ -44,7 +44,7 @@ export default function BookingBar() {
             <span className="hidden xs:inline">WhatsApp</span>
           </button>
           <Link
-            href="/rooms"
+            href="/reservations"
             className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95 lg:flex-none"
           >
             <CalendarDays className="size-4" />

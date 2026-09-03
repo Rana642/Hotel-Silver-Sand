@@ -35,8 +35,13 @@ export default function PromotionsSideTab() {
     };
   }, [open, paused, promos.length]);
 
-  // Don't show on the promotions pages themselves, or the thank-you page.
-  if (!promos.length || pathname?.startsWith("/promotions") || pathname?.startsWith("/thank-you")) {
+  // Don't show on the promotions pages, the reservations/booking flow, or thank-you.
+  if (
+    !promos.length ||
+    pathname?.startsWith("/promotions") ||
+    pathname?.startsWith("/reservations") ||
+    pathname?.startsWith("/thank-you")
+  ) {
     return null;
   }
 
