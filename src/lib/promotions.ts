@@ -13,10 +13,13 @@ export type Promotion = {
   is_active: boolean;
   sort_order: number;
   start_date: string | null;
+  end_date: string | null;
+  lead_time_type: "none" | "early_bird" | "last_minute" | null;
+  min_nights: number | null;
 };
 
 const SELECT =
-  "id, slug, title, short_desc, description, image, badge, benefits, coupon_code, is_active, sort_order, start_date";
+  "id, slug, title, short_desc, description, image, badge, benefits, coupon_code, is_active, sort_order, start_date, end_date, lead_time_type, min_nights";
 
 export async function getPromotionsStatic(): Promise<Promotion[]> {
   const supabase = createServiceClient();
