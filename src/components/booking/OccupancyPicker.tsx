@@ -63,13 +63,16 @@ export default function OccupancyPicker({
   showRooms = true,
   label = "Select Occupancy",
   className = "",
+  variant = "solid",
 }: {
   value: Occupancy;
   onChange: (v: Occupancy) => void;
   showRooms?: boolean;
   label?: string;
   className?: string;
+  variant?: "solid" | "glass";
 }) {
+  const glass = variant === "glass";
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -94,12 +97,14 @@ export default function OccupancyPicker({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-left transition hover:border-gold focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
+        className={`flex min-h-[52px] w-full items-center gap-2 rounded-md border px-3 py-2 text-left transition focus:outline-none focus:ring-2 focus:ring-gold/40 ${
+          glass ? "border-white/25 bg-white/10 backdrop-blur-md hover:border-gold" : "border-gray-300 bg-white hover:border-gold focus:border-gold"
+        }`}
       >
         <Users className="size-5 shrink-0 text-gold" />
         <span className="min-w-0 flex-1">
-          <span className="block text-[11px] font-semibold text-slate">{label}</span>
-          <span className="block truncate text-sm font-semibold text-navy">{summarize(value, showRooms)}</span>
+          <span className={`block text-[11px] font-semibold ${glass ? "text-white/70" : "text-slate"}`}>{label}</span>
+          <span className={`block truncate text-sm font-semibold ${glass ? "text-white" : "text-navy"}`}>{summarize(value, showRooms)}</span>
         </span>
       </button>
 
