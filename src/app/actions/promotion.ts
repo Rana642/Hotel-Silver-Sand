@@ -26,6 +26,7 @@ export type PromotionInput = {
   weekdays: number[]; // 0=Sun..6=Sat; empty = every day
   lead_time_type: "none" | "early_bird" | "last_minute";
   lead_time_days: number;
+  min_nights: number;
   refundable: boolean;
   free_cancel_days: number;
   priority: number;
@@ -43,6 +44,7 @@ export async function upsertPromotion(id: string | null, input: PromotionInput):
     weekdays: Array.isArray(input.weekdays) ? [...new Set(input.weekdays)].filter((n) => n >= 0 && n <= 6) : [],
     lead_time_type: ["early_bird", "last_minute"].includes(input.lead_time_type) ? input.lead_time_type : "none",
     lead_time_days: Math.max(0, Math.floor(Number(input.lead_time_days) || 0)),
+    min_nights: Math.max(0, Math.floor(Number(input.min_nights) || 0)),
     free_cancel_days: Math.max(0, Math.floor(Number(input.free_cancel_days) || 0)),
     priority: Math.floor(Number(input.priority) || 0),
   };

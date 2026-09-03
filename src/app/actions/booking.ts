@@ -132,7 +132,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   // Apply any active dashboard deal for the check-in date (server-authoritative,
   // so the saved price matches what the guest was shown on /reservations).
   const baseUnit = Number(room.price_per_night) || 0;
-  const deal = await dealForRoomOnDate(room.id, input.checkIn);
+  const deal = await dealForRoomOnDate(room.id, input.checkIn, nights);
   const unitPrice = applyDeal(baseUnit, deal);
   const roomTotal = unitPrice * nights * roomsCount;
 
