@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import PreContactModal, { type ContactMode } from "@/components/PreContactModal";
+import ReservationModal from "@/components/ReservationModal";
 import { tel, waLink } from "@/data/site";
 import { trackEvent, trackAdsConversion } from "@/lib/analytics";
 
@@ -21,6 +22,7 @@ const CONTACT_FORM_ENABLED = false;
 
 type BookingContextValue = {
   openContact: (mode: ContactMode) => void;
+  openReservation: () => void;
 };
 
 const BookingContext = createContext<BookingContextValue | null>(null);
@@ -33,6 +35,7 @@ export function useBooking() {
 
 export default function BookingProvider({ children }: { children: ReactNode }) {
   const [contactMode, setContactMode] = useState<ContactMode | null>(null);
+  const [reservationOpen, setReservationOpen] = useState(false);
 
   const openContact = useCallback((mode: ContactMode) => {
     if (CONTACT_FORM_ENABLED) {
@@ -51,7 +54,9 @@ export default function BookingProvider({ children }: { children: ReactNode }) {
     else window.open(waLink(), "_blank", "noopener");
   }, []);
 
-  const value = useMemo(() => ({ openContact }), [openContact]);
+  const openReservation = useCallback(() => setReservationOpen(true), []);
+
+  const value = useMemo(() => ({ openContact, openReservation }), [openContact, openReservation]);
 
   return (
     <BookingContext.Provider value={value}>
@@ -59,6 +64,7 @@ export default function BookingProvider({ children }: { children: ReactNode }) {
       {CONTACT_FORM_ENABLED && contactMode && (
         <PreContactModal mode={contactMode} onClose={() => setContactMode(null)} />
       )}
+      {reservationOpen && <ReservationModal onClose={() => setReservationOpen(false)} />}
     </BookingContext.Provider>
   );
 }

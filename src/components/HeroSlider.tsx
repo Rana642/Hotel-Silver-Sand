@@ -26,6 +26,7 @@ export default function HeroSlider({ images }: { images: HeroImage[] }) {
           className={`object-cover object-center transition-opacity duration-[1200ms] ${
             idx === i ? "opacity-100" : "opacity-0"
           }`}
+          style={idx === i ? { animation: "heroZoom 6s ease-out forwards" } : undefined}
         />
       ))}
       <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/45 via-transparent to-transparent" />
