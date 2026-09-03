@@ -22,6 +22,11 @@ export function pktToday(): string {
   return new Date(Date.now() + 5 * 3600 * 1000).toISOString().slice(0, 10);
 }
 
+/** Current time of day as "HH:MM" in Pakistan time (UTC+5). */
+export function pktNowTime(): string {
+  return new Date(Date.now() + 5 * 3600 * 1000).toISOString().slice(11, 16);
+}
+
 /** Add n days to a YYYY-MM-DD string using pure UTC math (no DST drift). */
 export function addDays(ymd: string, n: number): string {
   const d = new Date(ymd + "T00:00:00Z");

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import ReservationsFlow, { type RoomVM } from "@/components/reservations/ReservationsFlow";
 import { getRoomsStatic, roomPricing } from "@/lib/rooms";
-import { availabilityForStay, pktToday, addDays } from "@/lib/availability";
+import { availabilityForStay, pktToday, pktNowTime, addDays } from "@/lib/availability";
 import { getActiveDeals, pickDeal, applyDeal } from "@/lib/deals";
 import { pageMeta } from "@/lib/seo";
 
@@ -43,6 +43,7 @@ export default async function ReservationsPage({
   const roomsWanted = Math.max(1, Number(sp.rooms) || 1);
   const promo = sp.promo?.trim() || "";
   const nights = nightsBetween(checkIn, checkOut);
+  const nowTime = pktNowTime();
 
   const [dbRooms, avail, deals] = await Promise.all([
     getRoomsStatic(),
@@ -52,7 +53,7 @@ export default async function ReservationsPage({
 
   const rooms: RoomVM[] = dbRooms.map((r) => {
     const p = roomPricing(r);
-    const deal = pickDeal(deals, r.id, checkIn, today, nights);
+    const deal = pickDeal(deals, r.id, checkIn, today, nights, nowTime);
     const price = applyDeal(p.price, deal);
     return {
       id: r.id,

@@ -1,5 +1,5 @@
 import { createServiceClient } from "@/lib/supabase/service";
-import { pktToday } from "@/lib/availability";
+import { pktToday, pktNowTime } from "@/lib/availability";
 
 export type LeadTimeType = "none" | "early_bird" | "last_minute";
 
@@ -14,6 +14,8 @@ export type RateDeal = {
   lead_time_type: LeadTimeType;
   lead_time_days: number;
   min_nights: number; // Long Stay: 0 = no minimum
+  start_time: string | null; // Last Minute only: active-hours window "HH:MM"
+  end_time: string | null;
   refundable: boolean;
   free_cancel_days: number;
   is_active: boolean;
@@ -36,7 +38,7 @@ export async function getActiveDeals(): Promise<RateDeal[]> {
   const supabase = createServiceClient();
   const { data } = await supabase
     .from("promotions")
-    .select("id, title, discount_percent, start_date, end_date, room_ids, weekdays, lead_time_type, lead_time_days, min_nights, refundable, free_cancel_days, priority")
+    .select("id, title, discount_percent, start_date, end_date, room_ids, weekdays, lead_time_type, lead_time_days, min_nights, start_time, end_time, refundable, free_cancel_days, priority")
     .eq("is_active", true)
     .gt("discount_percent", 0);
   return (data ?? []).map((d) => ({
@@ -50,6 +52,8 @@ export async function getActiveDeals(): Promise<RateDeal[]> {
     lead_time_type: ((d.lead_time_type as LeadTimeType) ?? "none"),
     lead_time_days: (d.lead_time_days as number) ?? 0,
     min_nights: (d.min_nights as number) ?? 0,
+    start_time: (d.start_time as string | null) ?? null,
+    end_time: (d.end_time as string | null) ?? null,
     refundable: (d.refundable as boolean) ?? true,
     free_cancel_days: (d.free_cancel_days as number) ?? 2,
     is_active: true,
@@ -62,12 +66,23 @@ function daysBefore(checkIn: string, today: string) {
   return Math.round((Date.parse(checkIn + "T00:00:00Z") - Date.parse(today + "T00:00:00Z")) / 86400000);
 }
 
-/** Does a deal apply for this room / check-in / booking-day (today) / stay length? */
-function dealApplies(d: RateDeal, roomId: string, checkIn: string, today: string, nights: number): boolean {
+/** true if now (HH:MM) is inside [start,end]; supports windows crossing midnight. */
+function timeInWindow(now: string, start: string, end: string): boolean {
+  if (start <= end) return now >= start && now <= end;
+  return now >= start || now <= end; // e.g. 22:00 → 02:00
+}
+
+/** Does a deal apply for this room / check-in / booking-day (today) / stay length / now-time? */
+function dealApplies(d: RateDeal, roomId: string, checkIn: string, today: string, nights: number, nowTime: string): boolean {
   if (d.room_ids.length > 0 && !d.room_ids.includes(roomId)) return false;
 
   // Long Stay: minimum nights.
   if (d.min_nights > 0 && nights < d.min_nights) return false;
+
+  // Last Minute active-hours window (based on the current booking time).
+  if (d.lead_time_type === "last_minute" && d.start_time && d.end_time) {
+    if (!timeInWindow(nowTime, d.start_time, d.end_time)) return false;
+  }
 
   // Fixed check-in date window (if set).
   if (d.start_date && checkIn < d.start_date) return false;
@@ -89,8 +104,8 @@ function dealApplies(d: RateDeal, roomId: string, checkIn: string, today: string
 }
 
 /** Best matching deal for a room / check-in / stay (highest priority, then discount). */
-export function pickDeal(deals: RateDeal[], roomId: string, checkIn: string, today: string, nights: number): AppliedDeal | null {
-  const matches = deals.filter((d) => dealApplies(d, roomId, checkIn, today, nights));
+export function pickDeal(deals: RateDeal[], roomId: string, checkIn: string, today: string, nights: number, nowTime: string): AppliedDeal | null {
+  const matches = deals.filter((d) => dealApplies(d, roomId, checkIn, today, nights, nowTime));
   if (!matches.length) return null;
   matches.sort((a, b) => b.priority - a.priority || Number(b.discount_percent) - Number(a.discount_percent));
   const d = matches[0];
@@ -105,7 +120,7 @@ export function pickDeal(deals: RateDeal[], roomId: string, checkIn: string, tod
 /** Server-authoritative single lookup (used by createBooking). */
 export async function dealForRoomOnDate(roomId: string, checkIn: string, nights: number): Promise<AppliedDeal | null> {
   const deals = await getActiveDeals();
-  return pickDeal(deals, roomId, checkIn, pktToday(), nights);
+  return pickDeal(deals, roomId, checkIn, pktToday(), nights, pktNowTime());
 }
 
 /** Apply a deal's discount to a base nightly price. */
