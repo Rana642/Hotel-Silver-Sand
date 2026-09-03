@@ -6,6 +6,12 @@
 -- needed — it shows and applies on the reservation automatically. room_id NULL
 -- means the deal applies to every room.
 
+-- Ensure the staff-check helper exists (originally defined in phase2). Recreated
+-- here so this migration is self-contained even if phase2 wasn't applied.
+create or replace function is_staff() returns boolean as $$
+  select exists (select 1 from admin_users where id = auth.uid());
+$$ language sql security definer;
+
 create table if not exists rate_deals (
   id uuid primary key default uuid_generate_v4(),
   name text not null,                                   -- e.g. "Early Bird Deal", "Last Minute Deal", "Eid Special"
