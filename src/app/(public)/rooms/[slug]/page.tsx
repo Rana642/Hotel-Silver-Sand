@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Maximize, Users, Eye, Check, MapPin, ArrowRight } from "lucide-react";
 import RoomGallery from "@/components/RoomGallery";
-import RoomBookingForm from "@/components/RoomBookingForm";
+import RoomBookCta from "@/components/RoomBookCta";
 import ViewTracker from "@/components/ViewTracker";
 import JsonLd from "@/components/JsonLd";
 import { getRoomsStatic, getRoomBySlugStatic, roomPricing, featuredImage } from "@/lib/rooms";
@@ -202,9 +202,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ slu
 
             {/* Right widget */}
             <div>
-              <RoomBookingForm
-                roomName={room.name}
-                roomSlug={room.slug}
+              <RoomBookCta
                 price={price}
                 original={original}
                 discountPct={discountPct}
