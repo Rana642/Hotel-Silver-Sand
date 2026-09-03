@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ReservationsFlow, { type RoomVM } from "@/components/reservations/ReservationsFlow";
 import { getRoomsStatic, roomPricing } from "@/lib/rooms";
 import { availabilityForStay, pktToday, pktNowTime, addDays } from "@/lib/availability";
-import { getActiveDeals, pickDeal, applyDeal } from "@/lib/deals";
+import { getActiveDeals, pickDeal, applyDeal, pickBannerDeal } from "@/lib/deals";
 import { pageMeta } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -78,12 +78,15 @@ export default async function ReservationsPage({
     };
   });
 
+  const banner = pickBannerDeal(deals, checkIn, today, nights);
+
   return (
     <ReservationsFlow
       rooms={rooms}
       initial={{ checkIn, checkOut, adults, children, rooms: roomsWanted, promo }}
       today={today}
       nights={nights}
+      banner={banner}
     />
   );
 }

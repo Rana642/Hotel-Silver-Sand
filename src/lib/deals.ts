@@ -117,6 +117,52 @@ export function pickDeal(deals: RateDeal[], roomId: string, checkIn: string, tod
   };
 }
 
+export type BannerDeal = {
+  name: string;
+  discountPct: number;
+  startDate: string | null;
+  endDate: string | null;
+  weekdays: number[];
+  startTime: string | null;
+  endTime: string | null;
+};
+
+/**
+ * The best deal to feature in a banner for the current search — matches the
+ * date range / weekday / min-nights / lead-time for the check-in, but ignores
+ * the active-hours window (so the countdown can show "starts in…" before it opens)
+ * and ignores room (banner is property-wide).
+ */
+export function pickBannerDeal(deals: RateDeal[], checkIn: string, today: string, nights: number): BannerDeal | null {
+  const ok = deals.filter((d) => {
+    if (d.start_date && checkIn < d.start_date) return false;
+    if (d.end_date && checkIn > d.end_date) return false;
+    if (d.weekdays.length > 0) {
+      const dow = new Date(checkIn + "T00:00:00Z").getUTCDay();
+      if (!d.weekdays.includes(dow)) return false;
+    }
+    if (d.min_nights > 0 && nights < d.min_nights) return false;
+    if (d.lead_time_type !== "none") {
+      const lead = daysBefore(checkIn, today);
+      if (d.lead_time_type === "early_bird" && lead < d.lead_time_days) return false;
+      if (d.lead_time_type === "last_minute" && lead > d.lead_time_days) return false;
+    }
+    return true;
+  });
+  if (!ok.length) return null;
+  ok.sort((a, b) => b.priority - a.priority || b.discount_percent - a.discount_percent);
+  const d = ok[0];
+  return {
+    name: d.name,
+    discountPct: d.discount_percent,
+    startDate: d.start_date,
+    endDate: d.end_date,
+    weekdays: d.weekdays,
+    startTime: d.start_time,
+    endTime: d.end_time,
+  };
+}
+
 /** Server-authoritative single lookup (used by createBooking). */
 export async function dealForRoomOnDate(roomId: string, checkIn: string, nights: number): Promise<AppliedDeal | null> {
   const deals = await getActiveDeals();

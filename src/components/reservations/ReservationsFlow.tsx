@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import DateRangePicker from "@/components/booking/DateRangePicker";
 import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyPicker";
+import DealBanner from "@/components/reservations/DealBanner";
+import type { BannerDeal } from "@/lib/deals";
 import { createBooking } from "@/app/actions/booking";
 import { previewCoupon } from "@/app/actions/coupon";
 import { pkr } from "@/lib/format";
@@ -69,11 +71,13 @@ export default function ReservationsFlow({
   initial,
   today,
   nights,
+  banner,
 }: {
   rooms: RoomVM[];
   initial: Search;
   today: string;
   nights: number;
+  banner?: BannerDeal | null;
 }) {
   const router = useRouter();
 
@@ -138,8 +142,15 @@ export default function ReservationsFlow({
           </div>
         </div>
 
+        {/* Featured deal banner + live countdown */}
+        {banner && (
+          <div className="mt-3">
+            <DealBanner deal={banner} />
+          </div>
+        )}
+
         {/* Select Room bar */}
-        <div className="flex items-center justify-between bg-navy-dark px-5 py-3 text-white">
+        <div className="mt-3 flex items-center justify-between bg-navy-dark px-5 py-3 text-white">
           <h2 className="font-heading text-base font-bold">
             Select Room <span className="font-normal text-white/70">({occ.adults} Adult{occ.adults > 1 ? "s" : ""}{occ.children ? `, ${occ.children} Child${occ.children > 1 ? "ren" : ""}` : ""})</span>
           </h2>
