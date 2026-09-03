@@ -152,6 +152,18 @@ export async function checkNightsAvailable(
   return { ok: true };
 }
 
+/**
+ * Bookable units left for a stay, per room id. It's the minimum availability
+ * across every night of the stay (a room is only bookable if free on all nights).
+ */
+export async function availabilityForStay(checkIn: string, nights: number): Promise<Record<string, number>> {
+  const n = Math.max(1, nights);
+  const grid = await getAvailabilityGrid(checkIn, n);
+  const out: Record<string, number> = {};
+  for (const r of grid) out[r.id] = Math.min(...r.days.map((d) => d.available));
+  return out;
+}
+
 /** Effective cap for a single (room, date): the override if set, else the room default. */
 export async function effectiveTotal(roomId: string, date: string): Promise<number> {
   const supabase = createServiceClient();

@@ -41,7 +41,15 @@ export default function HeroBookingBar() {
       room: undefined,
       roomSlug: undefined,
     });
-    router.push("/rooms#room-list");
+    const q = new URLSearchParams({
+      checkIn,
+      checkOut,
+      adults: String(occ.adults),
+      children: String(occ.children),
+      rooms: String(occ.rooms),
+    });
+    if (coupon.trim()) q.set("promo", coupon.trim());
+    router.push(`/reservations?${q.toString()}`);
   }
 
   return (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import DateRangePicker from "@/components/booking/DateRangePicker";
 import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyPicker";
@@ -13,6 +14,7 @@ function localDate(offsetDays = 0) {
 }
 
 export default function RoomSearchBar() {
+  const router = useRouter();
   const today = localDate(0);
   const [checkIn, setCheckIn] = useState(today);
   const [checkOut, setCheckOut] = useState(localDate(1));
@@ -27,7 +29,14 @@ export default function RoomSearchBar() {
       children: occ.children,
       rooms: occ.rooms,
     });
-    document.getElementById("room-list")?.scrollIntoView({ behavior: "smooth" });
+    const q = new URLSearchParams({
+      checkIn,
+      checkOut,
+      adults: String(occ.adults),
+      children: String(occ.children),
+      rooms: String(occ.rooms),
+    });
+    router.push(`/reservations?${q.toString()}`);
   }
 
   return (
