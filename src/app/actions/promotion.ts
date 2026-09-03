@@ -23,6 +23,8 @@ export type PromotionInput = {
   start_date: string | null;
   end_date: string | null;
   room_ids: string[]; // empty = all rooms
+  lead_time_type: "none" | "early_bird" | "last_minute";
+  lead_time_days: number;
   refundable: boolean;
   free_cancel_days: number;
   priority: number;
@@ -37,6 +39,8 @@ export async function upsertPromotion(id: string | null, input: PromotionInput):
     start_date: input.start_date || null,
     end_date: input.end_date || null,
     room_ids: Array.isArray(input.room_ids) ? input.room_ids : [],
+    lead_time_type: ["early_bird", "last_minute"].includes(input.lead_time_type) ? input.lead_time_type : "none",
+    lead_time_days: Math.max(0, Math.floor(Number(input.lead_time_days) || 0)),
     free_cancel_days: Math.max(0, Math.floor(Number(input.free_cancel_days) || 0)),
     priority: Math.floor(Number(input.priority) || 0),
   };

@@ -52,7 +52,7 @@ export default async function ReservationsPage({
 
   const rooms: RoomVM[] = dbRooms.map((r) => {
     const p = roomPricing(r);
-    const deal = pickDeal(deals, r.id, checkIn);
+    const deal = pickDeal(deals, r.id, checkIn, today);
     const price = applyDeal(p.price, deal);
     return {
       id: r.id,

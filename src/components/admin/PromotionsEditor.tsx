@@ -23,6 +23,8 @@ export type Promotion = {
   start_date?: string | null;
   end_date?: string | null;
   room_ids?: string[] | null;
+  lead_time_type?: "none" | "early_bird" | "last_minute" | null;
+  lead_time_days?: number | null;
   refundable?: boolean | null;
   free_cancel_days?: number | null;
   priority?: number | null;
@@ -54,6 +56,8 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
     discount_percent: String(initial?.discount_percent ?? 0),
     start_date: initial?.start_date ?? "",
     end_date: initial?.end_date ?? "",
+    lead_time_type: (initial?.lead_time_type ?? "none") as "none" | "early_bird" | "last_minute",
+    lead_time_days: String(initial?.lead_time_days ?? 7),
     refundable: initial?.refundable ?? true,
     free_cancel_days: String(initial?.free_cancel_days ?? 2),
     priority: String(initial?.priority ?? 0),
@@ -72,9 +76,11 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
       coupon_code: f.coupon_code.trim() ? f.coupon_code.trim().toUpperCase() : null,
       is_active: f.is_active, sort_order: Number(f.sort_order) || 0,
       discount_percent: Number(f.discount_percent) || 0,
-      start_date: f.start_date || null,
-      end_date: f.end_date || null,
+      start_date: f.lead_time_type === "none" ? f.start_date || null : null,
+      end_date: f.lead_time_type === "none" ? f.end_date || null : null,
       room_ids: roomIds,
+      lead_time_type: f.lead_time_type,
+      lead_time_days: Number(f.lead_time_days) || 0,
       refundable: f.refundable,
       free_cancel_days: Number(f.free_cancel_days) || 0,
       priority: Number(f.priority) || 0,
@@ -135,11 +141,33 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
               Set a discount % and check-in date range to make this promotion apply automatically on the booking page.
               Leave discount at 0 (or dates blank) to keep it as a display-only promotion.
             </p>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <label className="block"><span className={lbl}>Discount %</span><input type="number" min={0} max={90} value={f.discount_percent} onChange={(e) => set("discount_percent", e.target.value)} className={field} /></label>
-              <label className="block"><span className={lbl}>Check-in from</span><input type="date" value={f.start_date} onChange={(e) => set("start_date", e.target.value)} className={field} /></label>
-              <label className="block"><span className={lbl}>Check-in to</span><input type="date" min={f.start_date} value={f.end_date} onChange={(e) => set("end_date", e.target.value)} className={field} /></label>
+              <label className="block sm:col-span-1 lg:col-span-2"><span className={lbl}>When does it apply?</span>
+                <select value={f.lead_time_type} onChange={(e) => set("lead_time_type", e.target.value)} className={field}>
+                  <option value="none">Fixed check-in date range</option>
+                  <option value="early_bird">Early Bird — book at least N days before check-in</option>
+                  <option value="last_minute">Last Minute — book within N days of check-in</option>
+                </select>
+              </label>
             </div>
+            {f.lead_time_type === "none" ? (
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <label className="block"><span className={lbl}>Check-in from</span><input type="date" value={f.start_date} onChange={(e) => set("start_date", e.target.value)} className={field} /></label>
+                <label className="block"><span className={lbl}>Check-in to</span><input type="date" min={f.start_date} value={f.end_date} onChange={(e) => set("end_date", e.target.value)} className={field} /></label>
+              </div>
+            ) : (
+              <div className="mt-3">
+                <label className="block max-w-xs"><span className={lbl}>{f.lead_time_type === "early_bird" ? "Book at least N days before check-in" : "Book within N days of check-in"}</span>
+                  <input type="number" min={0} value={f.lead_time_days} onChange={(e) => set("lead_time_days", e.target.value)} className={field} />
+                </label>
+                <p className="mt-1 text-xs text-slate">
+                  {f.lead_time_type === "early_bird"
+                    ? `Guest gets this discount automatically when they book ${f.lead_time_days || "N"}+ days before check-in.`
+                    : `Guest gets this discount automatically when check-in is within ${f.lead_time_days || "N"} day(s) of booking.`}
+                </p>
+              </div>
+            )}
             <div className="mt-3">
               <span className={lbl}>Applies to (tick rooms — leave all unticked = all rooms)</span>
               <div className="flex flex-wrap gap-x-5 gap-y-2">
