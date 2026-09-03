@@ -71,7 +71,7 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
             )}
 
             <div className="mt-7">
-              <PromoBookButton coupon={promo.coupon_code} />
+              <PromoBookButton coupon={promo.coupon_code} checkIn={promo.start_date} />
               {promo.coupon_code && (
                 <p className="mt-2 text-xs text-slate">
                   Coupon <span className="font-semibold text-navy">{promo.coupon_code}</span> will be applied at booking.

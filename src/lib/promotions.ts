@@ -12,10 +12,11 @@ export type Promotion = {
   coupon_code: string | null;
   is_active: boolean;
   sort_order: number;
+  start_date: string | null;
 };
 
 const SELECT =
-  "id, slug, title, short_desc, description, image, badge, benefits, coupon_code, is_active, sort_order";
+  "id, slug, title, short_desc, description, image, badge, benefits, coupon_code, is_active, sort_order, start_date";
 
 export async function getPromotionsStatic(): Promise<Promotion[]> {
   const supabase = createServiceClient();

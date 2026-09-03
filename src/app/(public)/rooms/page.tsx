@@ -103,7 +103,7 @@ export default async function RoomsPage() {
                         View Details <ArrowRight className="size-4" />
                       </Link>
                       <Link
-                        href={`/rooms/${room.slug}`}
+                        href="/reservations"
                         className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-navy-dark transition hover:brightness-95"
                       >
                         Check Availability
