@@ -23,6 +23,7 @@ export type Promotion = {
   start_date?: string | null;
   end_date?: string | null;
   room_ids?: string[] | null;
+  weekdays?: number[] | null;
   lead_time_type?: "none" | "early_bird" | "last_minute" | null;
   lead_time_days?: number | null;
   refundable?: boolean | null;
@@ -63,9 +64,12 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
     priority: String(initial?.priority ?? 0),
   });
   const [roomIds, setRoomIds] = useState<string[]>(initial?.room_ids ?? []);
+  const [weekdays, setWeekdays] = useState<number[]>(initial?.weekdays ?? []);
   const set = (k: keyof typeof f, v: string | boolean) => setF((p) => ({ ...p, [k]: v }));
   const toggleRoom = (id: string) =>
     setRoomIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  const toggleWeekday = (d: number) =>
+    setWeekdays((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]));
 
   function save() {
     setError(null); setMsg(null);
@@ -79,6 +83,7 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
       start_date: f.lead_time_type === "none" ? f.start_date || null : null,
       end_date: f.lead_time_type === "none" ? f.end_date || null : null,
       room_ids: roomIds,
+      weekdays,
       lead_time_type: f.lead_time_type,
       lead_time_days: Number(f.lead_time_days) || 0,
       refundable: f.refundable,
@@ -179,6 +184,18 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
                 ))}
                 {rooms.length === 0 && <span className="text-sm text-slate">No rooms found.</span>}
               </div>
+            </div>
+            <div className="mt-3">
+              <span className={lbl}>Days of week (tick days — leave all unticked = every day)</span>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d, i) => (
+                  <label key={d} className="flex cursor-pointer items-center gap-1.5 text-sm text-navy">
+                    <input type="checkbox" checked={weekdays.includes(i)} onChange={() => toggleWeekday(i)} className="size-4 accent-[#d9a928]" />
+                    {d}
+                  </label>
+                ))}
+              </div>
+              <p className="mt-1 text-xs text-slate">Deal applies only when the guest&apos;s check-in falls on a ticked day (recurring every week).</p>
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-4">
               <label className="flex items-center gap-2 text-sm text-slate"><input type="checkbox" checked={f.refundable} onChange={(e) => set("refundable", e.target.checked)} className="size-4 accent-[#d9a928]" /> Free cancellation (uncheck = Non-Refundable)</label>

@@ -10,6 +10,7 @@ export type RateDeal = {
   start_date: string | null;
   end_date: string | null;
   room_ids: string[]; // empty = applies to all rooms
+  weekdays: number[]; // 0=Sun..6=Sat; empty = every day (based on check-in weekday)
   lead_time_type: LeadTimeType;
   lead_time_days: number;
   refundable: boolean;
@@ -34,7 +35,7 @@ export async function getActiveDeals(): Promise<RateDeal[]> {
   const supabase = createServiceClient();
   const { data } = await supabase
     .from("promotions")
-    .select("id, title, discount_percent, start_date, end_date, room_ids, lead_time_type, lead_time_days, refundable, free_cancel_days, priority")
+    .select("id, title, discount_percent, start_date, end_date, room_ids, weekdays, lead_time_type, lead_time_days, refundable, free_cancel_days, priority")
     .eq("is_active", true)
     .gt("discount_percent", 0);
   return (data ?? []).map((d) => ({
@@ -44,6 +45,7 @@ export async function getActiveDeals(): Promise<RateDeal[]> {
     start_date: (d.start_date as string | null) ?? null,
     end_date: (d.end_date as string | null) ?? null,
     room_ids: (d.room_ids as string[] | null) ?? [],
+    weekdays: ((d.weekdays as number[] | null) ?? []).map(Number),
     lead_time_type: ((d.lead_time_type as LeadTimeType) ?? "none"),
     lead_time_days: (d.lead_time_days as number) ?? 0,
     refundable: (d.refundable as boolean) ?? true,
@@ -64,11 +66,18 @@ function dealApplies(d: RateDeal, roomId: string, checkIn: string, today: string
 
   const hasWindow = !!d.start_date || !!d.end_date;
   const hasLead = d.lead_time_type !== "none";
-  if (!hasWindow && !hasLead) return false; // not actually configured as a deal
+  const hasWeekdays = d.weekdays.length > 0;
+  if (!hasWindow && !hasLead && !hasWeekdays) return false; // not actually configured as a deal
 
   // Fixed check-in date window (if set).
   if (d.start_date && checkIn < d.start_date) return false;
   if (d.end_date && checkIn > d.end_date) return false;
+
+  // Weekday filter (based on the check-in date's day of week).
+  if (hasWeekdays) {
+    const dow = new Date(checkIn + "T00:00:00Z").getUTCDay(); // 0=Sun..6=Sat
+    if (!d.weekdays.includes(dow)) return false;
+  }
 
   // Lead-time rule (if set).
   if (hasLead) {
