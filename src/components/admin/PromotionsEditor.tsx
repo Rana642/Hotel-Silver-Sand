@@ -22,7 +22,7 @@ export type Promotion = {
   discount_percent?: number | null;
   start_date?: string | null;
   end_date?: string | null;
-  room_id?: string | null;
+  room_ids?: string[] | null;
   refundable?: boolean | null;
   free_cancel_days?: number | null;
   priority?: number | null;
@@ -54,12 +54,14 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
     discount_percent: String(initial?.discount_percent ?? 0),
     start_date: initial?.start_date ?? "",
     end_date: initial?.end_date ?? "",
-    room_id: initial?.room_id ?? "",
     refundable: initial?.refundable ?? true,
     free_cancel_days: String(initial?.free_cancel_days ?? 2),
     priority: String(initial?.priority ?? 0),
   });
+  const [roomIds, setRoomIds] = useState<string[]>(initial?.room_ids ?? []);
   const set = (k: keyof typeof f, v: string | boolean) => setF((p) => ({ ...p, [k]: v }));
+  const toggleRoom = (id: string) =>
+    setRoomIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
   function save() {
     setError(null); setMsg(null);
@@ -72,7 +74,7 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
       discount_percent: Number(f.discount_percent) || 0,
       start_date: f.start_date || null,
       end_date: f.end_date || null,
-      room_id: f.room_id || null,
+      room_ids: roomIds,
       refundable: f.refundable,
       free_cancel_days: Number(f.free_cancel_days) || 0,
       priority: Number(f.priority) || 0,
@@ -133,16 +135,22 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
               Set a discount % and check-in date range to make this promotion apply automatically on the booking page.
               Leave discount at 0 (or dates blank) to keep it as a display-only promotion.
             </p>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-3">
               <label className="block"><span className={lbl}>Discount %</span><input type="number" min={0} max={90} value={f.discount_percent} onChange={(e) => set("discount_percent", e.target.value)} className={field} /></label>
               <label className="block"><span className={lbl}>Check-in from</span><input type="date" value={f.start_date} onChange={(e) => set("start_date", e.target.value)} className={field} /></label>
               <label className="block"><span className={lbl}>Check-in to</span><input type="date" min={f.start_date} value={f.end_date} onChange={(e) => set("end_date", e.target.value)} className={field} /></label>
-              <label className="block"><span className={lbl}>Applies to</span>
-                <select value={f.room_id} onChange={(e) => set("room_id", e.target.value)} className={field}>
-                  <option value="">All rooms</option>
-                  {rooms.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-                </select>
-              </label>
+            </div>
+            <div className="mt-3">
+              <span className={lbl}>Applies to (tick rooms — leave all unticked = all rooms)</span>
+              <div className="flex flex-wrap gap-x-5 gap-y-2">
+                {rooms.map((r) => (
+                  <label key={r.id} className="flex cursor-pointer items-center gap-2 text-sm text-navy">
+                    <input type="checkbox" checked={roomIds.includes(r.id)} onChange={() => toggleRoom(r.id)} className="size-4 accent-[#d9a928]" />
+                    {r.name}
+                  </label>
+                ))}
+                {rooms.length === 0 && <span className="text-sm text-slate">No rooms found.</span>}
+              </div>
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-4">
               <label className="flex items-center gap-2 text-sm text-slate"><input type="checkbox" checked={f.refundable} onChange={(e) => set("refundable", e.target.checked)} className="size-4 accent-[#d9a928]" /> Free cancellation (uncheck = Non-Refundable)</label>

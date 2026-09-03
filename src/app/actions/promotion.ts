@@ -22,7 +22,7 @@ export type PromotionInput = {
   discount_percent: number;
   start_date: string | null;
   end_date: string | null;
-  room_id: string | null;
+  room_ids: string[]; // empty = all rooms
   refundable: boolean;
   free_cancel_days: number;
   priority: number;
@@ -36,7 +36,7 @@ export async function upsertPromotion(id: string | null, input: PromotionInput):
     discount_percent: Math.max(0, Math.min(90, Number(input.discount_percent) || 0)),
     start_date: input.start_date || null,
     end_date: input.end_date || null,
-    room_id: input.room_id || null,
+    room_ids: Array.isArray(input.room_ids) ? input.room_ids : [],
     free_cancel_days: Math.max(0, Math.floor(Number(input.free_cancel_days) || 0)),
     priority: Math.floor(Number(input.priority) || 0),
   };
