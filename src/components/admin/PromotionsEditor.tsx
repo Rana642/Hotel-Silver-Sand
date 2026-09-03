@@ -19,13 +19,22 @@ export type Promotion = {
   coupon_code: string | null;
   is_active: boolean;
   sort_order: number;
+  discount_percent?: number | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  room_id?: string | null;
+  refundable?: boolean | null;
+  free_cancel_days?: number | null;
+  priority?: number | null;
 };
+
+export type RoomOpt = { id: string; name: string };
 
 const field = "w-full rounded-none border border-gray-300 px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
 const lbl = "mb-1 block text-xs font-semibold text-navy";
 const linesToArr = (s: string) => s.split("\n").map((x) => x.trim()).filter(Boolean);
 
-function Row({ initial, isAdmin }: { initial: Promotion | null; isAdmin: boolean }) {
+function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: boolean; rooms: RoomOpt[] }) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +51,13 @@ function Row({ initial, isAdmin }: { initial: Promotion | null; isAdmin: boolean
     coupon_code: initial?.coupon_code ?? "",
     is_active: initial?.is_active ?? true,
     sort_order: String(initial?.sort_order ?? 0),
+    discount_percent: String(initial?.discount_percent ?? 0),
+    start_date: initial?.start_date ?? "",
+    end_date: initial?.end_date ?? "",
+    room_id: initial?.room_id ?? "",
+    refundable: initial?.refundable ?? true,
+    free_cancel_days: String(initial?.free_cancel_days ?? 2),
+    priority: String(initial?.priority ?? 0),
   });
   const set = (k: keyof typeof f, v: string | boolean) => setF((p) => ({ ...p, [k]: v }));
 
@@ -53,6 +69,13 @@ function Row({ initial, isAdmin }: { initial: Promotion | null; isAdmin: boolean
       image: f.image || null, badge: f.badge, benefits: linesToArr(f.benefits),
       coupon_code: f.coupon_code.trim() ? f.coupon_code.trim().toUpperCase() : null,
       is_active: f.is_active, sort_order: Number(f.sort_order) || 0,
+      discount_percent: Number(f.discount_percent) || 0,
+      start_date: f.start_date || null,
+      end_date: f.end_date || null,
+      room_id: f.room_id || null,
+      refundable: f.refundable,
+      free_cancel_days: Number(f.free_cancel_days) || 0,
+      priority: Number(f.priority) || 0,
     };
     start(async () => {
       const res = await upsertPromotion(initial?.id ?? null, input);
@@ -102,6 +125,33 @@ function Row({ initial, isAdmin }: { initial: Promotion | null; isAdmin: boolean
             <label className="flex items-center gap-2 text-sm text-slate"><input type="checkbox" checked={f.is_active} onChange={(e) => set("is_active", e.target.checked)} className="size-4 accent-[#d9a928]" /> Active</label>
             <label className="flex items-center gap-2 text-sm text-slate">Sort <input type="number" value={f.sort_order} onChange={(e) => set("sort_order", e.target.value)} className={field + " w-20"} /></label>
           </div>
+
+          {/* Deal (optional) — auto discount for a check-in date range */}
+          <div className="mt-4 border-t border-gray-100 pt-4">
+            <p className="text-sm font-bold text-navy">Automatic Discount (optional)</p>
+            <p className="mb-3 text-xs text-slate">
+              Set a discount % and check-in date range to make this promotion apply automatically on the booking page.
+              Leave discount at 0 (or dates blank) to keep it as a display-only promotion.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <label className="block"><span className={lbl}>Discount %</span><input type="number" min={0} max={90} value={f.discount_percent} onChange={(e) => set("discount_percent", e.target.value)} className={field} /></label>
+              <label className="block"><span className={lbl}>Check-in from</span><input type="date" value={f.start_date} onChange={(e) => set("start_date", e.target.value)} className={field} /></label>
+              <label className="block"><span className={lbl}>Check-in to</span><input type="date" min={f.start_date} value={f.end_date} onChange={(e) => set("end_date", e.target.value)} className={field} /></label>
+              <label className="block"><span className={lbl}>Applies to</span>
+                <select value={f.room_id} onChange={(e) => set("room_id", e.target.value)} className={field}>
+                  <option value="">All rooms</option>
+                  {rooms.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                </select>
+              </label>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-4">
+              <label className="flex items-center gap-2 text-sm text-slate"><input type="checkbox" checked={f.refundable} onChange={(e) => set("refundable", e.target.checked)} className="size-4 accent-[#d9a928]" /> Free cancellation (uncheck = Non-Refundable)</label>
+              {f.refundable && (
+                <label className="flex items-center gap-2 text-sm text-slate">Free until (days before)<input type="number" min={0} value={f.free_cancel_days} onChange={(e) => set("free_cancel_days", e.target.value)} className={field + " w-20"} /></label>
+              )}
+              <label className="flex items-center gap-2 text-sm text-slate">Priority <input type="number" value={f.priority} onChange={(e) => set("priority", e.target.value)} className={field + " w-20"} /></label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -121,13 +171,13 @@ function Row({ initial, isAdmin }: { initial: Promotion | null; isAdmin: boolean
   );
 }
 
-export default function PromotionsEditor({ promotions, isAdmin }: { promotions: Promotion[]; isAdmin: boolean }) {
+export default function PromotionsEditor({ promotions, isAdmin, rooms }: { promotions: Promotion[]; isAdmin: boolean; rooms: RoomOpt[] }) {
   const [addingNew, setAddingNew] = useState(false);
   return (
     <div className="space-y-4">
-      {promotions.map((p) => <Row key={p.id} initial={p} isAdmin={isAdmin} />)}
+      {promotions.map((p) => <Row key={p.id} initial={p} isAdmin={isAdmin} rooms={rooms} />)}
       {addingNew ? (
-        <Row initial={null} isAdmin={isAdmin} />
+        <Row initial={null} isAdmin={isAdmin} rooms={rooms} />
       ) : (
         <button onClick={() => setAddingNew(true)} className="flex w-full items-center justify-center gap-2 border-2 border-dashed border-gray-300 py-4 text-sm font-semibold text-slate hover:border-gold hover:text-navy">
           <Plus className="size-4" /> Add promotion

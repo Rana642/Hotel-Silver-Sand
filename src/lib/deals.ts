@@ -20,11 +20,32 @@ export type AppliedDeal = {
   freeCancelDays: number;
 };
 
-/** All active deals (service client — safe for ISR/dynamic public pages). */
+/**
+ * Active date-based deals — sourced from PROMOTIONS (a promotion acts as a deal
+ * when it has a discount % and a check-in date window). One place to manage,
+ * so there's no separate Deals section to keep in sync.
+ */
 export async function getActiveDeals(): Promise<RateDeal[]> {
   const supabase = createServiceClient();
-  const { data } = await supabase.from("rate_deals").select("*").eq("is_active", true);
-  return (data ?? []) as RateDeal[];
+  const { data } = await supabase
+    .from("promotions")
+    .select("id, title, discount_percent, start_date, end_date, room_id, refundable, free_cancel_days, priority")
+    .eq("is_active", true)
+    .gt("discount_percent", 0)
+    .not("start_date", "is", null)
+    .not("end_date", "is", null);
+  return (data ?? []).map((d) => ({
+    id: d.id as string,
+    name: d.title as string,
+    discount_percent: Number(d.discount_percent) || 0,
+    start_date: d.start_date as string,
+    end_date: d.end_date as string,
+    room_id: (d.room_id as string | null) ?? null,
+    refundable: (d.refundable as boolean) ?? true,
+    free_cancel_days: (d.free_cancel_days as number) ?? 2,
+    is_active: true,
+    priority: (d.priority as number) ?? 0,
+  }));
 }
 
 /** Best matching deal for a room on a given check-in date (highest priority, then discount). */
