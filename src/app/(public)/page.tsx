@@ -51,7 +51,8 @@ export default async function HomePage() {
           </h1>
           <p className="subtitle-serif mt-3 text-xl sm:text-2xl">40 Years of Trusted Comfort</p>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate sm:text-base">
-            8 Minutes from Multan Airport • Prime Location in Cantt • Established 1986
+            500 m walk from Multan Cantt Railway Station • 2.4 km from Multan International Airport •
+            Free parking &amp; free WiFi • Check in any hour, day or night
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <ButtonLink href="/rooms" variant="gold">
@@ -82,14 +83,15 @@ export default async function HomePage() {
             </h2>
             <p className="subtitle-serif mt-2 text-lg">Four decades of hospitality excellence</p>
             <p className="mt-5 leading-relaxed text-slate">
-              Since 1986, Hotel Silver Sand Multan has been a trusted choice for comfortable
-              accommodation. Located in the heart of Multan Cantt, just 8 minutes from Multan
-              International Airport, we offer the perfect blend of convenience and comfort.
+              Step off the train at Multan Cantt and you are five minutes from your room — we are a
+              500 m walk from the station, and 2.4 km from Multan International Airport. No long
+              taxi ride at midnight, no hunting for the address in the dark.
             </p>
             <p className="mt-4 leading-relaxed text-slate">
-              Our commitment to personalized service, modern amenities, and competitive pricing has
-              made us a preferred destination for both business and leisure travelers visiting
-              Multan.
+              Every room is air-conditioned and soundproofed, with a private attached bathroom, a
+              fridge and a TV. Parking is free and private, the WiFi is genuinely fast, and the
+              front desk is staffed 24 hours — so a delayed flight or a late train is never a
+              problem. Serving travellers in Multan Cantt since 1986.
             </p>
             <ButtonLink href="/about" variant="navy" className="mt-6">
               Discover Our Story

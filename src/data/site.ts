@@ -4,7 +4,7 @@ export const site = {
   established: "1986",
   tagline: "40 Years of Trusted Comfort",
   description:
-    "40 years of trusted comfort and hospitality in the heart of Multan Cantt. Experience the perfect blend of modern amenities, convenient location, and traditional warmth.",
+    "A 500 m walk from Multan Cantt Railway Station and 2.4 km from Multan International Airport. Comfortable AC rooms, free WiFi, free private parking and a front desk open 24 hours — so a late train or a delayed flight never leaves you stranded.",
   url: "https://www.hotelsilversandmultan.com",
   address: {
     street: "514 Akbar Road, Railway Colony, near Aziz Hotel Chowk",

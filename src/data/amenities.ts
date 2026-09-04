@@ -10,6 +10,12 @@ import {
   Clock,
   Users,
   Sparkles,
+  Volume2,
+  Trees,
+  Store,
+  Plane,
+  Accessibility,
+  CigaretteOff,
   type LucideIcon,
 } from "lucide-react";
 
@@ -30,8 +36,14 @@ export const amenities: Amenity[] = [
   { icon: ParkingCircle, title: "Free Parking", description: "Secure parking for all guests" },
   { icon: ShieldCheck, title: "24/7 CCTV", description: "Complete security by surveillance" },
   { icon: Clock, title: "24-Hour Front Desk", description: "Always here to assist you" },
-  { icon: Users, title: "Family-Friendly", description: "Perfect for families and groups" },
+  { icon: Users, title: "Family Rooms", description: "Extra beds available for children" },
   { icon: Sparkles, title: "Daily Housekeeping", description: "Clean, well-kept rooms every day" },
+  { icon: Volume2, title: "Soundproofed Rooms", description: "Sleep through street and station noise" },
+  { icon: Trees, title: "Garden & Terrace", description: "Outdoor seating to sit out in the evening" },
+  { icon: Plane, title: "Airport Pick & Drop", description: "Shuttle on request (chargeable)" },
+  { icon: Store, title: "Mini Market", description: "Snacks and essentials without leaving" },
+  { icon: CigaretteOff, title: "Non-Smoking Rooms", description: "Fresh, smoke-free rooms available" },
+  { icon: Accessibility, title: "Accessible Facilities", description: "Support for guests with limited mobility" },
 ];
 
 /* Facilities page — feature cards */
