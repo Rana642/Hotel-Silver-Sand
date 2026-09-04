@@ -52,6 +52,7 @@ export default async function RoomsPage() {
                       src={featuredImage(room)}
                       alt={room.name}
                       fill
+                      quality={90}
                       sizes="(max-width: 768px) 100vw, 1200px"
                       className="object-cover"
                     />

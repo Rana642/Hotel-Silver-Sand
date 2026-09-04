@@ -42,6 +42,7 @@ export default function RoomForm({ room, images }: { room: RoomFull | null; imag
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [lowRes, setLowRes] = useState<string[]>([]);
 
   const [f, setF] = useState({
     slug: room?.slug ?? "",
@@ -105,18 +106,46 @@ export default function RoomForm({ room, images }: { room: RoomFull | null; imag
     });
   }
 
+  /** Below this the photo visibly softens in the room gallery, which renders ~720px wide at 2x. */
+  const MIN_IMAGE_WIDTH = 1600;
+
+  /** Read a file's real pixel dimensions before it goes to storage. */
+  function readDimensions(file: File) {
+    return new Promise<{ width: number; height: number }>((resolve) => {
+      const url = URL.createObjectURL(file);
+      const img = new window.Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        resolve({ width: 0, height: 0 });
+      };
+      img.src = url;
+    });
+  }
+
   async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
     if (!room || !e.target.files?.length) return;
     setError(null);
+    setLowRes([]);
     setUploading(true);
     const supabase = createClient();
+    const small: string[] = [];
     for (const file of Array.from(e.target.files)) {
+      // Nothing here compresses the file — whatever is uploaded is what guests
+      // see. Warn when the source is already too small to look sharp.
+      const { width, height } = await readDimensions(file);
+      if (width > 0 && width < MIN_IMAGE_WIDTH) small.push(`${file.name} — ${width}×${height}`);
+
       const path = `${room.id}/${Date.now()}-${file.name.replace(/[^\w.-]/g, "_")}`;
       const { error: upErr } = await supabase.storage.from("room-images").upload(path, file, { upsert: false });
       if (upErr) { setError("Upload failed: " + upErr.message); break; }
       const { data } = supabase.storage.from("room-images").getPublicUrl(path);
       await addRoomImage(room.id, data.publicUrl, f.name);
     }
+    setLowRes(small);
     setUploading(false);
     e.target.value = "";
     router.refresh();
@@ -147,7 +176,27 @@ export default function RoomForm({ room, images }: { room: RoomFull | null; imag
               <input type="file" accept="image/*" multiple onChange={onUpload} className="hidden" disabled={uploading} />
             </label>
           </div>
-          <p className="mt-2 text-xs text-slate">First/featured image is used as the card thumbnail.</p>
+          <p className="mt-2 text-xs text-slate">
+            First/featured image is used as the card thumbnail. Upload the original photo — at least{" "}
+            {MIN_IMAGE_WIDTH}px wide. Nothing here compresses it, so a picture sent through WhatsApp
+            arrives already shrunk and will look soft on the room page.
+          </p>
+          {lowRes.length > 0 && (
+            <div className="mt-3 border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+              <p className="font-semibold">
+                Uploaded, but {lowRes.length === 1 ? "this photo is" : "these photos are"} smaller than{" "}
+                {MIN_IMAGE_WIDTH}px wide and will look soft:
+              </p>
+              <ul className="mt-1 list-inside list-disc">
+                {lowRes.map((n) => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ul>
+              <p className="mt-1.5">
+                Replace with the original from the camera or phone gallery, not a forwarded copy.
+              </p>
+            </div>
+          )}
         </div>
       )}
 

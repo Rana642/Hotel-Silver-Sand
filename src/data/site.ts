@@ -68,14 +68,16 @@ export function waLink(message?: string) {
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
 
+/**
+ * Primary nav. "Home" is deliberately absent — the logo goes there — and FAQs
+ * lives in the footer, so the bar carries only the pages people browse to.
+ */
 export const nav = [
-  { label: "Home", href: "/" },
   { label: "Rooms", href: "/rooms" },
   { label: "Promotions", href: "/promotions" },
   { label: "Facilities", href: "/facilities" },
   { label: "Discover Multan", href: "/discover-multan" },
   { label: "Gallery", href: "/gallery" },
   { label: "About Us", href: "/about" },
-  { label: "FAQs", href: "/faq" },
   { label: "Contact Us", href: "/contact" },
 ] as const;

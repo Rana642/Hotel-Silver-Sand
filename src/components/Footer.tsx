@@ -41,6 +41,12 @@ export default function Footer() {
                 </Link>
               </li>
             ))}
+            {/* Not in the top nav — the bar stays short and these live here. */}
+            <li>
+              <Link href="/faq" className="text-sm text-white/80 transition hover:text-gold">
+                FAQs &amp; Policies
+              </Link>
+            </li>
             <li>
               <Link href="/manage-booking" className="text-sm text-white/80 transition hover:text-gold">
                 Manage Booking
