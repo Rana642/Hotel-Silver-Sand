@@ -9,11 +9,36 @@ type Promo = { slug: string; title: string; short_desc: string | null; badge: st
 
 export default function PromotionsSideTab() {
   const pathname = usePathname();
+  const isHome = pathname === "/";
   const [promos, setPromos] = useState<Promo[]>([]);
-  const [open, setOpen] = useState(true);
+  // On the homepage the hero headline and the booking widget own the first
+  // screen — an auto-opened panel sitting on top of them competes for the same
+  // attention. There it starts as a strip; elsewhere it opens. The visitor's own
+  // toggle wins and is remembered.
+  const [open, setOpen] = useState(!isHome);
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("hss-promo-tab");
+      if (saved === "open" || saved === "closed") setOpen(saved === "open");
+    } catch {
+      /* private mode / blocked storage — the default stands */
+    }
+  }, []);
+
+  function toggle() {
+    setOpen((o) => {
+      try {
+        localStorage.setItem("hss-promo-tab", o ? "closed" : "open");
+      } catch {
+        /* ignore */
+      }
+      return !o;
+    });
+  }
 
   useEffect(() => {
     let alive = true;
@@ -55,8 +80,9 @@ export default function PromotionsSideTab() {
       <div className="flex w-9 flex-col items-center bg-navy-dark/70 text-gold backdrop-blur-md">
         <button
           type="button"
-          onClick={() => setOpen((o) => !o)}
+          onClick={toggle}
           aria-label={open ? "Hide promotions" : "Show promotions"}
+          aria-expanded={open}
           className="flex w-full items-center justify-center py-2 hover:bg-navy-dark"
         >
           {open ? <X className="size-4" /> : <ChevronRight className="size-4" />}

@@ -36,7 +36,7 @@ export default async function RoomsPage() {
 
       <section className="bg-cream">
         <div className="container-site py-14 sm:py-20">
-          <SectionHeading title="Explore the Rooms & Suites" />
+          <SectionHeading title="Every Room We Have" subtitle="Four room types — no suites, no upsell ladder" />
 
           <div id="room-list" className="mt-10 scroll-mt-24 space-y-8">
             {rooms.map((room) => {
@@ -58,7 +58,10 @@ export default async function RoomsPage() {
                   </div>
 
                   <div className="p-6 text-center sm:p-8">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-gold">Rooms &amp; Suites</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gold">
+                      {room.capacity ?? `${room.max_adults} Adults`}
+                      {room.size_sqft ? ` · ${room.size_sqft} sq ft` : ""}
+                    </p>
                     <h2 className="mt-1 font-heading text-2xl font-bold text-navy">{room.name}</h2>
 
                     <div className="mt-2 flex flex-wrap items-center justify-center gap-2">

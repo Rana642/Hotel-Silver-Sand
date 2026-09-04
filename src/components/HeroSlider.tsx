@@ -32,15 +32,24 @@ export default function HeroSlider({ images }: { images: HeroImage[] }) {
       <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/45 via-transparent to-transparent" />
 
       {images.length > 1 && (
-        <div className="absolute inset-x-0 bottom-3 z-10 flex justify-center gap-2">
+        <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center">
           {images.map((_, idx) => (
+            /* The dot is 8 px, but the button around it is a full thumb-sized
+               target — a 8 px tap area is unusable on a phone. */
             <button
               key={idx}
               type="button"
               onClick={() => setI(idx)}
               aria-label={`Show slide ${idx + 1}`}
-              className={`h-2 rounded-full transition-all ${idx === i ? "w-6 bg-gold" : "w-2 bg-white/60 hover:bg-white/90"}`}
-            />
+              aria-current={idx === i}
+              className="group flex h-11 w-8 items-center justify-center"
+            >
+              <span
+                className={`h-2 rounded-full transition-all ${
+                  idx === i ? "w-6 bg-gold" : "w-2 bg-white/60 group-hover:bg-white/90"
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}

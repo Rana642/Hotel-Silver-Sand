@@ -1,7 +1,6 @@
 import Image from "next/image";
-import { Phone, MapPin, Mail, ArrowRight, MessageCircle } from "lucide-react";
+import { Phone, MapPin, Mail, ArrowRight, MessageCircle, Check } from "lucide-react";
 import { ButtonLink } from "@/components/Button";
-import ContactButton from "@/components/ContactButton";
 import TrackedLink from "@/components/TrackedLink";
 import HeroBookingBar from "@/components/HeroBookingBar";
 import HeroSlider from "@/components/HeroSlider";
@@ -51,44 +50,55 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero — building shot with the booking widget floating over its lower-middle */}
+      {/* Hero — the whole first screen has to work on its own: what this is,
+          who it's for, why to trust it, and the one action we want. */}
       <section className="relative bg-cream">
-        <div className="relative h-[45vh] min-h-[300px] w-full overflow-hidden sm:h-[72vh] lg:h-[80vh]">
+        {/* Shorter on a phone so the headline, the trust row and the booking
+            widget all land within reach instead of pushing the CTA off-screen. */}
+        <div className="relative h-[34vh] min-h-[240px] w-full overflow-hidden sm:h-[72vh] lg:h-[80vh]">
           <HeroSlider images={heroImages} />
+          {/* Scrim over the top 60% only — that is where the headline and the trust
+              row sit, and on a bright-sky slide they are unreadable without it.
+              The slider already lays its own gradient over the bottom edge. */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 hidden h-[62%] bg-gradient-to-b from-navy-dark/85 via-navy-dark/60 to-transparent sm:block" />
         </div>
-        {/* Mobile: the booking bar sits just below the hero so the photo stays
-            clean (the combined pickers make it too tall to overlay on a phone).
-            sm+ : it floats over the lower part of the image as before. */}
-        <div className="z-10 py-4 sm:absolute sm:inset-x-0 sm:bottom-16 sm:py-0 lg:bottom-24">
-          <div className="container-site">
-            <HeroBookingBar />
-          </div>
-        </div>
-      </section>
 
-      {/* Hotel name / intro band */}
-      <section className="bg-cream">
-        <div className="container-site py-12 text-center sm:py-16">
-          <h1 className="font-heading text-4xl font-bold text-navy sm:text-5xl lg:text-6xl">
+        {/* Headline: overlays the upper third of the photo on sm+, sits below it on a phone
+            (a 300 px-tall image has no room for type). One H1, positioned two ways. */}
+        <div className="container-site pt-5 text-center sm:absolute sm:inset-x-0 sm:top-[19%] sm:pt-0">
+          <h1 className="font-heading text-2xl font-bold leading-tight text-navy sm:text-5xl sm:text-white sm:drop-shadow lg:text-6xl">
             Hotel Silver Sand Multan
           </h1>
-          <p className="subtitle-serif mt-3 text-xl sm:text-2xl">40 Years of Trusted Comfort</p>
-          <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-slate">
-            An affordable, air-conditioned hotel in Multan Cantt — a 500 m walk from Multan Cantt
-            Railway Station. Book a hotel room in Multan direct, pay at the hotel, and cancel free if
-            your plans change.
+          <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-slate sm:mt-3 sm:text-lg sm:text-white/90">
+            An affordable, air-conditioned hotel in Multan Cantt — a{" "}
+            <span className="font-semibold text-navy sm:text-white">500 m walk</span> from Multan
+            Cantt Railway Station. Book direct, pay at the hotel, cancel free.
           </p>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate">
-            2.4 km from Multan International Airport • Free private parking &amp; free WiFi •
-            Breakfast included • Check in any hour, day or night
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <ButtonLink href="/rooms" variant="gold">
-              Explore Rooms
-            </ButtonLink>
-            <ContactButton mode="call" variant="outline">
-              <Phone className="size-4" /> Call Now
-            </ContactButton>
+          {/* Chips rather than plain text: over a photo, loose white type loses its
+              contrast exactly where the scrim fades out. */}
+          <ul className="mx-auto mt-3 flex max-w-3xl flex-wrap items-center justify-center gap-x-2 gap-y-1.5 text-xs font-medium text-slate sm:mt-5 sm:gap-2 sm:text-sm sm:text-white">
+            {[
+              "Free cancellation — pay at the hotel",
+              "WiFi rated 10/10 on Booking.com",
+              "Free private parking",
+              "Serving Multan since 1986",
+            ].map((t) => (
+              <li
+                key={t}
+                className="flex items-center gap-1.5 sm:border sm:border-white/20 sm:bg-navy-dark/55 sm:px-3 sm:py-1.5 sm:backdrop-blur-sm"
+              >
+                <Check className="size-3.5 shrink-0 text-gold" />
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Booking bar — the single primary action. Below the photo on a phone,
+            floating over its lower third on sm+. */}
+        <div className="z-10 py-4 sm:absolute sm:inset-x-0 sm:bottom-12 sm:py-0 lg:bottom-16">
+          <div className="container-site">
+            <HeroBookingBar />
           </div>
         </div>
       </section>
@@ -132,8 +142,8 @@ export default async function HomePage() {
       <section className="bg-white">
         <div className="container-site py-16 sm:py-20">
           <SectionHeading
-            title="Featured Rooms & Suites"
-            subtitle="Comfort designed for every traveler"
+            title="Our Rooms"
+            subtitle="Air-conditioned, soundproofed, and priced honestly"
           />
           <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {featured.map((room) => (
@@ -142,7 +152,7 @@ export default async function HomePage() {
           </div>
           <div className="mt-10 text-center">
             <ButtonLink href="/rooms" variant="outline">
-              View All Rooms & Suites <ArrowRight className="size-4" />
+              See All Rooms &amp; Rates <ArrowRight className="size-4" />
             </ButtonLink>
           </div>
         </div>
