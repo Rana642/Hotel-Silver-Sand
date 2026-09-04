@@ -8,9 +8,7 @@ import DateRangePicker from "@/components/booking/DateRangePicker";
 import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyPicker";
 import WhyBookDirect from "@/components/WhyBookDirect";
 import { saveIntent } from "@/lib/bookingIntent";
-import { rooms } from "@/data/rooms";
-
-const startingFrom = Math.min(...rooms.map((r) => r.price));
+import { useMinRate } from "@/lib/useMinRate";
 
 function localDate(offsetDays = 0) {
   const d = new Date();
@@ -25,6 +23,7 @@ export default function ReservationModal({ onClose }: { onClose: () => void }) {
   const [checkOut, setCheckOut] = useState(localDate(1));
   const [occ, setOcc] = useState<Occupancy>({ adults: 1, children: 0, rooms: 1 });
   const [promo, setPromo] = useState("");
+  const startingFrom = useMinRate();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();

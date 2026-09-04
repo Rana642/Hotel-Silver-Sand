@@ -24,9 +24,13 @@ export const roomFeatures = [
 ];
 
 /**
- * Names, rates, sizes, beds and occupancy mirror the live Booking.com listing —
- * Booking.com is the source of truth so the two channels never disagree.
- * Rates are per night in PKR, room only.
+ * Names, sizes, beds and occupancy mirror the live Booking.com listing so the two
+ * channels never disagree.
+ *
+ * The `price` values are only a build-time FALLBACK for the "From PKR x/night"
+ * labels. Live rates come from the database (`useMinRate` / `getRoomsStatic`) and
+ * are set by the owner in the admin dashboard off the Booking.com extranet — the
+ * public Booking.com page shows post-discount rates, not the standard ones.
  */
 export const rooms: Room[] = [
   {

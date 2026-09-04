@@ -5,9 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, X } from "lucide-react";
 import { getIntent, clearIntent, type BookingIntent } from "@/lib/bookingIntent";
-import { rooms } from "@/data/rooms";
-
-const startingFrom = Math.min(...rooms.map((r) => r.price));
+import { useMinRate } from "@/lib/useMinRate";
 
 function fmt(d?: string) {
   if (!d) return null;
@@ -17,6 +15,7 @@ function fmt(d?: string) {
 export default function ContinueBookingBanner() {
   const pathname = usePathname();
   const [intent, setIntent] = useState<BookingIntent | null>(null);
+  const startingFrom = useMinRate();
 
   useEffect(() => {
     const read = () => setIntent(getIntent());

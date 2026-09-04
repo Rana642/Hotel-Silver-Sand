@@ -8,9 +8,7 @@ import { saveIntent } from "@/lib/bookingIntent";
 import DateRangePicker from "@/components/booking/DateRangePicker";
 import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyPicker";
 import WhyBookDirect from "@/components/WhyBookDirect";
-import { rooms } from "@/data/rooms";
-
-const startingFrom = Math.min(...rooms.map((r) => r.price));
+import { useMinRate } from "@/lib/useMinRate";
 
 function localDate(offsetDays = 0) {
   const d = new Date();
@@ -28,6 +26,7 @@ export default function HeroBookingBar() {
   const [checkOut, setCheckOut] = useState(localDate(1));
   const [occ, setOcc] = useState<Occupancy>({ adults: 1, children: 0, rooms: 1 });
   const [coupon, setCoupon] = useState("");
+  const startingFrom = useMinRate();
 
   function search() {
     saveIntent({

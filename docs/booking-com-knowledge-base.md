@@ -89,29 +89,37 @@ Concierge service · Special diet menus · Walking tours
 
 ## Room types on Booking.com
 
-Rates scraped with live dates (check-in 2026-09-15, 1 night, 2 adults).
+Names, sizes, bed types and occupancy below are **authoritative** — they are what the
+property publishes. Rates are **not**.
 
-| Room | Rate / night | Taxes & charges | Size | Beds | Sleeps |
+| Room | Rate seen on Booking.com | Taxes & charges shown | Size | Beds | Sleeps |
 |---|---|---|---|---|---|
-| Deluxe King Room | **PKR 3,000** | + PKR 780 | 15 m² (161 sq ft) | 1 extra-large double bed | 2 |
+| Deluxe King Room | PKR 3,000 | + PKR 780 | 15 m² (161 sq ft) | 1 extra-large double bed | 2 |
 | Deluxe Double Room | PKR 6,250 | + PKR 1,625 | — (high floor) | 1 large double bed | 2 |
 | Deluxe Triple Room | PKR 6,250 | + PKR 1,625 | 17 m² (183 sq ft) | 1 single + 1 double bed | 3 |
 | Budget Twin Room | PKR 6,250 | + PKR 1,625 | — | 2 single beds | 2 |
 
 Policy on every room: *Free cancellation · No prepayment needed — pay at the property.*
-No struck-through "was" price is shown, so the site can no longer claim a "Save X%" discount
-off a list rate.
+No struck-through "was" price is shown on the listing.
 
-> ✅ **RESOLVED (2026-09-04).** Booking.com is now the single source of truth. The database
-> and `src/data/rooms.ts` were synced by `scripts/sync-rooms-from-booking.mjs`:
+> ⚠️ **These are NOT the standard rates.** Confirmed by the owner (2026-09-04): the public
+> Booking.com page shows the rate **after** whatever promotion is running, for the specific
+> dates searched. The standard rack rates live in the **Booking.com extranet**, and the owner
+> will read them there and set them himself from the admin dashboard.
+> **Do not re-run `scripts/sync-rooms-from-booking.mjs`** — it would overwrite the owner's
+> rates with scraped promotional ones. The script is kept only for the naming/details sync it
+> already performed.
+
+> ✅ **Names RESOLVED (2026-09-04).** Booking.com is the source of truth for naming and room
+> detail. The database and `src/data/rooms.ts` now carry:
 > *Executive Twin Room* → **Deluxe Double Room**, *Executive Family Room* → **Budget Twin Room**,
-> slugs renamed to match, rates set to 3,000 / 6,250, and all `original_price` cleared.
+> slugs renamed to match, and all `original_price` cleared (no supportable "Save X%" claim).
 
-> ⚠️ **OPEN — needs owner decision.** Booking.com adds **26 % "taxes and charges"**
-> (PKR 780 on 3,000; PKR 1,625 on 6,250). The website charges **16 % GST**. That 10-point
-> gap is probably Booking.com's own commission/service fee folded into the displayed total,
-> which would *not* apply to a direct booking — but it is a financial figure, so it has not
-> been changed. Confirm with the owner before touching `gst_percent`.
+> ✅ **Tax RESOLVED (2026-09-04) — keep 16 %.** The 26 % on Booking.com is **GST 16 % + City
+> Tax 10 %**. The city tax applies to the OTA channel only; **direct website bookings are
+> charged GST 16 % and no city tax**. So `gst_percent = 16` is correct and must stay as it is.
+> This is also a real direct-booking advantage worth saying out loud in the copy: booking
+> direct is ~10 % cheaper on tax than booking through the OTA.
 
 ---
 

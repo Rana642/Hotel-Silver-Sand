@@ -1,8 +1,14 @@
-// Sync the rooms table to match the live Booking.com listing exactly.
-// Booking.com is the source of truth for names, rates, sizes, beds and occupancy.
+// One-off sync of the rooms table to the live Booking.com listing.
+// Booking.com is the source of truth for NAMES, SIZES, BEDS and OCCUPANCY.
 // Scraped 2026-09-04 from:
 //   https://www.booking.com/hotel/pk/silver-sand-multan-multan.en-gb.html
-// Run:  node scripts/sync-rooms-from-booking.mjs
+//
+// ⚠️ DO NOT RE-RUN. The prices below are the PROMOTIONAL rates Booking.com showed for the
+// dates searched, not the standard rack rates. The owner reads the real rates from the
+// Booking.com extranet and sets them from the admin dashboard — re-running this would
+// overwrite them. Kept for the record of the naming/detail sync it already performed.
+//
+// Run (only if you really mean it):  node scripts/sync-rooms-from-booking.mjs --force
 
 import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
@@ -15,6 +21,15 @@ function loadEnv() {
   }
 }
 loadEnv();
+
+if (!process.argv.includes("--force")) {
+  console.error(
+    "Refusing to run: this script would overwrite the owner's rates with scraped\n" +
+      "promotional prices. Rates are managed in the admin dashboard from the\n" +
+      "Booking.com extranet. Pass --force only if you genuinely intend to overwrite them."
+  );
+  process.exit(1);
+}
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
