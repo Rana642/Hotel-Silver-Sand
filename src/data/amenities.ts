@@ -46,42 +46,100 @@ export const amenities: Amenity[] = [
   { icon: Accessibility, title: "Accessible Facilities", description: "Support for guests with limited mobility" },
 ];
 
-/* Facilities page — feature cards */
+/**
+ * Facilities page — feature cards.
+ * Every item below is a facility the property publishes on Booking.com.
+ * Nothing here is aspirational; see docs/booking-com-knowledge-base.md.
+ */
 export const facilities: Amenity[] = [
   {
     icon: Wifi,
-    title: "Free High-Speed WiFi",
+    title: "Free WiFi — Rated 10/10",
     description:
-      "Stay connected with complimentary high-speed internet access throughout the hotel, perfect for both business and leisure travelers.",
+      "Our guests score the WiFi a perfect 10 out of 10 on Booking.com, and it is free in every room and throughout the hotel. Join a call, upload the files, stream what you want.",
   },
   {
     icon: Wind,
-    title: "Air Conditioning",
+    title: "Air Conditioning in Every Room",
     description:
-      "All rooms feature individual climate control systems to ensure your comfort regardless of the weather outside.",
+      "Multan summers are not gentle. Every room has its own air conditioning, so you decide how cool the room gets — not a thermostat in some corridor.",
   },
   {
-    icon: Refrigerator,
-    title: "Mini Fridge",
+    icon: Volume2,
+    title: "Soundproofed Rooms",
     description:
-      "Keep your beverages and snacks fresh with an in-room mini refrigerator available in all our rooms.",
+      "The rooms are soundproofed. You are 500 metres from Multan Cantt Railway Station and you will still sleep through the night — which is the entire reason people book a hotel this close to a station.",
+  },
+  {
+    icon: ParkingCircle,
+    title: "Free Private Parking On Site",
+    description:
+      "Parking is free, inside the property, and needs no reservation. Your car sits behind our gate, not on Akbar Road.",
+  },
+  {
+    icon: Clock,
+    title: "24-Hour Front Desk",
+    description:
+      "There is no check-in cut-off here. Arrive at 2 a.m. off a delayed train and someone will be awake, at the desk, with your key.",
+  },
+  {
+    icon: Plane,
+    title: "Airport Pick-up & Drop",
+    description:
+      "The airport is 2.4 km away, about eight minutes. Send us your flight number and we will have a car waiting. The service is chargeable and we confirm the fare before you travel.",
   },
   {
     icon: Utensils,
-    title: "24/7 Room Service",
+    title: "Room Service & Breakfast Included",
     description:
-      "Enjoy delicious meals and refreshments delivered to your room at any time of day or night.",
+      "Breakfast is included in your rate, and room service brings meals to your door. We have no restaurant of our own — but the front desk knows exactly where locals eat nearby.",
   },
   {
-    icon: Tv,
-    title: "Smart/Flat-screen TV",
+    icon: Trees,
+    title: "Garden, Terrace & Balconies",
     description:
-      "Entertainment at your fingertips with modern flat-screen TVs featuring premium channels and streaming capabilities.",
+      "A garden and terrace to sit out in when the evening finally cools down, and balconies on the Deluxe King and Deluxe Triple rooms.",
   },
   {
     icon: Droplets,
-    title: "Hot & Cold Water",
+    title: "Private Attached Bathrooms",
     description:
-      "Round-the-clock hot and cold water supply in all attached private bathrooms for your convenience.",
+      "Every room has its own attached bathroom with hot and cold water around the clock, a shower and free toiletries. Nothing is shared.",
+  },
+  {
+    icon: Tv,
+    title: "Flat-screen TV & Refrigerator",
+    description:
+      "A flat-screen TV with satellite channels and a refrigerator in every room, so your water stays cold and your medicines stay safe.",
+  },
+  {
+    icon: Store,
+    title: "Minimarket On Site",
+    description:
+      "Snacks, water and the small things you forgot to pack — available without stepping outside the gate.",
+  },
+  {
+    icon: Users,
+    title: "Family Rooms & Extra Beds",
+    description:
+      "The Deluxe Triple sleeps three adults in real beds, and extra beds for children aged 0–12 are PKR 1,000 per child per night. Children of every age are welcome.",
+  },
+  {
+    icon: Accessibility,
+    title: "Facilities for Guests With Limited Mobility",
+    description:
+      "Accessible facilities are available. Tell us what you need when you book and we will put you in the room that suits you best.",
+  },
+  {
+    icon: CigaretteOff,
+    title: "Non-Smoking Rooms",
+    description:
+      "Non-smoking rooms are available on request — ask for one at the time of booking and we will set it aside.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Private Check-in & Check-out",
+    description:
+      "Private check-in and check-out, plus concierge service, for guests who would rather not do their arrival in a crowded lobby.",
   },
 ];

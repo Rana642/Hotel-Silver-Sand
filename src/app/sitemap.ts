@@ -16,6 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/discover-multan", priority: 0.7, freq: "monthly" },
     { path: "/gallery", priority: 0.6, freq: "monthly" },
     { path: "/about", priority: 0.6, freq: "monthly" },
+    { path: "/faq", priority: 0.7, freq: "monthly" },
     { path: "/contact", priority: 0.7, freq: "monthly" },
   ];
 

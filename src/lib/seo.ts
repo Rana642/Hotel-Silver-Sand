@@ -35,6 +35,18 @@ export function pageMeta({
   };
 }
 
+/**
+ * Structured data for the property.
+ *
+ * Deliberately omitted:
+ * - `aggregateRating` — the only verifiable public score is Booking.com's 6.2/10 from
+ *   19 reviews. Review markup must reflect reviews collected by this site, so asserting
+ *   any rating here would be fabricated. Omitted until a real on-site review source exists.
+ * - `starRating` — Booking.com classifies the property as 2-star. Rather than assert a
+ *   different number, the field is left out.
+ * - `priceRange` — rates are set by the owner in the admin dashboard and change, so a
+ *   hard-coded range would go stale and misstate the price.
+ */
 export const hotelSchema = {
   "@context": "https://schema.org",
   "@type": "Hotel",
@@ -45,8 +57,6 @@ export const hotelSchema = {
   telephone: site.phoneIntl,
   email: site.email,
   image: `${site.url}/images/hero.png`,
-  priceRange: "PKR 4,000 – 11,000",
-  starRating: { "@type": "Rating", ratingValue: "3" },
   address: {
     "@type": "PostalAddress",
     streetAddress: site.address.street,
@@ -66,15 +76,28 @@ export const hotelSchema = {
     site.googleBusinessUrl,
     site.bookingDotComUrl,
   ],
-  checkinTime: "14:00",
-  checkoutTime: "12:00",
+  // Check-in is available 24 hours; check-out is 12:00–13:00.
+  checkinTime: "00:00",
+  checkoutTime: "13:00",
+  petsAllowed: false,
+  // Only facilities the property actually publishes on Booking.com.
   amenityFeature: [
     "Free WiFi",
     "Air Conditioning",
-    "Room Service",
-    "Free Parking",
-    "24/7 CCTV",
+    "Free Private Parking",
     "24-Hour Front Desk",
+    "Room Service",
+    "Airport Shuttle",
+    "Soundproof Rooms",
+    "Private Attached Bathroom",
+    "Balcony",
+    "Terrace",
+    "Garden",
+    "Minimarket",
+    "Family Rooms",
+    "Non-Smoking Rooms",
+    "Facilities for Disabled Guests",
+    "Concierge Service",
   ].map((n) => ({ "@type": "LocationFeatureSpecification", name: n, value: true })),
   contactPoint: {
     "@type": "ContactPoint",
@@ -82,12 +105,20 @@ export const hotelSchema = {
     contactType: "reservations",
     availableLanguage: ["en", "ur"],
   },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    reviewCount: "120",
-  },
 };
+
+/** FAQPage markup — only ever built from verified answers in @/data/hotel-facts. */
+export function faqSchema(items: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  };
+}
 
 export const websiteSchema = {
   "@context": "https://schema.org",

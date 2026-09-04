@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import AmenityCard from "@/components/AmenityCard";
 import { facilities } from "@/data/amenities";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = pageMeta({
-  title: "Facilities & Amenities",
+  title: "Hotel Facilities in Multan Cantt",
   description:
-    "Free high-speed WiFi, air conditioning, 24/7 room service, smart TVs, mini fridge and hot & cold water — everything you need for a comfortable stay at Hotel Silver Sand Multan.",
+    "Free WiFi rated 10/10, air conditioning, soundproofed rooms, free private parking, a 24-hour front desk, airport pick-up and breakfast included — the facilities at Hotel Silver Sand, a hotel in Multan Cantt 500 m from the railway station.",
   path: "/facilities",
 });
 
@@ -17,7 +18,7 @@ export default function FacilitiesPage() {
     <>
       <PageHero
         title="Facilities & Amenities"
-        subtitle="Everything you need for a comfortable stay"
+        subtitle="What we actually have — and what we don't"
       />
 
       <section className="bg-cream">
@@ -43,20 +44,35 @@ export default function FacilitiesPage() {
           </div>
           <div>
             <h2 className="font-heading text-3xl font-bold text-navy sm:text-4xl">
-              Premium Comfort &amp; Convenience
+              We&apos;d Rather Be Honest Than Impressive
             </h2>
-            <p className="subtitle-serif mt-2 text-lg">Designed for your ultimate satisfaction</p>
+            <p className="subtitle-serif mt-2 text-lg">An affordable hotel in Multan, not a resort</p>
             <p className="mt-5 leading-relaxed text-slate">
-              At Hotel Silver Sand Multan, we understand that the little details make a big
-              difference. That&apos;s why we&apos;ve equipped our hotel with modern amenities and
-              facilities to ensure your stay is as comfortable and convenient as possible.
+              There is no swimming pool here. No spa, and no restaurant of our own. We would rather
+              you read that on this page than discover it at the front desk, because a hotel room in
+              Multan at our rate cannot honestly promise all three.
             </p>
             <p className="mt-4 leading-relaxed text-slate">
-              From complimentary high-speed WiFi to 24/7 room service, from secure parking to
-              round-the-clock security, we&apos;ve thought of everything to make your stay memorable.
-              Whether you&apos;re here for business or leisure, our facilities are designed to meet
-              all your needs.
+              What we spend the money on instead is the part you actually sleep in. Air conditioning
+              in every room. Soundproofing, so being 500 metres from Multan Cantt Railway Station
+              costs you convenience and not a night&apos;s sleep. WiFi our guests score 10 out of 10.
+              Free private parking behind our own gate. Breakfast included. And a front desk that is
+              staffed at three in the morning, because that is when trains arrive.
             </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/reservations"
+                className="inline-block bg-gold px-6 py-3 text-sm font-semibold text-navy-dark transition hover:brightness-95"
+              >
+                Check Availability
+              </Link>
+              <Link
+                href="/faq"
+                className="inline-block border border-navy px-6 py-3 text-sm font-semibold text-navy transition hover:bg-navy hover:text-white"
+              >
+                Read the FAQs &amp; Policies
+              </Link>
+            </div>
           </div>
         </div>
       </section>

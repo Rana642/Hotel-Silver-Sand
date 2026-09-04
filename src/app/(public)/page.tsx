@@ -11,8 +11,11 @@ import RoomCard from "@/components/RoomCard";
 import AmenityCard from "@/components/AmenityCard";
 import ReviewsCarousel from "@/components/ReviewsCarousel";
 import JsonLd from "@/components/JsonLd";
-import { rooms } from "@/data/rooms";
+import FaqAccordion from "@/components/FaqAccordion";
+import { rooms as fallbackRooms, type Room } from "@/data/rooms";
 import { amenities } from "@/data/amenities";
+import { faqs } from "@/data/hotel-facts";
+import { getRoomsStatic, featuredImage } from "@/lib/rooms";
 import { site, tel, mapEmbedUrl } from "@/data/site";
 import type { Metadata } from "next";
 
@@ -23,7 +26,27 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const featured = rooms.slice(0, 4);
+  // Rates and names come from the database so a change in the admin dashboard
+  // reaches the homepage; the static list is only a fallback.
+  const dbRooms = await getRoomsStatic();
+  const featured: Room[] =
+    dbRooms.length > 0
+      ? dbRooms.slice(0, 4).map((r) => ({
+          slug: r.slug,
+          name: r.name,
+          capacity: r.capacity ?? `${r.max_adults} Adults`,
+          maxAdults: r.max_adults,
+          maxChildren: r.max_children,
+          price: Number(r.price_per_night),
+          originalPrice: r.original_price ? Number(r.original_price) : undefined,
+          available: r.is_active,
+          image: featuredImage(r),
+          features:
+            r.amenities?.length
+              ? r.amenities
+              : (fallbackRooms.find((f) => f.slug === r.slug)?.features ?? []),
+        }))
+      : fallbackRooms.slice(0, 4);
   const heroImages = await getHeroImagesStatic();
 
   return (
@@ -50,9 +73,14 @@ export default async function HomePage() {
             Hotel Silver Sand Multan
           </h1>
           <p className="subtitle-serif mt-3 text-xl sm:text-2xl">40 Years of Trusted Comfort</p>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate sm:text-base">
-            500 m walk from Multan Cantt Railway Station • 2.4 km from Multan International Airport •
-            Free parking &amp; free WiFi • Check in any hour, day or night
+          <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-slate">
+            An affordable, air-conditioned hotel in Multan Cantt — a 500 m walk from Multan Cantt
+            Railway Station. Book a hotel room in Multan direct, pay at the hotel, and cancel free if
+            your plans change.
+          </p>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate">
+            2.4 km from Multan International Airport • Free private parking &amp; free WiFi •
+            Breakfast included • Check in any hour, day or night
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <ButtonLink href="/rooms" variant="gold">
@@ -198,6 +226,21 @@ export default async function HomePage() {
             >
               Get Directions
             </TrackedLink>
+          </div>
+        </div>
+      </section>
+
+      {/* Before You Book — the questions that actually stop a booking */}
+      <section className="bg-cream">
+        <div className="container-site max-w-4xl py-16 sm:py-20">
+          <SectionHeading title="Before You Book" subtitle="The things guests ask us most" />
+          <div className="mt-8">
+            <FaqAccordion items={faqs.slice(0, 5)} openFirst={false} />
+          </div>
+          <div className="mt-8 text-center">
+            <ButtonLink href="/faq" variant="outline">
+              All FAQs &amp; Hotel Policies <ArrowRight className="size-4" />
+            </ButtonLink>
           </div>
         </div>
       </section>

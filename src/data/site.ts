@@ -76,5 +76,6 @@ export const nav = [
   { label: "Discover Multan", href: "/discover-multan" },
   { label: "Gallery", href: "/gallery" },
   { label: "About Us", href: "/about" },
+  { label: "FAQs", href: "/faq" },
   { label: "Contact Us", href: "/contact" },
 ] as const;

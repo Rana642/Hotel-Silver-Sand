@@ -6,12 +6,13 @@ import { ButtonLink } from "@/components/Button";
 import TrackedLink from "@/components/TrackedLink";
 import MapDirections from "@/components/MapDirections";
 import { site, tel, waLink, mapEmbedUrl } from "@/data/site";
+import { distances, housePolicies } from "@/data/hotel-facts";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = pageMeta({
-  title: "Contact Hotel Silver Sand Multan",
+  title: "Contact Hotel Silver Sand — Hotel in Multan Cantt",
   description:
-    "Get in touch with Hotel Silver Sand Multan in Multan Cantt. Call, WhatsApp or email us for reservations and enquiries. Front desk open 24/7.",
+    "Call or WhatsApp Hotel Silver Sand Multan to book a room. We are at 514 Akbar Road, Multan Cantt — a 500 m walk from Multan Cantt Railway Station and 2.4 km from the airport. Front desk open 24 hours, every day.",
   path: "/contact",
   absoluteTitle: true,
 });
@@ -129,10 +130,19 @@ export default function ContactPage() {
             <div className="rounded-xl border border-gray-100 bg-cream p-6 shadow-card">
               <h3 className="font-heading text-lg font-bold text-navy">Get Directions</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate">
-                Hotel Silver Sand is in the heart of Multan Cantt — 8 minutes from Multan International
-                Airport and close to the Railway Station, Aziz Hotel Chowk and the city&apos;s major
-                landmarks.
+                We are on Akbar Road in Multan Cantt, near Aziz Hotel Chowk. Coming off a train?
+                Walk out of Multan Cantt Railway Station and you are here in about six minutes —
+                it is 500 m. From Multan International Airport it is 2.4 km, roughly eight minutes
+                by car, and the city centre is about ten minutes away.
               </p>
+              <ul className="mt-3 space-y-1.5 border-t border-gray-200 pt-3 text-sm text-slate">
+                {distances.slice(0, 3).map((d) => (
+                  <li key={d.place} className="flex justify-between gap-3">
+                    <span>{d.place}</span>
+                    <span className="shrink-0 font-semibold text-navy">{d.distance}</span>
+                  </li>
+                ))}
+              </ul>
               <div className="mt-4">
                 <MapDirections />
               </div>
@@ -148,6 +158,26 @@ export default function ContactPage() {
                 </TrackedLink>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Good to know — the four policies people phone the front desk to ask about */}
+      <section className="bg-cream">
+        <div className="container-site py-14 sm:py-16">
+          <SectionHeading title="Good to Know" subtitle="Before you call, this may already answer it" />
+          <div className="mx-auto mt-8 grid max-w-4xl gap-px overflow-hidden border border-gray-200 bg-gray-200 sm:grid-cols-2 lg:grid-cols-4">
+            {housePolicies.slice(0, 4).map((p) => (
+              <div key={p.label} className="bg-white p-5 text-center">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate">{p.label}</p>
+                <p className="mt-1 font-heading text-lg font-bold text-navy">{p.value}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <ButtonLink href="/faq" variant="outline">
+              All FAQs &amp; Hotel Policies
+            </ButtonLink>
           </div>
         </div>
       </section>
