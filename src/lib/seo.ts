@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { site } from "@/data/site";
+import { googleRating } from "@/data/hotel-facts";
 
 export function pageMeta({
   title,
@@ -38,12 +39,14 @@ export function pageMeta({
 /**
  * Structured data for the property.
  *
+ * `aggregateRating` carries the property's real Google Business Profile score
+ * (see `googleRating` in @/data/hotel-facts), which the homepage also displays and
+ * links to Google so a visitor can verify it. The previous 4.8 from 120 reviews was
+ * fabricated and has been removed.
+ *
  * Deliberately omitted:
- * - `aggregateRating` — the only verifiable public score is Booking.com's 6.2/10 from
- *   19 reviews. Review markup must reflect reviews collected by this site, so asserting
- *   any rating here would be fabricated. Omitted until a real on-site review source exists.
- * - `starRating` — Booking.com classifies the property as 2-star. Rather than assert a
- *   different number, the field is left out.
+ * - `starRating` — Booking.com and Google both classify the property as 2-star. The
+ *   site does not assert a different number, so the field is left out.
  * - `priceRange` — rates are set by the owner in the admin dashboard and change, so a
  *   hard-coded range would go stale and misstate the price.
  */
@@ -104,6 +107,13 @@ export const hotelSchema = {
     telephone: site.phoneIntl,
     contactType: "reservations",
     availableLanguage: ["en", "ur"],
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: String(googleRating.value),
+    reviewCount: String(googleRating.count),
+    bestRating: String(googleRating.scale),
+    worstRating: "1",
   },
 };
 

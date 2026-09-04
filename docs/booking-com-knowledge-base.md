@@ -20,7 +20,52 @@ conflict is flagged — those need the owner's decision, not a silent overwrite.
 | Photos on listing | 190+ |
 | Payment accepted | **Cash** |
 
-### Review sub-scores (real)
+### Google Business Profile (read 2026-09-04 — the headline figure)
+
+| Field | Value |
+|---|---|
+| **Google rating** | **3.8 / 5** |
+| **Google review count** | **837** |
+| Classification | 2-star hotel |
+| Listed check-in / check-out | 11:00 AM / 12:00 PM ⚠️ |
+| Rate shown via OTAs | Rs 3,780 (Booking.com and Agoda, Sep 6–7) |
+
+**Google is the number to use, not Booking.com's.** 3.8 from 837 reviews is a 44x
+larger sample than Booking.com's 6.2 from 19. The site displays 3.8/837, links it to
+Google, and marks it up in `aggregateRating`.
+
+#### Nearby competitors on Google (same search)
+
+| Hotel | Rating | Reviews | Rate shown |
+|---|---|---|---|
+| Hotels in Multan | 4.1 | 661 | — |
+| City Centre Suites | 4.0 | 328 | — |
+| The First Hotel Multan | 3.9 | 890 | — |
+| Hotel Grace inn Multan | 3.9 | 916 | — |
+| **Hotel Silver Sand Multan** | **3.8** | **837** | **Rs 3,780** |
+| Hotel Elegant Executive Suites | 4.6 | 573 | Rs 8,346 |
+| MULTAN SWISS HOTEL | 4.7 | 751 | Rs 10,788 |
+| Hotel One Lalazar Multan | 4.3 | 2.5K | Rs 10,174 |
+| Belmorris Hotels & Resorts | 4.2 | 1.7K | Rs 19,836 |
+| Avari Boutique Multan | 4.7 | 2K | Rs 22,986 |
+| Ramada by Wyndham Multan | 4.4 | 8K | Rs 26,046 |
+
+The read: within its own bracket Silver Sand is competitive (3.8 vs 3.9–4.1) and has
+the review volume to prove it. Against the 4.2–4.7 hotels it cannot win on score — but
+it is **2.7x cheaper than the nearest of them and 7x cheaper than Ramada**. Price plus
+proximity to the station is the position; score is not.
+
+#### ⚠️ Two errors on the Google Business Profile the owner should fix
+
+1. **"Pool" is listed under Hotel details.** Confirmed by the owner (2026-09-04):
+   there is no swimming pool. Google auto-adds amenities; this one is wrong and will
+   produce arriving guests who expected a pool. Remove it in the GBP dashboard.
+2. **Check-in 11:00 AM / check-out 12:00 PM.** The real policy, per Booking.com and
+   confirmed by the owner, is **check-in available 24 hours, check-out 12:00–13:00**.
+   The 24-hour check-in is a genuine selling point for guests on night trains — the GBP
+   listing is currently hiding it.
+
+### Booking.com review sub-scores (real)
 | Category | Score |
 |---|---|
 | Free WiFi | **10** |

@@ -7,6 +7,23 @@
  * Nothing in this file is invented — if a fact is not verified, it does not go in.
  */
 
+/**
+ * The property's live Google Business Profile score, read from the GBP panel on
+ * 2026-09-04. This is the rating the site is allowed to show and mark up: it is
+ * public, attributed to Google, and displayed on the page next to the claim.
+ *
+ * For context on why this and not Booking.com's number: Booking.com shows 6.2
+ * from 19 reviews, Google 3.8 from 837. The Google sample is 44x larger, so it
+ * is the honest headline figure.
+ */
+export const googleRating = {
+  value: 3.8,
+  count: 837,
+  scale: 5,
+  /** Where a visitor can verify it for themselves. */
+  source: "Google",
+};
+
 export type Policy = { label: string; value: string; note?: string };
 
 /** House rules exactly as the property publishes them on Booking.com. */

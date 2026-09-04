@@ -11,6 +11,7 @@ import AmenityCard from "@/components/AmenityCard";
 import ReviewsCarousel from "@/components/ReviewsCarousel";
 import JsonLd from "@/components/JsonLd";
 import FaqAccordion from "@/components/FaqAccordion";
+import GoogleRating from "@/components/GoogleRating";
 import { rooms as fallbackRooms, type Room } from "@/data/rooms";
 import { amenities } from "@/data/amenities";
 import { faqs } from "@/data/hotel-facts";
@@ -74,9 +75,19 @@ export default async function HomePage() {
             <span className="font-semibold text-navy sm:text-white">500 m walk</span> from Multan
             Cantt Railway Station. Book direct, pay at the hotel, cancel free.
           </p>
+          {/* The strongest proof we have gets its own line, above the chips. */}
+          <div className="mt-3 sm:mt-4">
+            <span className="hidden sm:inline-block">
+              <GoogleRating variant="light" />
+            </span>
+            <span className="sm:hidden">
+              <GoogleRating variant="dark" size="sm" />
+            </span>
+          </div>
+
           {/* Chips rather than plain text: over a photo, loose white type loses its
               contrast exactly where the scrim fades out. */}
-          <ul className="mx-auto mt-3 flex max-w-3xl flex-wrap items-center justify-center gap-x-2 gap-y-1.5 text-xs font-medium text-slate sm:mt-5 sm:gap-2 sm:text-sm sm:text-white">
+          <ul className="mx-auto mt-3 flex max-w-3xl flex-wrap items-center justify-center gap-x-2 gap-y-1.5 text-xs font-medium text-slate sm:mt-4 sm:gap-2 sm:text-sm sm:text-white">
             {[
               "Free cancellation — pay at the hotel",
               "WiFi rated 10/10 on Booking.com",
@@ -177,8 +188,14 @@ export default async function HomePage() {
       {/* Guest Reviews */}
       <section className="bg-cream">
         <div className="container-site py-16 sm:py-20">
-          <SectionHeading title="Guest Reviews" subtitle="What our guests say about us" />
-          <div className="mt-10">
+          <SectionHeading
+            title="Guest Reviews"
+            subtitle="837 people have stayed and said so publicly"
+          />
+          <div className="mt-5 text-center">
+            <GoogleRating variant="dark" />
+          </div>
+          <div className="mt-8">
             <ReviewsCarousel />
           </div>
         </div>

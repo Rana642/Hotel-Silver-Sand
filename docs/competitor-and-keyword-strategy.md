@@ -25,16 +25,24 @@ Data pulled from Booking.com's Multan search results (sorted by review score) on
 
 ### The honest read
 
-Silver Sand is currently the **lowest-scored property with the fewest reviews**
-among visible Multan competitors. Every serious competitor sits at 8.2–9.1.
+> **⚠️ Superseded in part on 2026-09-04.** The table above is Booking.com only, where
+> Silver Sand has just 19 reviews. The Google Business Profile — checked directly —
+> shows **3.8 from 837 reviews**, a 44x larger sample, and puts the property level with
+> its actual neighbours (The First Hotel 3.9/890, Hotel Grace inn 3.9/916, City Centre
+> Suites 4.0/328). See the GBP section of the knowledge base for the full comparison.
+> **Google's 3.8/837 is the figure the site publishes.**
+
+Against the premium hotels (Ramada 4.4, Avari 4.7, Hotel One 4.3) Silver Sand cannot
+compete on score — but it is **2.7x to 7x cheaper**, and none of them is 500 m from the
+Cantt station.
 
 **What this means strategically:**
 
 - ❌ Do **not** compete on "best hotel in Multan", "luxury", or "top rated" —
   those claims are contradicted by public data and will lose the click on comparison.
-- ❌ Do **not** publish the 6.2 score on the site. It's not a lie to omit it, but
-  featuring it would actively harm conversion.
-- ✅ **Compete on location + value + service.** Those are defensible with real data.
+- ❌ Do **not** publish Booking.com's 6.2 — it is real but drawn from 19 reviews and
+  understates the property. Google's 3.8 from 837 is both better and better-evidenced.
+- ✅ **Compete on price + location + service.** All three are defensible with real data.
 
 ### Genuine, defensible advantages
 
