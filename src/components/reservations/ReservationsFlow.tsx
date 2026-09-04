@@ -36,6 +36,7 @@ export type RoomVM = {
   unitsLeft: number;
   dealName: string | null; // active deal name for the selected check-in, if any
   dealPct: number; // deal discount % (0 if none)
+  dealDays: number[]; // 0=Sun..6=Sat; empty = every day
   refundable: boolean; // from the active deal
   freeCancelDays: number;
 };
@@ -43,6 +44,7 @@ export type RoomVM = {
 type Search = { checkIn: string; checkOut: string; adults: number; children: number; rooms: number; promo: string };
 
 const FALLBACK_IMG = "/images/gallery/851976912.jpg";
+const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 /** Inclusions shown on the rate plan (real, pay-at-hotel model). */
 const INCLUSIONS = [
@@ -258,9 +260,14 @@ function RoomRow({
             {tooSmall && <p className="mb-2 text-xs text-amber-700">This room fits up to {room.maxAdults + room.maxChildren} guest(s). Add more rooms for your group.</p>}
             <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
-                <p className="font-semibold text-navy">
+                <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-semibold text-navy">
                   {dealName}
-                  {room.dealPct > 0 && <span className="ml-2 inline-flex items-center gap-1 text-sm font-semibold text-red-600"><Tag className="size-3.5" /> {room.dealPct}% Off On Room Price</span>}
+                  {room.dealPct > 0 && <span className="inline-flex items-center gap-1 text-sm font-semibold text-red-600"><Tag className="size-3.5" /> {room.dealPct}% Off On Room Price</span>}
+                  {room.dealDays.length > 0 && room.dealDays.length < 7 && (
+                    <span className="inline-flex items-center gap-1 bg-gold px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-navy-dark">
+                      {room.dealDays.slice().sort().map((d) => DAY_NAMES[d]).join(" · ")} only
+                    </span>
+                  )}
                 </p>
                 <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
                   {INCLUSIONS.map(({ icon: Icon, label }) => (

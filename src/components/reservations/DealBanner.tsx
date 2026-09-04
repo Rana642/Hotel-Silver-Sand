@@ -1,14 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Flame, Clock, CalendarDays, Tag } from "lucide-react";
+import { Flame, Clock, Tag } from "lucide-react";
 import type { BannerDeal } from "@/lib/deals";
 
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-function fmtDate(ymd: string) {
-  return new Date(ymd + "T00:00:00").toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
-}
 function toSec(hhmm: string) {
   const [h, m] = hhmm.split(":").map(Number);
   return h * 3600 + m * 60;
@@ -39,6 +36,9 @@ export default function DealBanner({ deal }: { deal: BannerDeal }) {
     return () => clearInterval(t);
   }, [hasWindow]);
 
+  // The banner exists for the countdown — without active hours there's nothing to count down.
+  if (!hasWindow) return null;
+
   // Timer state
   let timer: { active: boolean; label: string; value: string } | null = null;
   if (hasWindow && now !== null) {
@@ -66,18 +66,8 @@ export default function DealBanner({ deal }: { deal: BannerDeal }) {
             <span className="rounded bg-gold px-2 py-0.5 text-sm font-bold text-navy-dark">Save {deal.discountPct}%</span>
           </p>
           <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/85">
-            {(deal.startDate || deal.endDate) && (
-              <span className="flex items-center gap-1.5">
-                <CalendarDays className="size-4 text-gold" />
-                {deal.startDate && deal.endDate
-                  ? `Check-in ${fmtDate(deal.startDate)} – ${fmtDate(deal.endDate)}`
-                  : deal.startDate
-                    ? `From ${fmtDate(deal.startDate)}`
-                    : `Until ${fmtDate(deal.endDate!)}`}
-              </span>
-            )}
             {days && <span className="flex items-center gap-1.5"><Tag className="size-4 text-gold" /> {days} only</span>}
-            {hasWindow && <span className="flex items-center gap-1.5"><Clock className="size-4 text-gold" /> {deal.startTime}–{deal.endTime} (PKT)</span>}
+            <span className="flex items-center gap-1.5"><Clock className="size-4 text-gold" /> {deal.startTime}–{deal.endTime} (PKT)</span>
           </div>
         </div>
 

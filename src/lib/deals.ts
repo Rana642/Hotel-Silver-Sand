@@ -27,6 +27,7 @@ export type AppliedDeal = {
   discountPct: number;
   refundable: boolean;
   freeCancelDays: number;
+  weekdays: number[]; // 0=Sun..6=Sat; empty = every day
 };
 
 /**
@@ -114,6 +115,7 @@ export function pickDeal(deals: RateDeal[], roomId: string, checkIn: string, tod
     discountPct: Number(d.discount_percent) || 0,
     refundable: d.refundable,
     freeCancelDays: d.free_cancel_days,
+    weekdays: d.weekdays,
   };
 }
 

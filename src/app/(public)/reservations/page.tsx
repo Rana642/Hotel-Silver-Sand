@@ -73,6 +73,7 @@ export default async function ReservationsPage({
       unitsLeft: avail[r.id] ?? 0,
       dealName: deal?.name ?? null,
       dealPct: deal?.discountPct ?? 0,
+      dealDays: deal?.weekdays ?? [],
       refundable: deal?.refundable ?? false,
       freeCancelDays: deal?.freeCancelDays ?? 0,
     };
