@@ -174,5 +174,7 @@ Returned **null / no data** by Keyword Planner for Multan:
    Answer honestly — including the "no" answers (no pool, no spa, no restaurant).
 4. **Publish house rules**: check-out 12:00–13:00, extra bed PKR 1,000/child/night,
    children 3+ charged as adults, no pets, no parties, cash accepted.
-5. **Reconcile room names** with Booking.com before optimising room pages
-   (see knowledge base — two of four names differ).
+5. ~~Reconcile room names with Booking.com~~ — **done 2026-09-04.** Names, rates, sizes,
+   beds and occupancy now mirror Booking.com exactly (Deluxe King 3,000 · Deluxe Double,
+   Deluxe Triple, Budget Twin 6,250). Room pages can now be optimised without the two
+   channels contradicting each other.

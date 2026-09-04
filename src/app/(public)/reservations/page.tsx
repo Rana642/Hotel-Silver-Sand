@@ -15,11 +15,12 @@ export const metadata: Metadata = pageMeta({
   absoluteTitle: true,
 });
 
+// Bed types exactly as listed on Booking.com.
 const BED: Record<string, string> = {
-  "deluxe-king-room": "King Bed",
-  "deluxe-triple-room": "3 Single Beds",
-  "executive-twin-room": "Twin Beds",
-  "executive-family-room": "Double + Twin Beds",
+  "deluxe-king-room": "1 Extra-Large Double Bed",
+  "deluxe-double-room": "1 Large Double Bed",
+  "deluxe-triple-room": "1 Single + 1 Double Bed",
+  "budget-twin-room": "2 Single Beds",
 };
 
 function nightsBetween(a: string, b: string) {

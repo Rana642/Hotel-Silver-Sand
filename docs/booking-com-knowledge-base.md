@@ -89,18 +89,29 @@ Concierge service · Special diet menus · Walking tours
 
 ## Room types on Booking.com
 
-| Room | Beds |
-|---|---|
-| Deluxe King Room | 1 extra-large double bed |
-| Deluxe Triple Room | 1 single bed + 1 double bed |
-| **Deluxe Double Room** | 1 large double bed |
-| **Budget Twin Room** | 2 single beds |
+Rates scraped with live dates (check-in 2026-09-15, 1 night, 2 adults).
 
-> ⚠️ **CONFLICT — needs owner decision.** The website lists *Deluxe King, Deluxe Triple,
-> Executive Twin, Executive Family*. Booking.com lists *Deluxe King, Deluxe Triple,
-> **Deluxe Double**, **Budget Twin***. Two of four room names do not match.
-> Same inventory named differently, or genuinely different rooms? Must be reconciled —
-> mismatched room names hurt trust and confuse guests comparing channels.
+| Room | Rate / night | Taxes & charges | Size | Beds | Sleeps |
+|---|---|---|---|---|---|
+| Deluxe King Room | **PKR 3,000** | + PKR 780 | 15 m² (161 sq ft) | 1 extra-large double bed | 2 |
+| Deluxe Double Room | PKR 6,250 | + PKR 1,625 | — (high floor) | 1 large double bed | 2 |
+| Deluxe Triple Room | PKR 6,250 | + PKR 1,625 | 17 m² (183 sq ft) | 1 single + 1 double bed | 3 |
+| Budget Twin Room | PKR 6,250 | + PKR 1,625 | — | 2 single beds | 2 |
+
+Policy on every room: *Free cancellation · No prepayment needed — pay at the property.*
+No struck-through "was" price is shown, so the site can no longer claim a "Save X%" discount
+off a list rate.
+
+> ✅ **RESOLVED (2026-09-04).** Booking.com is now the single source of truth. The database
+> and `src/data/rooms.ts` were synced by `scripts/sync-rooms-from-booking.mjs`:
+> *Executive Twin Room* → **Deluxe Double Room**, *Executive Family Room* → **Budget Twin Room**,
+> slugs renamed to match, rates set to 3,000 / 6,250, and all `original_price` cleared.
+
+> ⚠️ **OPEN — needs owner decision.** Booking.com adds **26 % "taxes and charges"**
+> (PKR 780 on 3,000; PKR 1,625 on 6,250). The website charges **16 % GST**. That 10-point
+> gap is probably Booking.com's own commission/service fee folded into the displayed total,
+> which would *not* apply to a direct booking — but it is a financial figure, so it has not
+> been changed. Confirm with the owner before touching `gst_percent`.
 
 ---
 

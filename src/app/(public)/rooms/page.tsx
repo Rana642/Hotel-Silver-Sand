@@ -11,9 +11,9 @@ import { pkr } from "@/lib/format";
 export const revalidate = 60;
 
 export const metadata = pageMeta({
-  title: "Rooms & Suites in Multan",
+  title: "Hotel Rooms in Multan — Rates & Availability",
   description:
-    "Comfortable, affordable rooms at Hotel Silver Sand Multan Cantt — Deluxe King, Triple, Executive Twin & Family rooms. AC, WiFi, private bathroom. Book direct.",
+    "Book a hotel room in Multan from PKR 3,000 a night. Deluxe King, Deluxe Double, Deluxe Triple and Budget Twin rooms at Hotel Silver Sand Multan Cantt — air conditioning, free WiFi, private attached bathroom and free parking. Pay at the hotel.",
   path: "/rooms",
 });
 
