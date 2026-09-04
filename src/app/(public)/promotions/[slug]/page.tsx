@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PromotionDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const promo = await getPromotionBySlug(slug);
+  const [promo, all] = await Promise.all([getPromotionBySlug(slug), getPromotionsStatic()]);
   if (!promo || !promo.is_active) notFound();
 
   const paras = (promo.description ?? "").split(/\n\s*\n/).filter(Boolean);
@@ -41,7 +41,30 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
           <ArrowLeft className="size-4" /> All Promotions
         </Link>
 
-        <h1 className="mt-5 text-center font-heading text-3xl font-bold text-navy sm:text-4xl">{promo.title}</h1>
+        {/* Switch between offers without going back to the listing */}
+        {all.length > 1 && (
+          <div className="mt-5 overflow-x-auto border-b border-gray-200">
+            <div className="flex min-w-max justify-center gap-1 sm:gap-2">
+              {all.map((p) => {
+                const active = p.slug === promo.slug;
+                return (
+                  <Link
+                    key={p.id}
+                    href={`/promotions/${p.slug}`}
+                    aria-current={active ? "page" : undefined}
+                    className={`-mb-px whitespace-nowrap border-b-2 px-4 py-3 text-sm font-semibold transition ${
+                      active ? "border-gold text-navy" : "border-transparent text-slate hover:border-gold/40 hover:text-navy"
+                    }`}
+                  >
+                    {p.title}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <h1 className="mt-6 text-center font-heading text-3xl font-bold text-navy sm:text-4xl">{promo.title}</h1>
         {promo.badge && (
           <p className="mt-2 text-center">
             <span className="inline-flex items-center gap-1 bg-gold px-3 py-1 text-sm font-bold text-navy-dark">
