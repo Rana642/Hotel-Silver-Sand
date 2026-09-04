@@ -15,11 +15,18 @@ export type Promotion = {
   start_date: string | null;
   end_date: string | null;
   lead_time_type: "none" | "early_bird" | "last_minute" | null;
+  lead_time_days: number | null;
   min_nights: number | null;
+  discount_percent: number | null;
+  weekdays: number[] | null;
+  start_time: string | null;
+  end_time: string | null;
+  refundable: boolean | null;
+  free_cancel_days: number | null;
 };
 
 const SELECT =
-  "id, slug, title, short_desc, description, image, badge, benefits, coupon_code, is_active, sort_order, start_date, end_date, lead_time_type, min_nights";
+  "id, slug, title, short_desc, description, image, badge, benefits, coupon_code, is_active, sort_order, start_date, end_date, lead_time_type, lead_time_days, min_nights, discount_percent, weekdays, start_time, end_time, refundable, free_cancel_days";
 
 export async function getPromotionsStatic(): Promise<Promotion[]> {
   const supabase = createServiceClient();

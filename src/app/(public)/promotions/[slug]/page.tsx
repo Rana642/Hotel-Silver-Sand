@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Check, ArrowLeft, TicketPercent } from "lucide-react";
+import { Check, ArrowLeft, TicketPercent, CalendarDays, Clock, Moon, ShieldCheck, BadgePercent } from "lucide-react";
 import PromoBookButton from "@/components/PromoBookButton";
 import { getPromotionsStatic, getPromotionBySlug } from "@/lib/promotions";
 import { pageMeta } from "@/lib/seo";
@@ -33,6 +33,41 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
 
   const paras = (promo.description ?? "").split(/\n\s*\n/).filter(Boolean);
   const benefits = promo.benefits ?? [];
+
+  // Reflect the deal settings configured in the dashboard.
+  const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const fmtTime = (t: string) => {
+    const [h, m] = t.split(":").map(Number);
+    const ampm = h >= 12 ? "PM" : "AM";
+    const hh = h % 12 === 0 ? 12 : h % 12;
+    return `${hh}:${String(m).padStart(2, "0")} ${ampm}`;
+  };
+  const discount = Number(promo.discount_percent) || 0;
+  const days = (promo.weekdays ?? []).slice().sort();
+  const facts: { icon: typeof Clock; text: string }[] = [];
+  if (days.length > 0 && days.length < 7) {
+    facts.push({ icon: CalendarDays, text: `Valid on ${days.map((d) => DAY_NAMES[d]).join(", ")} check-ins` });
+  }
+  if (promo.start_time && promo.end_time) {
+    facts.push({ icon: Clock, text: `Bookings between ${fmtTime(promo.start_time)} – ${fmtTime(promo.end_time)} (PKT)` });
+  }
+  if ((promo.min_nights ?? 0) > 0) {
+    facts.push({ icon: Moon, text: `Minimum stay ${promo.min_nights} nights` });
+  }
+  if (promo.lead_time_type === "early_bird") {
+    facts.push({ icon: CalendarDays, text: `Book at least ${promo.lead_time_days ?? 0} days before check-in` });
+  }
+  if (promo.lead_time_type === "last_minute") {
+    facts.push({ icon: CalendarDays, text: `Book within ${promo.lead_time_days ?? 0} day(s) of check-in` });
+  }
+  if (discount > 0) {
+    facts.push({
+      icon: ShieldCheck,
+      text: promo.refundable
+        ? `Free cancellation up to ${promo.free_cancel_days ?? 0} day(s) before check-in`
+        : "Non-refundable rate",
+    });
+  }
 
   return (
     <section className="bg-cream">
@@ -91,6 +126,27 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
                   </li>
                 ))}
               </ul>
+            )}
+
+            {discount > 0 && (
+              <div className="mt-6 border border-gold/40 bg-white p-5 shadow-card">
+                <div className="flex items-center gap-3">
+                  <span className="flex items-center gap-1.5 bg-gold px-3 py-1.5 font-heading text-xl font-bold text-navy-dark">
+                    <BadgePercent className="size-5" /> {discount}% OFF
+                  </span>
+                  <span className="text-sm font-semibold text-navy">on room price — applied automatically</span>
+                </div>
+                {facts.length > 0 && (
+                  <ul className="mt-4 space-y-2">
+                    {facts.map(({ icon: Icon, text }) => (
+                      <li key={text} className="flex items-start gap-2 text-sm text-slate">
+                        <Icon className="mt-0.5 size-4 shrink-0 text-gold" /> {text}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <p className="mt-3 text-xs text-slate">No advance payment — pay at the hotel.</p>
+              </div>
             )}
 
             <div className="mt-7">
