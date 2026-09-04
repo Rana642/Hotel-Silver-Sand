@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Save, Trash2, Plus, Upload } from "lucide-react";
+import { Save, Trash2, Plus, Upload, RotateCcw } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { upsertPromotion, deletePromotion, type PromotionInput } from "@/app/actions/promotion";
 
@@ -37,6 +37,9 @@ export type Promotion = {
 export type RoomOpt = { id: string; name: string };
 
 const field = "w-full rounded-none border border-gray-300 px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
+// Same look but auto-width, so date/time inputs can sit inline instead of stretching.
+const fieldInline = "rounded-none border border-gray-300 px-2.5 py-1.5 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
+const resetBtn = "inline-flex items-center gap-1 rounded-none border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-slate transition hover:border-gold hover:text-navy";
 const lbl = "mb-1 block text-xs font-semibold text-navy";
 const linesToArr = (s: string) => s.split("\n").map((x) => x.trim()).filter(Boolean);
 
@@ -178,9 +181,19 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
               </label>
             </div>
             {f.trigger === "range" && (
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <label className="block"><span className={lbl}>Check-in from</span><input type="date" value={f.start_date} onChange={(e) => set("start_date", e.target.value)} className={field} /></label>
-                <label className="block"><span className={lbl}>Check-in to</span><input type="date" min={f.start_date} value={f.end_date} onChange={(e) => set("end_date", e.target.value)} className={field} /></label>
+              <div className="mt-3">
+                <span className={lbl}>Check-in date range</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <input type="date" value={f.start_date} onChange={(e) => set("start_date", e.target.value)} className={fieldInline} />
+                  <span className="text-sm text-slate">to</span>
+                  <input type="date" min={f.start_date} value={f.end_date} onChange={(e) => set("end_date", e.target.value)} className={fieldInline} />
+                  {(f.start_date || f.end_date) && (
+                    <button type="button" onClick={() => { set("start_date", ""); set("end_date", ""); }} className={resetBtn} title="Clear dates">
+                      <RotateCcw className="size-3.5" /> Reset
+                    </button>
+                  )}
+                </div>
+                <p className="mt-1 text-xs text-slate">Leave blank = any check-in date.</p>
               </div>
             )}
             {(f.trigger === "early_bird" || f.trigger === "last_minute") && (
@@ -208,13 +221,20 @@ function Row({ initial, isAdmin, rooms }: { initial: Promotion | null; isAdmin: 
             )}
             {(f.trigger === "range" || f.trigger === "last_minute") && (
               <div className="mt-3">
-                <span className={lbl}>Active hours (optional — leave blank = all day)</span>
+                <span className={lbl}>Active hours</span>
                 <div className="flex flex-wrap items-center gap-2">
-                  <input type="time" value={f.start_time} onChange={(e) => set("start_time", e.target.value)} className={field + " w-36"} />
+                  <input type="time" value={f.start_time} onChange={(e) => set("start_time", e.target.value)} className={fieldInline} />
                   <span className="text-sm text-slate">to</span>
-                  <input type="time" value={f.end_time} onChange={(e) => set("end_time", e.target.value)} className={field + " w-36"} />
+                  <input type="time" value={f.end_time} onChange={(e) => set("end_time", e.target.value)} className={fieldInline} />
+                  {(f.start_time || f.end_time) ? (
+                    <button type="button" onClick={() => { set("start_time", ""); set("end_time", ""); }} className={resetBtn} title="Reset to all day">
+                      <RotateCcw className="size-3.5" /> Reset
+                    </button>
+                  ) : (
+                    <span className="text-xs font-semibold text-green-600">All day</span>
+                  )}
                 </div>
-                <p className="mt-1 text-xs text-slate">Deal is available only during these hours (Pakistan time). Overnight windows like 22:00 → 02:00 supported.</p>
+                <p className="mt-1 text-xs text-slate">Pakistan time. Blank = all day. Overnight windows like 22:00 → 02:00 supported.</p>
               </div>
             )}
             <div className="mt-3">
