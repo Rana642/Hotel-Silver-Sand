@@ -59,70 +59,104 @@ Weakest sub-score is **Facilities (6.8)** — so avoid facility-heavy promises
 
 ---
 
-## 2. Keyword data caveat (read this)
+## 2. REAL keyword volumes (Google Keyword Planner, Multan geo, Sep 2026)
 
-**Google Keyword Planner was NOT available for this research.** The google-ads MCP
-connection dropped, and before that `keyword_ideas` was blocked for this token
-("explorer access" — KeywordPlanIdeaService requires Basic API access).
+Source: Google Ads `KeywordPlanIdeaService`, geo `1011083` (Multan), English.
+These are actual average monthly searches — not estimates.
 
-So the keyword list below has **no Google volume numbers**. It is derived from:
-1. Real questions guests ask on the Booking.com listing (genuine demand signals)
-2. Real geography/facilities confirmed on Booking.com
-3. Competitor naming patterns in Multan search results
-4. The site's existing SEO metadata
+### Commercial / non-brand terms
 
-To get true volumes later: request **Basic access** for the Google Ads API, then
-re-run `keyword_ideas`. Once the new Search campaign runs, its **search-terms report**
-will give real queries — that is the best source and it's free.
+| Keyword | Avg monthly searches | Competition |
+|---|---|---|
+| **hotel in multan** | **320** | MEDIUM (56) |
+| hotels in multan pakistan | 260 | MEDIUM (58) |
+| **hotel room in multan** | 260 | MEDIUM (58) |
+| hotels of multan | 260 | MEDIUM (58) |
+| **guest house in multan** | 90 | MEDIUM (44) |
+| guest house in multan city | 90 | MEDIUM (44) |
+| multan lodges | 50 | LOW (1) |
+| best hotel in multan pakistan | 40 | **HIGH (87)** |
+| best hotel multan | 40 | **HIGH (87)** |
+| good hotels in multan | 40 | **HIGH (87)** |
+| best hotel in multan | 30 | HIGH (74) |
+| multan hotels low price | 20 | HIGH (67) |
+| multan hotel booking | 20 | HIGH (81) |
+| multan hotel room | 20 | HIGH (97) |
+| multan cantt hotel | 10 | LOW (0) |
+| rooms in multan | 10 | MEDIUM (34) |
+| hotel room rent in multan | 10 | HIGH (71) |
+
+### Brand terms
+
+| Keyword | Avg monthly searches | Competition |
+|---|---|---|
+| **hotel silver sand multan** | **140** | **LOW (4)** |
+
+### Competitor brand demand (why brand SEO matters here)
+
+| Competitor keyword | Searches |
+|---|---|
+| ramada by wyndham multan | **880** |
+| ramada multan / hotel ramada multan / ramada multan pakistan | 390 each |
+| the grand hotel multan | 390 |
+| hotel one multan tariq road | 320 |
+| hotel de shalimar multan | 210 |
+| bling hotel international multan | 210 |
+| ramada hotel multan | 210 |
+| avari xpress hotel multan | 170 |
+| s chalet multan | 140 |
+| sindbad hotel multan / hotel one lalazar multan | 110 each |
+| pc hotel multan / pearl continental hotel multan | 90 each |
+
+### ⚠️ Terms with effectively ZERO volume (do NOT build SEO around these)
+
+Returned **null / no data** by Keyword Planner for Multan:
+
+- hotel near multan cantt
+- hotel near railway station multan
+- cheap hotel multan
+- hotel with parking multan
+- hotel near multan cantt railway station *(seed produced no idea with volume)*
+- hotel near multan airport *(same)*
+- budget hotel in multan *(same)*
+- family hotel in multan *(same)*
 
 ---
 
-## 3. Keyword map (grounded, not guessed volumes)
+## 3. What the real data changes
 
-### Tier 1 — highest intent, most defensible (own these)
-These map directly to the hotel's real differentiator: proximity to the station/airport.
+1. **This is a brand-search market.** People search hotel *names*, not features.
+   Ramada's variants alone total ~1,870 searches/month. Generic feature long-tails
+   barely register.
 
-- hotel near Multan Cantt railway station
-- hotel near Multan railway station
-- hotel walking distance from Multan Cantt station
-- hotel near Multan airport
-- hotel near Multan International Airport
-- hotel in Multan Cantt
-- Multan Cantt hotel with parking
+2. **"hotel silver sand multan" = 140/mo at LOW competition (index 4).**
+   This is the single most valuable and most winnable keyword the property has.
+   It must rank #1 organically *and* be covered in Ads (it is — the Brand ad group).
 
-### Tier 2 — core commercial
-- hotel in Multan
-- hotels in Multan Pakistan
-- budget hotel in Multan
-- affordable hotel in Multan
-- cheap hotel in Multan Cantt
-- family hotel in Multan
-- family rooms in Multan
-- hotel room in Multan price
+3. **The head terms are the volume play:** `hotel in multan` (320),
+   `hotels in multan pakistan` (260), `hotel room in multan` (260),
+   `hotels of multan` (260). All MEDIUM competition — winnable with good on-page SEO.
 
-### Tier 3 — feature / long-tail (answer these on-site)
-Each is a real question from the Booking.com listing FAQ:
+4. **`guest house in multan` (90, MEDIUM)** is an untapped, well-matched angle for a
+   2-star budget property. Worth a dedicated content section.
 
-- hotel in Multan with free parking
-- hotel in Multan with free WiFi
-- Multan hotel airport shuttle / pick and drop
-- hotel in Multan with 24 hour check in
-- late night check in hotel Multan
-- hotel in Multan with balcony
-- non smoking rooms Multan hotel
-- hotel Multan check out time
-- Multan hotel extra bed charges
-- hotel near Multan Cantt with room service
+5. **"500 m from Multan Cantt Railway Station" is a CONVERSION message, not an SEO
+   keyword.** It has no search volume, so it must not occupy the title tag — but it
+   is still the strongest reason-to-choose once someone lands. Keep it prominent in
+   body copy, hero and the location section; keep head terms in the title/H1.
 
-### Tier 4 — brand (cheap, must own)
-- Hotel Silver Sand Multan
-- Silver Sand hotel Multan
-- Silver Sand Multan booking / contact / rates
+6. **Avoid "best hotel in Multan" (HIGH competition 87, only 30–40 searches).**
+   Low reward, high difficulty, and unsupportable at a 6.2 guest score.
 
-### Negative / avoid
-Do not target: "5 star hotel Multan", "luxury hotel Multan", "best hotel in Multan",
-"resort Multan", "hotel with swimming pool Multan", "hotel with restaurant Multan".
-The property does not deliver these — traffic will bounce and reviews will worsen.
+### Corrected on-page targeting
+
+| Page | Primary target | Secondary |
+|---|---|---|
+| Home | hotel in Multan | hotel in Multan Cantt, Hotel Silver Sand Multan |
+| Rooms | hotel room in Multan | rooms in Multan, multan hotels room prices |
+| About/Brand | Hotel Silver Sand Multan | silver sand hotel Multan |
+| Contact/Location | hotel in Multan Cantt | multan cantt hotel |
+| A budget/value page | guest house in Multan | multan hotels low price |
 
 ---
 
