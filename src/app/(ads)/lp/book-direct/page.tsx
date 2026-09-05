@@ -9,6 +9,7 @@ import ReviewsCarousel from "@/components/ReviewsCarousel";
 import RoomCard from "@/components/RoomCard";
 import ViewTracker from "@/components/ViewTracker";
 import { getHeroImagesStatic } from "@/lib/hero";
+import { getGoogleReviews } from "@/lib/googleReviews";
 import { rooms as fallbackRooms, type Room } from "@/data/rooms";
 import { getRoomsStatic, featuredImage } from "@/lib/rooms";
 
@@ -21,7 +22,11 @@ export const metadata: Metadata = {
 // another city planning a trip, searching the brand name or a room/rate
 // keyword. No navbar, no footer, no other exits besides call/WhatsApp/booking.
 export default async function BookDirectLandingPage() {
-  const [heroImages, dbRooms] = await Promise.all([getHeroImagesStatic(), getRoomsStatic()]);
+  const [heroImages, dbRooms, google] = await Promise.all([
+    getHeroImagesStatic(),
+    getRoomsStatic(),
+    getGoogleReviews(),
+  ]);
   const heroImage = heroImages[0];
   const rooms: Room[] =
     dbRooms.length > 0
@@ -68,7 +73,7 @@ export default async function BookDirectLandingPage() {
             prepayment needed. Confirm instantly on WhatsApp or by call.
           </p>
           <div className="mt-4 flex justify-center">
-            <GoogleRating variant="light" />
+            <GoogleRating variant="light" rating={google.rating} count={google.count} />
           </div>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
@@ -134,7 +139,7 @@ export default async function BookDirectLandingPage() {
             What Guests Say
           </h2>
           <div className="mt-6">
-            <ReviewsCarousel />
+            <ReviewsCarousel reviews={google.reviews} />
           </div>
         </div>
       </section>

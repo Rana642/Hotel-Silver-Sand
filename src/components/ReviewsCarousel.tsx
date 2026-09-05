@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
-import { reviews } from "@/data/reviews";
+import { reviews as staticReviews, type Review } from "@/data/reviews";
 
 function Stars({ n }: { n: number }) {
   return (
@@ -17,7 +17,7 @@ function Stars({ n }: { n: number }) {
   );
 }
 
-export default function ReviewsCarousel() {
+export default function ReviewsCarousel({ reviews = staticReviews }: { reviews?: Review[] }) {
   const [start, setStart] = useState(0);
   const perView = 3;
   const maxStart = Math.max(0, reviews.length - perView);
@@ -69,7 +69,7 @@ function ReviewCard({
   review,
   className = "",
 }: {
-  review: (typeof reviews)[number];
+  review: Review;
   className?: string;
 }) {
   return (

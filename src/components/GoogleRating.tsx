@@ -9,12 +9,19 @@ import { site } from "@/data/site";
 export default function GoogleRating({
   variant = "light",
   size = "md",
+  rating,
+  count: countOverride,
 }: {
   /** "light" = on a dark background (hero); "dark" = on a light background. */
   variant?: "light" | "dark";
   size?: "sm" | "md";
+  /** Override the static snapshot with a live-fetched rating/count (see getGoogleReviews). */
+  rating?: number;
+  count?: number;
 }) {
-  const { value, count, scale } = googleRating;
+  const { scale } = googleRating;
+  const value = rating ?? googleRating.value;
+  const count = countOverride ?? googleRating.count;
   const light = variant === "light";
   const full = Math.floor(value);
   const hasHalf = value - full >= 0.25;

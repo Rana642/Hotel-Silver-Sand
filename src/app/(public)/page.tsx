@@ -17,6 +17,7 @@ import { rooms as fallbackRooms, type Room } from "@/data/rooms";
 import { amenities } from "@/data/amenities";
 import { faqs } from "@/data/hotel-facts";
 import { getRoomsStatic, featuredImage } from "@/lib/rooms";
+import { getGoogleReviews } from "@/lib/googleReviews";
 import { site, tel, mapEmbedUrl } from "@/data/site";
 import type { Metadata } from "next";
 
@@ -49,6 +50,7 @@ export default async function HomePage() {
         }))
       : fallbackRooms.slice(0, 4);
   const heroImages = await getHeroImagesStatic();
+  const google = await getGoogleReviews();
 
   return (
     <>
@@ -86,7 +88,7 @@ export default async function HomePage() {
 
           {/* The strongest proof we have, right under the name, linked to Google. */}
           <div className="mt-4 flex justify-center">
-            <GoogleRating variant="dark" />
+            <GoogleRating variant="dark" rating={google.rating} count={google.count} />
           </div>
 
           <p className="mx-auto mt-4 max-w-3xl text-sm text-slate">
@@ -184,10 +186,10 @@ export default async function HomePage() {
             subtitle="837 people have stayed and said so publicly"
           />
           <div className="mt-5 text-center">
-            <GoogleRating variant="dark" />
+            <GoogleRating variant="dark" rating={google.rating} count={google.count} />
           </div>
           <div className="mt-8">
-            <ReviewsCarousel />
+            <ReviewsCarousel reviews={google.reviews} />
           </div>
         </div>
       </section>
