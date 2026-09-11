@@ -14,7 +14,7 @@ import type { BannerDeal } from "@/lib/deals";
 import { createBooking } from "@/app/actions/booking";
 import { previewCoupon } from "@/app/actions/coupon";
 import { pkr } from "@/lib/format";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackMetaPixel } from "@/lib/analytics";
 import { clearIntent } from "@/lib/bookingIntent";
 import { site } from "@/data/site";
 
@@ -108,7 +108,11 @@ export default function ReservationsFlow({
   function selectRoom(slug: string) {
     setSelectedSlug(slug);
     const r = rooms.find((x) => x.slug === slug);
-    if (r) trackEvent("begin_checkout", { room: r.name, value: r.price * nights * occ.rooms, currency: "PKR" });
+    if (r) {
+      const value = r.price * nights * occ.rooms;
+      trackEvent("begin_checkout", { room: r.name, value, currency: "PKR" });
+      trackMetaPixel("InitiateCheckout", { content_name: r.name, value, currency: "PKR" }, crypto.randomUUID());
+    }
     if (typeof window !== "undefined") setTimeout(() => document.getElementById("guest-info")?.scrollIntoView({ behavior: "smooth" }), 60);
   }
 

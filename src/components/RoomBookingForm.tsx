@@ -7,7 +7,7 @@ import { useBooking } from "@/components/BookingProvider";
 import { createBooking } from "@/app/actions/booking";
 import { previewCoupon } from "@/app/actions/coupon";
 import { pkr } from "@/lib/format";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackMetaPixel } from "@/lib/analytics";
 import { getIntent, saveIntent, clearIntent } from "@/lib/bookingIntent";
 import DateRangePicker from "@/components/booking/DateRangePicker";
 import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyPicker";
@@ -114,6 +114,11 @@ export default function RoomBookingForm({
     if (v) return;
     setLoading(true);
     trackEvent("begin_checkout", { room: roomName, value: total, currency: "PKR" });
+    trackMetaPixel(
+      "InitiateCheckout",
+      { content_name: roomName, value: total, currency: "PKR" },
+      crypto.randomUUID()
+    );
     try {
       const res = await createBooking({
         roomType: roomName, checkIn: f.checkIn, checkOut: f.checkOut,
