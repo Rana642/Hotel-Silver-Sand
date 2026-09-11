@@ -5,6 +5,7 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { createClient } from "@/lib/supabase/server";
 import { logActivity } from "@/app/actions/activity";
 import { notifyInquiry } from "@/lib/notify";
+import { sendMetaEvent } from "@/lib/meta-capi";
 
 export type InquiryInput = {
   name: string;
@@ -15,6 +16,9 @@ export type InquiryInput = {
   checkOut?: string;
   message?: string;
   source?: string;
+  /** Shared with the browser Pixel's fbq call so Meta dedupes the two signals. */
+  metaEventId?: string;
+  pageUrl?: string;
 };
 
 export type InquiryResult = { success: true } | { success: false; error: string };
@@ -37,6 +41,19 @@ export async function createInquiry(input: InquiryInput): Promise<InquiryResult>
     status: "new",
   });
   if (error) return { success: false, error: "Could not send your message. Please try WhatsApp or call us." };
+
+  // Meta Conversions API — direct server call (no GTM), carrying the real
+  // name/phone/email captured on this form for the best match quality.
+  // Deduped against the browser Pixel fire via metaEventId when present.
+  if (input.metaEventId) {
+    await sendMetaEvent({
+      name: "Contact",
+      eventId: input.metaEventId,
+      eventSourceUrl: input.pageUrl,
+      user: { email: input.email, phone: input.phone, name: input.name },
+      custom: { content_name: input.source?.trim() || "contact_form" },
+    });
+  }
 
   await notifyInquiry({
     name: input.name.trim(),

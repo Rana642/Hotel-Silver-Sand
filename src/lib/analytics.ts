@@ -37,3 +37,22 @@ export function trackAdsConversion(label?: string) {
   if (typeof w.gtag !== "function") return;
   w.gtag("event", "conversion", { send_to: `${adsId}/${label}` });
 }
+
+type FbqWindow = Window & { fbq?: (...args: unknown[]) => void };
+
+/**
+ * Fire a Meta Pixel event directly via fbq (no GTM round-trip). `eventId`
+ * must match the id passed to the matching server-side CAPI call so Meta
+ * dedupes the browser + server signal instead of double-counting.
+ */
+export function trackMetaPixel(
+  eventName: "Lead" | "Contact" | "InitiateCheckout" | "Schedule" | "ViewContent",
+  params: Record<string, unknown>,
+  eventId: string
+) {
+  if (typeof window === "undefined") return;
+  if (!process.env.NEXT_PUBLIC_META_PIXEL_ID) return;
+  const w = window as FbqWindow;
+  if (typeof w.fbq !== "function") return;
+  w.fbq("track", eventName, params, { eventID: eventId });
+}

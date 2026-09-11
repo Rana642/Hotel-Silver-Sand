@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { X, MessageSquare, Phone, MapPin } from "lucide-react";
 import { site, tel, waLink } from "@/data/site";
 import { createInquiry } from "@/app/actions/inquiry";
-import { trackEvent, trackAdsConversion } from "@/lib/analytics";
+import { trackEvent, trackAdsConversion, trackMetaPixel } from "@/lib/analytics";
 
 export type ContactMode = "whatsapp" | "call";
 
@@ -27,6 +27,11 @@ export default function PreContactModal({
   const [busy, setBusy] = useState(false);
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
+  // One id per modal open, shared between the browser Pixel and server CAPI
+  // calls for this contact attempt, so Meta dedupes them instead of double-counting.
+  const eventIdRef = useRef<string>(
+    typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`
+  );
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -47,6 +52,13 @@ export default function PreContactModal({
       isCall
         ? process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_CALL
         : process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_WHATSAPP
+    );
+    // Direct Meta Pixel fire (no GTM) — deduped against the CAPI call in
+    // createInquiry via the same eventId, when the form was filled in.
+    trackMetaPixel(
+      "Contact",
+      { content_name: isCall ? "call_click" : "whatsapp_click", intent },
+      eventIdRef.current
     );
     if (isCall) {
       window.location.href = tel;
@@ -80,6 +92,9 @@ export default function PreContactModal({
 
     setBusy(true);
     // Save the lead (fire-and-forget) then continue to WhatsApp/Call.
+    // Same eventId as the browser Pixel call in proceed() below, so the
+    // server-side CAPI event (which carries the real name/phone/email)
+    // dedupes against it instead of double-counting the conversion.
     void createInquiry({
       name,
       phone,
@@ -89,6 +104,8 @@ export default function PreContactModal({
       checkOut: intent === "book" ? checkOut || undefined : undefined,
       message: intent === "book" ? "Booking request via quick form" : "Inquiry via quick form",
       source: isCall ? "call_button" : "whatsapp_button",
+      metaEventId: eventIdRef.current,
+      pageUrl: typeof window !== "undefined" ? window.location.href : undefined,
     });
     proceed();
   }

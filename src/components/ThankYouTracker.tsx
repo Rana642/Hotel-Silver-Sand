@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackMetaPixel } from "@/lib/analytics";
 
 /** Fires booking_confirmed exactly once per booking_ref, even across refreshes. */
 export default function ThankYouTracker({
@@ -26,6 +26,13 @@ export default function ThankYouTracker({
       value,
       currency: "PKR",
     });
+    // Direct Meta Pixel fire (no GTM) — same eventId as the server CAPI call
+    // in createBooking(), so Meta dedupes rather than double-counting.
+    trackMetaPixel(
+      "Lead",
+      { content_name: room, value, currency: "PKR" },
+      bookingRef
+    );
   }, [bookingRef, room, value]);
   return null;
 }
