@@ -15,10 +15,12 @@ import { trackEvent, trackAdsConversion } from "@/lib/analytics";
 
 /**
  * Pre-contact "Quick details" lead form on Call/WhatsApp.
- * Deactivated for now — Call/WhatsApp act directly. Flip to `true` to bring the
- * lead-capture form back (nothing else needs to change).
+ * Re-enabled — the site's entire Meta/Google Ads optimization strategy
+ * depends on this form's intent + dates fields to tell a qualified lead
+ * (real booking intent) from a raw, un-scored click. See PreContactModal /
+ * inquiry.ts / analytics.ts's trackMetaPixel for how that signal is used.
  */
-const CONTACT_FORM_ENABLED = false;
+const CONTACT_FORM_ENABLED = true;
 
 type BookingContextValue = {
   openContact: (mode: ContactMode) => void;
