@@ -5,6 +5,7 @@ import { X, MessageSquare, Phone, MapPin } from "lucide-react";
 import { site, tel, waLink } from "@/data/site";
 import { createInquiry } from "@/app/actions/inquiry";
 import { trackEvent, trackAdsConversion, trackMetaPixel } from "@/lib/analytics";
+import { rooms as fallbackRooms } from "@/data/rooms";
 
 export type ContactMode = "whatsapp" | "call";
 
@@ -46,6 +47,20 @@ export default function PreContactModal({
 
   const isCall = mode === "call";
 
+  // A "qualified" contact — real dates given for an actual booking intent,
+  // not just a curious click — is the signal the ad account should learn
+  // from. Raw clicks (skip button, or "inquiry" with no dates) still get
+  // logged, just not fed to Meta as the strong optimization event, so the
+  // algorithm stops learning to find more of the wrong people.
+  const qualified = intent === "book" && Boolean(checkIn) && Boolean(checkOut);
+  const nights =
+    checkIn && checkOut
+      ? Math.max(1, Math.round((+new Date(checkOut) - +new Date(checkIn)) / 86400000))
+      : 1;
+  const estimatedValue = qualified
+    ? Math.min(...fallbackRooms.map((r) => r.price)) * nights
+    : undefined;
+
   function proceed() {
     trackEvent(isCall ? "call_click" : "whatsapp_click", { location: "quick_details_modal", intent });
     trackAdsConversion(
@@ -55,9 +70,16 @@ export default function PreContactModal({
     );
     // Direct Meta Pixel fire (no GTM) — deduped against the CAPI call in
     // createInquiry via the same eventId, when the form was filled in.
+    // "Schedule" for a qualified (real dates + booking intent) contact,
+    // "Contact" for everything else — so the ad account's optimization
+    // event can target the former without waiting on rare actual bookings.
     trackMetaPixel(
-      "Contact",
-      { content_name: isCall ? "call_click" : "whatsapp_click", intent },
+      qualified ? "Schedule" : "Contact",
+      {
+        content_name: isCall ? "call_click" : "whatsapp_click",
+        intent,
+        ...(estimatedValue ? { value: estimatedValue, currency: "PKR" } : {}),
+      },
       eventIdRef.current
     );
     if (isCall) {
@@ -105,6 +127,8 @@ export default function PreContactModal({
       message: intent === "book" ? "Booking request via quick form" : "Inquiry via quick form",
       source: isCall ? "call_button" : "whatsapp_button",
       metaEventId: eventIdRef.current,
+      metaQualified: qualified,
+      metaValue: estimatedValue,
       pageUrl: typeof window !== "undefined" ? window.location.href : undefined,
     });
     proceed();
