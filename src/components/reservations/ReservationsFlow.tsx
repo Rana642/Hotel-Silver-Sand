@@ -240,8 +240,10 @@ function RoomRow({
               {lowStock && <span className="mb-1 rounded bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">In high demand! Only {room.unitsLeft} room{room.unitsLeft > 1 ? "s" : ""} left</span>}
               {strike && <span className="text-sm text-gray-400 line-through">{pkr(strike)}</span>}
               <div><span className="text-sm text-slate">From </span><span className="font-heading text-xl font-bold text-navy">{pkr(room.price)}</span><span className="text-sm text-slate">/night</span></div>
-              <span className="text-xs text-slate">+ {room.gstPercent}% GST</span>
-              <span className="mt-0.5 text-xs text-slate">Total {pkr(total)} for {nights} night{nights > 1 ? "s" : ""} + tax</span>
+              {room.gstPercent > 0 && (
+                <span className="text-xs text-slate">Inclusive of {room.gstPercent}% GST</span>
+              )}
+              <span className="mt-0.5 text-xs text-slate">Total {pkr(total)} for {nights} night{nights > 1 ? "s" : ""}</span>
             </>
           )}
         </div>
@@ -361,8 +363,10 @@ function GuestInformation({
   const savings = strike ? (strike - room.price) * nights * search.rooms : 0;
   const cancel = cancellation(room.refundable, room.freeCancelDays, search.checkIn);
   const afterDiscount = Math.max(0, subtotal - discount);
-  const gst = Math.round((afterDiscount * room.gstPercent) / 100);
-  const grandTotal = afterDiscount + gst;
+  // Rates are GST-inclusive — extract the tax already baked into afterDiscount
+  // for display, don't add a fresh gst% on top of it.
+  const gst = room.gstPercent ? Math.round(afterDiscount - afterDiscount / (1 + room.gstPercent / 100)) : 0;
+  const grandTotal = afterDiscount;
 
   useEffect(() => {
     // auto-check promo from the search bar once when landing on guest step
@@ -465,7 +469,9 @@ function GuestInformation({
           <div className="space-y-1.5 py-3 text-sm">
             <div className="flex justify-between text-slate"><span>Sub Total ({pkr(room.price)} × {nights}n × {search.rooms})</span><span className="text-navy">{pkr(subtotal)}</span></div>
             {discount > 0 && <div className="flex justify-between text-green-600"><span>Promo discount</span><span>− {pkr(discount)}</span></div>}
-            <div className="flex justify-between text-slate"><span>Taxes &amp; Fees (GST {room.gstPercent}%)</span><span className="text-navy">{pkr(gst)}</span></div>
+            {room.gstPercent > 0 && (
+              <div className="flex justify-between text-slate"><span>Includes GST ({room.gstPercent}%)</span><span className="text-navy">{pkr(gst)}</span></div>
+            )}
             <div className="mt-1 flex justify-between border-t border-gray-100 pt-2 font-bold text-navy"><span>Grand Total</span><span>{pkr(grandTotal)}</span></div>
           </div>
           <div className="rounded-md bg-cream px-3 py-2 text-sm">

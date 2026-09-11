@@ -34,7 +34,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ slu
   const room = await getRoomBySlugStatic(slug);
   if (!room || !room.is_active) notFound();
 
-  const { price, original, discountPct, gst } = roomPricing(room);
+  const { price, original, discountPct, gstPercent } = roomPricing(room);
   const amenities = room.amenities ?? [];
   const whyBook = room.why_book ?? [];
   const goodToKnow = Object.entries(room.good_to_know ?? {});
@@ -106,7 +106,9 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ slu
                   {discountPct > 0 && (
                     <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">Save {discountPct}%</span>
                   )}
-                  <span className="text-xs text-slate">+ {pkr(gst)} GST (excluded)</span>
+                  {gstPercent > 0 && (
+                    <span className="text-xs text-slate">Inclusive of {gstPercent}% GST</span>
+                  )}
                 </div>
                 {room.description && <p className="mt-4 leading-relaxed text-slate">{room.description}</p>}
 

@@ -87,7 +87,8 @@ export default function RoomBookingForm({
   const nights = f.checkIn && f.checkOut ? Math.max(0, Math.round((+new Date(f.checkOut) - +new Date(f.checkIn)) / 86400000)) : 0;
   const subtotal = price * (nights || 1) * occ.rooms;
   const total = Math.max(0, subtotal - discount);
-  const gst = Math.round((total * gstPercent) / 100);
+  // total is GST-inclusive — extract the tax already baked in, don't add it on top.
+  const gst = gstPercent ? Math.round(total - total / (1 + gstPercent / 100)) : 0;
   const cell = "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
 
   async function applyCoupon() {
@@ -168,7 +169,9 @@ export default function RoomBookingForm({
         <div className="flex justify-between text-slate"><span>{pkr(price)} × {nights || 1} night{(nights || 1) > 1 ? "s" : ""}{occ.rooms > 1 ? ` × ${occ.rooms} rooms` : ""}</span><span className="text-navy">{pkr(subtotal)}</span></div>
         {discount > 0 && <div className="flex justify-between text-green-600"><span>Coupon</span><span>− {pkr(discount)}</span></div>}
         <div className="flex justify-between font-bold text-navy"><span>Est. Total</span><span className="text-gold">{pkr(total)}</span></div>
-        <p className="text-xs text-slate">+ {pkr(gst)} GST ({gstPercent}%) — excluded</p>
+        {gstPercent > 0 && (
+          <p className="text-xs text-slate">Includes {pkr(gst)} GST ({gstPercent}%)</p>
+        )}
       </div>
 
       <label className="mt-3 flex cursor-pointer items-start gap-2 text-xs text-navy">

@@ -22,7 +22,8 @@ export default function RoomBookCta({
   gstPercent: number;
 }) {
   const booking = useBooking();
-  const gst = Math.round((price * gstPercent) / 100);
+  // price is GST-inclusive — extract the tax already baked in, don't add it on top.
+  const gst = gstPercent ? Math.round(price - price / (1 + gstPercent / 100)) : 0;
 
   return (
     <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-card lg:sticky lg:top-24">
@@ -36,7 +37,9 @@ export default function RoomBookCta({
           Save {discountPct}%
         </span>
       )}
-      <p className="mt-1 text-xs text-slate">+ {pkr(gst)} GST ({gstPercent}%) — excluded</p>
+      {gstPercent > 0 && (
+        <p className="mt-1 text-xs text-slate">Includes {pkr(gst)} GST ({gstPercent}%)</p>
+      )}
 
       <Link
         href="/reservations"

@@ -40,7 +40,7 @@ export default async function RoomsPage() {
 
           <div id="room-list" className="mt-10 scroll-mt-24 space-y-8">
             {rooms.map((room) => {
-              const { price, original, discountPct, gst } = roomPricing(room);
+              const { price, original, discountPct, gstPercent } = roomPricing(room);
               const tags = (room.amenities ?? []).slice(0, 4);
               return (
                 <article
@@ -75,7 +75,9 @@ export default async function RoomsPage() {
                         </span>
                       )}
                     </div>
-                    <p className="mt-0.5 text-xs text-slate">+ {pkr(gst)} GST per night (excluded)</p>
+                    {gstPercent > 0 && (
+                      <p className="mt-0.5 text-xs text-slate">Inclusive of {gstPercent}% GST</p>
+                    )}
 
                     {room.description && (
                       <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate">{room.description}</p>

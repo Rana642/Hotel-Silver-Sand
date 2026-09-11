@@ -56,8 +56,11 @@ export function roomPricing(room: Pick<DbRoom, "price_per_night" | "original_pri
   const price = Number(room.price_per_night) || 0;
   const original = room.original_price && room.original_price > price ? Number(room.original_price) : null;
   const discountPct = original ? Math.round(((original - price) / original) * 100) : 0;
-  const gst = Math.round((price * (Number(room.gst_percent) || 0)) / 100);
-  return { price, original, discountPct, gst };
+  const gstPercent = Number(room.gst_percent) || 0;
+  // Rates are GST-inclusive — extract the tax already baked into `price`
+  // instead of adding a fresh gst% on top of it.
+  const gst = gstPercent ? Math.round(price - price / (1 + gstPercent / 100)) : 0;
+  return { price, original, discountPct, gst, gstPercent };
 }
 
 export function featuredImage(room: DbRoom) {
