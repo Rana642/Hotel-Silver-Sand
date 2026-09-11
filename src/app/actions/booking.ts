@@ -60,6 +60,8 @@ export type BookingInput = {
   requests?: string;
   couponCode?: string;
   source?: "website" | "walkin" | "phone";
+  /** Set when this booking originated from an admin-converted inquiry lead. */
+  inquiryId?: string;
 };
 
 export type BookingResult =
@@ -217,6 +219,14 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
       content_ids: [room.id],
     },
   });
+
+  // Mark the source inquiry converted now that a real booking exists for it.
+  // Plain status update, no separate Meta signal — the CAPI call above (with
+  // the real, final total) already covers this conversion; firing again from
+  // setInquiryStatus would double-count the same booking.
+  if (input.inquiryId) {
+    await supabase.from("inquiries").update({ status: "converted" }).eq("id", input.inquiryId);
+  }
 
   // --- Email notifications (admin + guest confirmation) — never blocks success ---
   await notifyBooking({

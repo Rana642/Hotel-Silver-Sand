@@ -27,9 +27,11 @@ export type BookingPrefill = {
 export default function NewBookingForm({
   roomNames,
   prefill,
+  inquiryId,
 }: {
   roomNames: string[];
   prefill?: BookingPrefill;
+  inquiryId?: string;
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -63,6 +65,7 @@ export default function NewBookingForm({
         email: f.email,
         requests: f.requests,
         source: f.source,
+        inquiryId,
       });
       if (!res.success) {
         setError(res.error);

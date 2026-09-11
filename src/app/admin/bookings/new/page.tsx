@@ -22,6 +22,7 @@ export default async function NewBookingPage({
     checkOut: sp.checkOut,
     room: sp.room,
   };
+  const inquiryId = sp.inquiryId;
 
   return (
     <div>
@@ -31,7 +32,7 @@ export default async function NewBookingPage({
       <h1 className="mt-4 font-heading text-2xl font-bold text-navy">New Booking</h1>
       <p className="mt-1 text-sm text-slate">Record a walk-in or phone reservation.</p>
       <div className="mt-6">
-        <NewBookingForm roomNames={roomNames} prefill={prefill} />
+        <NewBookingForm roomNames={roomNames} prefill={prefill} inquiryId={inquiryId} />
       </div>
     </div>
   );

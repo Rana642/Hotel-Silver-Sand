@@ -45,10 +45,13 @@ export default function InquiriesTable({ inquiries, isAdmin }: { inquiries: Inqu
     if (q.check_in) params.set("checkIn", q.check_in);
     if (q.check_out) params.set("checkOut", q.check_out);
     if (q.room_interest) params.set("room", q.room_interest);
-    start(async () => {
-      await setInquiryStatus(q.id, "converted");
-      router.push(`/admin/bookings/new?${params.toString()}`);
-    });
+    // Don't mark "converted" here — that would fire the Meta signal (with a
+    // guessed value) before the booking form is even filled in, and fire it
+    // again with the real value once createBooking() runs. Pass the inquiry
+    // id through instead; createBooking() marks it converted once the
+    // booking actually exists.
+    params.set("inquiryId", q.id);
+    router.push(`/admin/bookings/new?${params.toString()}`);
   }
 
   if (inquiries.length === 0) {
