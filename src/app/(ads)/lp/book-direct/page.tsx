@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Phone, MessageCircle, Check } from "lucide-react";
+import { Phone, MessageCircle, Check, MapPin } from "lucide-react";
 import HeroBookingBar from "@/components/HeroBookingBar";
 import ContactButton from "@/components/ContactButton";
 import WhyBookDirect from "@/components/WhyBookDirect";
@@ -8,10 +8,13 @@ import GoogleRating from "@/components/GoogleRating";
 import ReviewsCarousel from "@/components/ReviewsCarousel";
 import RoomCard from "@/components/RoomCard";
 import ViewTracker from "@/components/ViewTracker";
+import TrackedLink from "@/components/TrackedLink";
 import { getHeroImagesStatic } from "@/lib/hero";
 import { getGoogleReviews } from "@/lib/googleReviews";
 import { rooms as fallbackRooms, type Room } from "@/data/rooms";
 import { getRoomsStatic, featuredImage } from "@/lib/rooms";
+import { site, mapEmbedUrl } from "@/data/site";
+import { distances } from "@/data/hotel-facts";
 
 async function cheapestPrice(): Promise<number> {
   const dbRooms = await getRoomsStatic();
@@ -153,6 +156,49 @@ export default async function BookDirectLandingPage() {
       </section>
 
       <section className="bg-white py-10">
+        <div className="container-site">
+          <h2 className="text-center font-heading text-2xl font-bold text-navy">Our Location</h2>
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_340px]">
+            <div className="overflow-hidden rounded-xl border border-gray-100 shadow-card">
+              <iframe
+                src={mapEmbedUrl()}
+                title="Hotel Silver Sand Multan location on Google Maps"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="aspect-[16/10] w-full lg:aspect-auto lg:h-full lg:min-h-[300px]"
+              />
+            </div>
+            <div className="rounded-xl border border-gray-100 bg-cream p-6 shadow-card">
+              <h3 className="font-heading text-lg font-bold text-navy">Get Directions</h3>
+              <p className="mt-2 flex items-start gap-2 text-sm leading-relaxed text-slate">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-gold" />
+                {site.address.full}
+              </p>
+              <ul className="mt-3 space-y-1.5 border-t border-gray-200 pt-3 text-sm text-slate">
+                {distances.slice(0, 3).map((d) => (
+                  <li key={d.place} className="flex justify-between gap-3">
+                    <span>{d.place}</span>
+                    <span className="shrink-0 font-semibold text-navy">{d.distance}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 border-t border-gray-200 pt-4">
+                <TrackedLink
+                  href={site.mapDirections}
+                  event="directions_click"
+                  params={{ location: "lp_book_direct" }}
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-gold"
+                  external
+                >
+                  <MapPin className="size-4 text-gold" /> Open in Google Maps
+                </TrackedLink>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-cream py-10">
         <div className="container-site max-w-4xl">
           <h2 className="text-center font-heading text-2xl font-bold text-navy">
             What Guests Say
