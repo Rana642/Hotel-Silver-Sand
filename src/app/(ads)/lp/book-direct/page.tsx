@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// Was fully static (no revalidation) — a room price/detail edit in the admin
+// panel never reached this ad-only page until the next deploy. Matches the
+// 60s ISR window already used on /rooms and the homepage.
+export const revalidate = 60;
+
 // Ad-only landing page for the "Pre-Booking Demand" campaign: someone in
 // another city planning a trip, searching the brand name or a room/rate
 // keyword. No navbar, no footer, no other exits besides call/WhatsApp/booking.

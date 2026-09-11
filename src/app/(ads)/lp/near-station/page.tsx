@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// Was fully static (no revalidation) — a room price/detail edit in the admin
+// panel never reached this ad-only page until the next deploy. Matches the
+// 60s ISR window already used on /rooms and the homepage.
+export const revalidate = 60;
+
 // Ad-only landing page for the "Arrival Intent" campaign: someone physically in
 // Multan right now — just off a train at Cantt, or just landed at the airport —
 // searching for a room. Message-matches "hotel in multan cantt" / "hotel near

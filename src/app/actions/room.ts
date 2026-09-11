@@ -6,6 +6,15 @@ import { logActivity } from "@/app/actions/activity";
 
 type Res = { ok: true; id?: string } | { ok: false; error: string };
 
+/** Every public page that shows room prices/details — kept in sync with admin edits. */
+function revalidateRoomPublicPages(slug?: string) {
+  revalidatePath("/");
+  revalidatePath("/rooms");
+  if (slug) revalidatePath(`/rooms/${slug}`);
+  revalidatePath("/lp/near-station");
+  revalidatePath("/lp/book-direct");
+}
+
 export type RoomInput = {
   slug: string;
   name: string;
@@ -38,6 +47,7 @@ export async function upsertRoom(id: string | null, input: RoomInput): Promise<R
     await logActivity("room.update", "room", id, input.name);
     revalidatePath("/admin/rooms");
     revalidatePath(`/admin/rooms/${id}`);
+    revalidateRoomPublicPages(payload.slug);
     return { ok: true, id };
   }
 
@@ -45,15 +55,18 @@ export async function upsertRoom(id: string | null, input: RoomInput): Promise<R
   if (error) return { ok: false, error: error.message };
   await logActivity("room.create", "room", data.id, input.name);
   revalidatePath("/admin/rooms");
+  revalidateRoomPublicPages(payload.slug);
   return { ok: true, id: data.id };
 }
 
 export async function deleteRoom(id: string): Promise<Res> {
   const supabase = await createClient();
+  const { data: room } = await supabase.from("rooms").select("slug").eq("id", id).maybeSingle();
   const { error } = await supabase.from("rooms").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
   await logActivity("room.delete", "room", id);
   revalidatePath("/admin/rooms");
+  revalidateRoomPublicPages(room?.slug);
   return { ok: true };
 }
 
