@@ -13,10 +13,23 @@ import { getGoogleReviews } from "@/lib/googleReviews";
 import { rooms as fallbackRooms, type Room } from "@/data/rooms";
 import { getRoomsStatic, featuredImage } from "@/lib/rooms";
 
-export const metadata: Metadata = {
-  title: "Hotel Rooms In Multan — From PKR 3,000/Night",
-  robots: { index: false, follow: false },
-};
+async function cheapestPrice(): Promise<number> {
+  const dbRooms = await getRoomsStatic();
+  const prices = dbRooms.length
+    ? dbRooms.map((r) => Number(r.price_per_night))
+    : fallbackRooms.map((r) => r.price);
+  return Math.min(...prices);
+}
+
+// Was a hardcoded "From PKR 3,000/Night" — drifted from the real cheapest
+// room the moment prices changed. Reads the live rate instead.
+export async function generateMetadata(): Promise<Metadata> {
+  const from = await cheapestPrice();
+  return {
+    title: `Hotel Rooms In Multan — From PKR ${from.toLocaleString("en-PK")}/Night`,
+    robots: { index: false, follow: false },
+  };
+}
 
 // Was fully static (no revalidation) — a room price/detail edit in the admin
 // panel never reached this ad-only page until the next deploy. Matches the
@@ -51,6 +64,7 @@ export default async function BookDirectLandingPage() {
               : (fallbackRooms.find((f) => f.slug === r.slug)?.features ?? []),
         }))
       : fallbackRooms;
+  const fromPrice = Math.min(...rooms.map((r) => r.price));
 
   return (
     <>
@@ -71,7 +85,7 @@ export default async function BookDirectLandingPage() {
       <section className="bg-navy-dark py-10 text-center sm:py-14">
         <div className="container-site max-w-3xl">
           <h1 className="font-heading text-3xl font-bold text-white sm:text-4xl">
-            Hotel Rooms In Multan — From PKR 3,000/Night
+            Hotel Rooms In Multan — From PKR {fromPrice.toLocaleString("en-PK")}/Night
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-white/85">
             Hotel Silver Sand Multan, Multan Cantt — free cancellation, pay at the hotel, no
