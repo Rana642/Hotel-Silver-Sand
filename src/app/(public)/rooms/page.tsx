@@ -10,12 +10,18 @@ import { pkr } from "@/lib/format";
 
 export const revalidate = 60;
 
-export const metadata = pageMeta({
-  title: "Hotel Rooms in Multan — Rates & Availability",
-  description:
-    "Book a hotel room in Multan from PKR 3,000 a night. Deluxe King, Deluxe Double, Deluxe Triple and Budget Twin rooms at Hotel Silver Sand Multan Cantt — air conditioning, free WiFi, private attached bathroom and free parking. Pay at the hotel.",
-  path: "/rooms",
-});
+// Description used to hard-code "from PKR 3,000 a night" — stale the moment
+// rates changed. Reads the live cheapest active room rate instead, same
+// principle already noted against baking a priceRange into hotelSchema.
+export async function generateMetadata() {
+  const rooms = await getRoomsStatic();
+  const from = rooms.length ? Math.min(...rooms.map((r) => Number(r.price_per_night))) : 0;
+  return pageMeta({
+    title: "Hotel Rooms in Multan — Rates & Availability",
+    description: `Book a hotel room in Multan from PKR ${from.toLocaleString("en-PK")} a night. Deluxe King, Deluxe Double, Deluxe Triple and Budget Twin rooms at Hotel Silver Sand Multan Cantt — air conditioning, free WiFi, private attached bathroom and free parking. Pay at the hotel.`,
+    path: "/rooms",
+  });
+}
 
 export default async function RoomsPage() {
   const rooms = await getRoomsStatic();
