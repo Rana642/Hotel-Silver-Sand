@@ -7,6 +7,7 @@ import DateRangePicker from "@/components/booking/DateRangePicker";
 import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyPicker";
 import { saveIntent } from "@/lib/bookingIntent";
 import { trackMetaPixel } from "@/lib/analytics";
+import { trackSearchServer } from "@/app/actions/tracking";
 import { useMinRate } from "@/lib/useMinRate";
 
 function localDate(offsetDays = 0) {
@@ -33,11 +34,19 @@ export default function RoomSearchBar() {
       rooms: occ.rooms,
     });
     const nights = Math.max(1, Math.round((+new Date(checkOut) - +new Date(checkIn)) / 86400000));
-    trackMetaPixel(
-      "Search",
-      { content_category: "hotel_room", value: startingFrom * nights * occ.rooms, currency: "PKR" },
-      typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`
-    );
+    const value = startingFrom * nights * occ.rooms;
+    const eventId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`;
+    trackMetaPixel("Search", { content_category: "hotel_room", value, currency: "PKR" }, eventId);
+    void trackSearchServer({
+      checkIn,
+      checkOut,
+      adults: occ.adults,
+      children: occ.children,
+      rooms: occ.rooms,
+      value,
+      pageUrl: typeof window !== "undefined" ? window.location.href : undefined,
+      metaEventId: eventId,
+    });
     const q = new URLSearchParams({
       checkIn,
       checkOut,

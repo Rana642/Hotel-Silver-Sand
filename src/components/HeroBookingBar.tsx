@@ -10,6 +10,7 @@ import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyP
 import WhyBookDirect from "@/components/WhyBookDirect";
 import { useMinRate } from "@/lib/useMinRate";
 import { trackMetaPixel } from "@/lib/analytics";
+import { trackSearchServer } from "@/app/actions/tracking";
 
 function localDate(offsetDays = 0) {
   const d = new Date();
@@ -43,13 +44,23 @@ export default function HeroBookingBar() {
     });
     // Meta's own standard hospitality event — fires when a guest filters by
     // dates, the earliest real signal in the funnel (Search -> ViewContent ->
-    // InitiateCheckout -> Purchase). No PII yet, so Pixel-only, no CAPI pair.
+    // InitiateCheckout -> Purchase). Now the optimization event for both ad
+    // sets, so it gets the same browser Pixel + server CAPI pairing (shared
+    // eventId, deduped by Meta) as every other event on the site.
     const nights = Math.max(1, Math.round((+new Date(checkOut) - +new Date(checkIn)) / 86400000));
-    trackMetaPixel(
-      "Search",
-      { content_category: "hotel_room", value: startingFrom * nights * occ.rooms, currency: "PKR" },
-      typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`
-    );
+    const value = startingFrom * nights * occ.rooms;
+    const eventId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`;
+    trackMetaPixel("Search", { content_category: "hotel_room", value, currency: "PKR" }, eventId);
+    void trackSearchServer({
+      checkIn,
+      checkOut,
+      adults: occ.adults,
+      children: occ.children,
+      rooms: occ.rooms,
+      value,
+      pageUrl: typeof window !== "undefined" ? window.location.href : undefined,
+      metaEventId: eventId,
+    });
     const q = new URLSearchParams({
       checkIn,
       checkOut,
