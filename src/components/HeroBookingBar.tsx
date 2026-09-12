@@ -9,7 +9,7 @@ import DateRangePicker from "@/components/booking/DateRangePicker";
 import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyPicker";
 import WhyBookDirect from "@/components/WhyBookDirect";
 import { useMinRate } from "@/lib/useMinRate";
-import { trackMetaPixel } from "@/lib/analytics";
+import { trackMetaPixel, trackAdsConversion } from "@/lib/analytics";
 import { trackSearchServer } from "@/app/actions/tracking";
 
 function localDate(offsetDays = 0) {
@@ -51,6 +51,10 @@ export default function HeroBookingBar() {
     const value = startingFrom * nights * occ.rooms;
     const eventId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`;
     trackMetaPixel("Search", { content_category: "hotel_room", value, currency: "PKR" }, eventId);
+    // Secondary signal for Google Ads Smart Bidding — not the primary
+    // conversion goal (Call/WhatsApp/Booking still is), just extra real
+    // behaviour volume for the low-volume Search campaigns to learn from.
+    trackAdsConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_SEARCH);
     void trackSearchServer({
       checkIn,
       checkOut,

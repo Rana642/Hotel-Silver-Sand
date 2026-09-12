@@ -6,7 +6,7 @@ import { Search } from "lucide-react";
 import DateRangePicker from "@/components/booking/DateRangePicker";
 import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyPicker";
 import { saveIntent } from "@/lib/bookingIntent";
-import { trackMetaPixel } from "@/lib/analytics";
+import { trackMetaPixel, trackAdsConversion } from "@/lib/analytics";
 import { trackSearchServer } from "@/app/actions/tracking";
 import { useMinRate } from "@/lib/useMinRate";
 
@@ -37,6 +37,7 @@ export default function RoomSearchBar() {
     const value = startingFrom * nights * occ.rooms;
     const eventId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`;
     trackMetaPixel("Search", { content_category: "hotel_room", value, currency: "PKR" }, eventId);
+    trackAdsConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_SEARCH);
     void trackSearchServer({
       checkIn,
       checkOut,
