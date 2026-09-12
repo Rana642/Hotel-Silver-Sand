@@ -47,12 +47,12 @@ export default function PreContactModal({
 
   const isCall = mode === "call";
 
-  // A "qualified" contact — real dates given for an actual booking intent,
-  // not just a curious click — is the signal the ad account should learn
-  // from. Raw clicks (skip button, or "inquiry" with no dates) still get
-  // logged, just not fed to Meta as the strong optimization event, so the
-  // algorithm stops learning to find more of the wrong people.
-  const qualified = intent === "book" && Boolean(checkIn) && Boolean(checkOut);
+  // A "qualified" contact — choosing "book" over "inquiry"/skip — is the
+  // signal the ad account should learn from. Dates are optional on this form
+  // (guests often don't know exact dates yet), so requiring them here was
+  // silently disqualifying real booking intent and starving the signal of
+  // volume. The choice to book is itself the meaningful filter.
+  const qualified = intent === "book";
   const nights =
     checkIn && checkOut
       ? Math.max(1, Math.round((+new Date(checkOut) - +new Date(checkIn)) / 86400000))

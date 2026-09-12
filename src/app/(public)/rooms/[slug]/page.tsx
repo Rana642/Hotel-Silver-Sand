@@ -75,7 +75,12 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ slu
   return (
     <>
       <JsonLd data={jsonLd} />
-      <ViewTracker event="view_item" params={{ item_name: room.name, item_id: room.slug, price, currency: "PKR" }} />
+      <ViewTracker
+        event="view_item"
+        params={{ item_name: room.name, item_id: room.slug, price, currency: "PKR" }}
+        metaEvent="ViewContent"
+        metaParams={{ content_ids: [room.slug], content_name: room.name, value: price, currency: "PKR" }}
+      />
 
       {/* Hero banner */}
       <section className="relative h-56 w-full sm:h-72">

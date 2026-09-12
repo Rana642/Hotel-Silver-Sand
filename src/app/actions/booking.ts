@@ -203,21 +203,30 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
 
   // --- Meta Conversions API (awaited so the serverless fn doesn't freeze
   // before the request lands; deduped with the browser Pixel via event_id) ---
+  const metaUser = { email: input.email, phone: input.phone, name: input.name };
+  const metaCustom = {
+    currency: "PKR",
+    value: total,
+    content_name: room.name,
+    content_ids: [room.id],
+  };
   await sendMetaEvent({
     name: "Lead",
     eventId: bookingRef,
     eventSourceUrl: `${site.url}/thank-you?ref=${bookingRef}`,
-    user: {
-      email: input.email,
-      phone: input.phone,
-      name: input.name,
-    },
-    custom: {
-      currency: "PKR",
-      value: total,
-      content_name: room.name,
-      content_ids: [room.id],
-    },
+    user: metaUser,
+    custom: metaCustom,
+  });
+  // Also send Purchase — Meta's own hospitality funnel treats a confirmed
+  // reservation as Purchase regardless of pay-at-hotel timing, and sending
+  // both the generic Lead and the vertical-specific standard event maximises
+  // how much of the algorithm's built-in event understanding applies here.
+  await sendMetaEvent({
+    name: "Purchase",
+    eventId: `${bookingRef}-purchase`,
+    eventSourceUrl: `${site.url}/thank-you?ref=${bookingRef}`,
+    user: metaUser,
+    custom: metaCustom,
   });
 
   // Mark the source inquiry converted now that a real booking exists for it.

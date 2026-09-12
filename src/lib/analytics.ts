@@ -46,7 +46,7 @@ type FbqWindow = Window & { fbq?: (...args: unknown[]) => void };
  * dedupes the browser + server signal instead of double-counting.
  */
 export function trackMetaPixel(
-  eventName: "Lead" | "Contact" | "InitiateCheckout" | "Schedule" | "ViewContent",
+  eventName: "Lead" | "Contact" | "InitiateCheckout" | "Schedule" | "ViewContent" | "Search" | "Purchase",
   params: Record<string, unknown>,
   eventId: string
 ) {

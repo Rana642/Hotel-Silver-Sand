@@ -33,6 +33,12 @@ export default function ThankYouTracker({
       { content_name: room, value, currency: "PKR" },
       bookingRef
     );
+    // Paired with createBooking()'s server-side Purchase CAPI call.
+    trackMetaPixel(
+      "Purchase",
+      { content_name: room, value, currency: "PKR" },
+      `${bookingRef}-purchase`
+    );
   }, [bookingRef, room, value]);
   return null;
 }

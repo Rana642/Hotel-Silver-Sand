@@ -32,7 +32,7 @@ export type CapiCustom = {
 };
 
 export type CapiEvent = {
-  name: "Lead" | "InitiateCheckout" | "Contact" | "Schedule" | "ViewContent";
+  name: "Lead" | "InitiateCheckout" | "Contact" | "Schedule" | "ViewContent" | "Search" | "Purchase";
   eventId: string;
   eventSourceUrl?: string;
   user?: CapiUser;
