@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, CalendarCheck, Contact, BedDouble, CalendarRange,
   BarChart3, ScrollText, Tag, Images, MapPin, Megaphone, Settings, LogOut, ExternalLink, MoreHorizontal, X,
-  PanelLeftClose, PanelLeftOpen, SearchCheck,
+  PanelLeftClose, PanelLeftOpen, SearchCheck, Inbox,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -18,6 +18,7 @@ const primary = [
   { href: "/admin/availability", label: "Availability", icon: CalendarRange },
 ];
 const secondary = [
+  { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
   { href: "/admin/rooms", label: "Rooms", icon: BedDouble },
   { href: "/admin/gallery", label: "Gallery", icon: Images },
   { href: "/admin/discover", label: "Discover", icon: MapPin },
