@@ -5,10 +5,10 @@ import { useEffect } from "react";
 type GtagWindow = Window & { gtag?: (...args: unknown[]) => void };
 
 /**
- * Fires a Google Ads conversion DIRECTLY (via gtag) on the thank-you page —
- * not routed through GTM/GA4 — for the fastest, most reliable conversion
- * signal so campaigns optimise quickly. Fires once per booking_ref.
- * Also sets Enhanced Conversions user data (gtag hashes it in-browser).
+ * Fires a Google Ads conversion directly via gtag on the thank-you page, for
+ * the fastest, most reliable conversion signal so campaigns optimise
+ * quickly. Fires once per booking_ref. Also sets Enhanced Conversions user
+ * data (gtag hashes it in-browser).
  */
 export default function GoogleAdsConversion({
   bookingRef,

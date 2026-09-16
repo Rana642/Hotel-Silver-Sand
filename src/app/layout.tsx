@@ -4,8 +4,8 @@ import { Montserrat, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { site } from "@/data/site";
 
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID; // e.g. AW-123456789
+const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID; // e.g. G-XXXXXXXXXX
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
 const montserrat = Montserrat({
@@ -61,26 +61,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${montserrat.variable} ${inter.variable} ${playfair.variable} antialiased`}
     >
-      {GTM_ID && (
-        <Script id="gtm" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`}
-        </Script>
-      )}
-      {/* Google Ads — direct global site tag (independent of GTM/GA4 for fast conversion signals) */}
-      {GOOGLE_ADS_ID && (
+      {/* Google Ads + GA4 — one direct gtag.js loader, configured for both IDs. */}
+      {(GOOGLE_ADS_ID || GA4_ID) && (
         <>
           <Script
-            id="google-ads-lib"
+            id="gtag-lib"
             strategy="afterInteractive"
-            src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+            src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID || GA4_ID}`}
           />
-          <Script id="google-ads-init" strategy="afterInteractive">
-            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=window.gtag||gtag;gtag('js',new Date());gtag('config','${GOOGLE_ADS_ID}');`}
+          <Script id="gtag-init" strategy="afterInteractive">
+            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=window.gtag||gtag;gtag('js',new Date());${
+              GOOGLE_ADS_ID ? `gtag('config','${GOOGLE_ADS_ID}');` : ""
+            }${GA4_ID ? `gtag('config','${GA4_ID}');` : ""}`}
           </Script>
         </>
       )}
-      {/* Meta Pixel — direct install (independent of GTM) so browser-side Contact/Lead
-          signals reach Meta with no GTM round-trip, matching the Google Ads gtag above. */}
+      {/* Meta Pixel — direct install so browser-side Contact/Lead signals
+          reach Meta with no extra hop, matching the gtag calls above. */}
       {META_PIXEL_ID && (
         <Script id="meta-pixel" strategy="afterInteractive">
           {`!function(f,b,e,v,n,t,s)
@@ -96,16 +93,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
       )}
       <body className="flex min-h-dvh flex-col bg-white">
-        {GTM_ID && (
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-            />
-          </noscript>
-        )}
         {META_PIXEL_ID && (
           <noscript>
             {/* eslint-disable-next-line @next/next/no-img-element */}

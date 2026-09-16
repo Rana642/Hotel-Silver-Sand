@@ -68,8 +68,8 @@ export default function PreContactModal({
         ? process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_CALL
         : process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_WHATSAPP
     );
-    // Direct Meta Pixel fire (no GTM) — deduped against the CAPI call in
-    // createInquiry via the same eventId, when the form was filled in.
+    // Direct Meta Pixel fire — deduped against the CAPI call in createInquiry
+    // via the same eventId, when the form was filled in.
     // "Schedule" for a qualified (real dates + booking intent) contact,
     // "Contact" for everything else — so the ad account's optimization
     // event can target the former without waiting on rare actual bookings.

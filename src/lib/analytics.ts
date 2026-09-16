@@ -1,7 +1,3 @@
-/**
- * Push an event to the GTM dataLayer. GTM handles fan-out to GA4 and Meta Pixel.
- * Safe on the server (no-op) and safe when GTM isn't installed.
- */
 export type EventName =
   | "call_click"
   | "whatsapp_click"
@@ -14,20 +10,20 @@ export type EventName =
   | "begin_checkout"
   | "booking_confirmed";
 
-type DataLayerWindow = Window & { dataLayer?: Record<string, unknown>[] };
-
-export function trackEvent(event: EventName, params: Record<string, unknown> = {}) {
-  if (typeof window === "undefined") return;
-  const w = window as DataLayerWindow;
-  w.dataLayer = w.dataLayer || [];
-  w.dataLayer.push({ event, ...params });
-}
-
 type GtagWindow = Window & { gtag?: (...args: unknown[]) => void };
 
+/** Fire a GA4 event directly via gtag. Safe on the server and when GA4 isn't set. */
+export function trackEvent(event: EventName, params: Record<string, unknown> = {}) {
+  if (typeof window === "undefined") return;
+  if (!process.env.NEXT_PUBLIC_GA4_ID) return;
+  const w = window as GtagWindow;
+  if (typeof w.gtag !== "function") return;
+  w.gtag("event", event, params);
+}
+
 /**
- * Fire a Google Ads click conversion directly via gtag (no GTM round-trip).
- * `label` is the conversion label for AW-<id>/<label>. No-op if Ads not set.
+ * Fire a Google Ads click conversion directly via gtag. `label` is the
+ * conversion label for AW-<id>/<label>. No-op if Ads not set.
  */
 export function trackAdsConversion(label?: string) {
   if (typeof window === "undefined") return;
@@ -41,9 +37,9 @@ export function trackAdsConversion(label?: string) {
 type FbqWindow = Window & { fbq?: (...args: unknown[]) => void };
 
 /**
- * Fire a Meta Pixel event directly via fbq (no GTM round-trip). `eventId`
- * must match the id passed to the matching server-side CAPI call so Meta
- * dedupes the browser + server signal instead of double-counting.
+ * Fire a Meta Pixel event directly via fbq. `eventId` must match the id
+ * passed to the matching server-side CAPI call so Meta dedupes the browser +
+ * server signal instead of double-counting.
  */
 export function trackMetaPixel(
   eventName: "Lead" | "Contact" | "InitiateCheckout" | "Schedule" | "ViewContent" | "Search" | "Purchase",

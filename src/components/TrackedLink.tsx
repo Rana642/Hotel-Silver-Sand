@@ -3,7 +3,7 @@
 import { trackEvent, type EventName } from "@/lib/analytics";
 import { buttonClasses, type Variant } from "@/components/Button";
 
-/** Client-side <a> that fires a GTM event on click. Used for external / tel: / mailto: links. */
+/** Client-side <a> that fires a GA4 event on click. Used for external / tel: / mailto: links. */
 export default function TrackedLink({
   href,
   event,

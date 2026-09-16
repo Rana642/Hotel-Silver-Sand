@@ -47,7 +47,7 @@ export async function createInquiry(input: InquiryInput): Promise<InquiryResult>
   });
   if (error) return { success: false, error: "Could not send your message. Please try WhatsApp or call us." };
 
-  // Meta Conversions API — direct server call (no GTM), carrying the real
+  // Meta Conversions API — direct server call, carrying the real
   // name/phone/email captured on this form for the best match quality.
   // Deduped against the browser Pixel fire via metaEventId when present.
   // "Schedule" (qualified: real dates + booking intent) vs "Contact" (a

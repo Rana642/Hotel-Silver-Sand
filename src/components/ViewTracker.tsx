@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { trackEvent, trackMetaPixel, type EventName } from "@/lib/analytics";
 
 /**
- * Fires a GTM event once on mount. Used for view_item / view_item_list.
+ * Fires a GA4 event once on mount. Used for view_item / view_item_list.
  * Optionally also fires the matching Meta Pixel standard event directly —
  * top-of-funnel data (Meta's own hospitality funnel: Search -> ViewContent
  * -> InitiateCheckout -> Purchase) that helps Meta's broader targeting even

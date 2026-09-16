@@ -26,8 +26,8 @@ export default function ThankYouTracker({
       value,
       currency: "PKR",
     });
-    // Direct Meta Pixel fire (no GTM) — same eventId as the server CAPI call
-    // in createBooking(), so Meta dedupes rather than double-counting.
+    // Direct Meta Pixel fire — same eventId as the server CAPI call in
+    // createBooking(), so Meta dedupes rather than double-counting.
     trackMetaPixel(
       "Lead",
       { content_name: room, value, currency: "PKR" },
