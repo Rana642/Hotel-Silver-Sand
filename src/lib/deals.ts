@@ -104,11 +104,11 @@ function dealApplies(d: RateDeal, roomId: string, checkIn: string, today: string
   return true;
 }
 
-/** Best matching deal for a room / check-in / stay (highest priority, then discount). */
+/** Best matching deal for a room / check-in / stay — the BIGGEST discount wins; priority only breaks ties. */
 export function pickDeal(deals: RateDeal[], roomId: string, checkIn: string, today: string, nights: number, nowTime: string): AppliedDeal | null {
   const matches = deals.filter((d) => dealApplies(d, roomId, checkIn, today, nights, nowTime));
   if (!matches.length) return null;
-  matches.sort((a, b) => b.priority - a.priority || Number(b.discount_percent) - Number(a.discount_percent));
+  matches.sort((a, b) => Number(b.discount_percent) - Number(a.discount_percent) || b.priority - a.priority);
   const d = matches[0];
   return {
     name: d.name,
@@ -152,7 +152,7 @@ export function pickBannerDeal(deals: RateDeal[], checkIn: string, today: string
     return true;
   });
   if (!ok.length) return null;
-  ok.sort((a, b) => b.priority - a.priority || b.discount_percent - a.discount_percent);
+  ok.sort((a, b) => b.discount_percent - a.discount_percent || b.priority - a.priority);
   const d = ok[0];
   return {
     name: d.name,

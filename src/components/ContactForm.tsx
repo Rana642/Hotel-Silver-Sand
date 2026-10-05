@@ -5,6 +5,7 @@ import { Send, CheckCircle2 } from "lucide-react";
 import { waLink } from "@/data/site";
 import { createInquiry } from "@/app/actions/inquiry";
 import { trackEvent } from "@/lib/analytics";
+import { withAttributionRef } from "@/lib/attribution";
 
 const empty = { name: "", email: "", phone: "", message: "" };
 
@@ -49,7 +50,7 @@ export default function ContactForm() {
       `Phone: ${form.phone}`,
       `Message: ${form.message}`,
     ].join("\n");
-    window.open(waLink(msg), "_blank", "noopener");
+    window.open(waLink(withAttributionRef(msg)), "_blank", "noopener");
     setSent(true);
   }
 

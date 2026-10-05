@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { adSignalsBlocked } from "@/lib/trackingGuard";
 
 type GtagWindow = Window & { gtag?: (...args: unknown[]) => void };
 
@@ -25,6 +26,7 @@ export default function GoogleAdsConversion({
     const adsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
     const label = process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL;
     if (!adsId || !label) return;
+    if (adSignalsBlocked()) return;
 
     const key = `gads_conv:${bookingRef}`;
     try {

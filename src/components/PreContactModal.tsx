@@ -6,6 +6,7 @@ import { site, tel, waLink } from "@/data/site";
 import { createInquiry } from "@/app/actions/inquiry";
 import { trackEvent, trackAdsConversion, trackMetaPixel } from "@/lib/analytics";
 import { rooms as fallbackRooms } from "@/data/rooms";
+import { withAttributionRef } from "@/lib/attribution";
 
 export type ContactMode = "whatsapp" | "call";
 
@@ -95,7 +96,7 @@ export default function PreContactModal({
       ]
         .filter(Boolean)
         .join("\n");
-      window.open(waLink(msg), "_blank", "noopener");
+      window.open(waLink(withAttributionRef(msg)), "_blank", "noopener");
     }
     onClose();
   }

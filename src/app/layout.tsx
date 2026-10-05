@@ -3,10 +3,17 @@ import Script from "next/script";
 import { Montserrat, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { site } from "@/data/site";
+import AttributionCapture from "@/components/AttributionCapture";
 
 const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID; // e.g. AW-123456789
 const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID; // e.g. G-XXXXXXXXXX
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+
+// Staff guard (mirrors lib/trackingGuard.ts): /admin loads no tracking and
+// flags the browser internal; an internal browser is sent to GA4 tagged
+// traffic_type=internal and never reaches Google Ads or Meta.
+// ?hss_internal=0 clears the flag on a device.
+const GUARD = `var hssAdmin=location.pathname.indexOf('/admin')===0,hssInternal=false;try{if(location.search.indexOf('hss_internal=0')>-1)localStorage.removeItem('hss_internal');if(hssAdmin)localStorage.setItem('hss_internal','1');hssInternal=localStorage.getItem('hss_internal')==='1';}catch(e){}`;
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -70,9 +77,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID || GA4_ID}`}
           />
           <Script id="gtag-init" strategy="afterInteractive">
-            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=window.gtag||gtag;gtag('js',new Date());${
-              GOOGLE_ADS_ID ? `gtag('config','${GOOGLE_ADS_ID}');` : ""
-            }${GA4_ID ? `gtag('config','${GA4_ID}');` : ""}`}
+            {`${GUARD}if(!hssAdmin){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=window.gtag||gtag;gtag('js',new Date());${
+              GOOGLE_ADS_ID ? `if(!hssInternal)gtag('config','${GOOGLE_ADS_ID}');` : ""
+            }${GA4_ID ? `gtag('config','${GA4_ID}',hssInternal?{traffic_type:'internal'}:{});` : ""}}`}
           </Script>
         </>
       )}
@@ -80,7 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           reach Meta with no extra hop, matching the gtag calls above. */}
       {META_PIXEL_ID && (
         <Script id="meta-pixel" strategy="afterInteractive">
-          {`!function(f,b,e,v,n,t,s)
+          {`${GUARD}if(!hssAdmin&&!hssInternal){!function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
           n.callMethod.apply(n,arguments):n.queue.push(arguments)};
           if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
@@ -89,22 +96,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           s.parentNode.insertBefore(t,s)}(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
           fbq('init', '${META_PIXEL_ID}');
-          fbq('track', 'PageView');`}
+          fbq('track', 'PageView');}`}
         </Script>
       )}
       <body className="flex min-h-dvh flex-col bg-white">
-        {META_PIXEL_ID && (
-          <noscript>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              height="1"
-              width="1"
-              alt=""
-              style={{ display: "none" }}
-              src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
-            />
-          </noscript>
-        )}
+        <AttributionCapture />
         {children}
       </body>
     </html>

@@ -28,10 +28,18 @@ export type Promotion = {
 const SELECT =
   "id, slug, title, short_desc, description, image, badge, benefits, coupon_code, is_active, sort_order, start_date, end_date, lead_time_type, lead_time_days, min_nights, discount_percent, weekdays, start_time, end_time, refundable, free_cancel_days";
 
+/** Today's date in Pakistan (YYYY-MM-DD) — deal windows are PKT dates. */
+function todayPkt(): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Karachi" }).format(new Date());
+}
+
+/** Active promotions whose date window hasn't ended — an expired deal must
+ *  never be advertised (it can't be applied at checkout anyway). */
 export async function getPromotionsStatic(): Promise<Promotion[]> {
   const supabase = createServiceClient();
   const { data } = await supabase.from("promotions").select(SELECT).eq("is_active", true).order("sort_order");
-  return (data ?? []) as Promotion[];
+  const today = todayPkt();
+  return ((data ?? []) as Promotion[]).filter((p) => !p.end_date || p.end_date >= today);
 }
 
 export async function getPromotionBySlug(slug: string): Promise<Promotion | null> {

@@ -6,17 +6,20 @@ export const site = {
   description:
     "A 500 m walk from Multan Cantt Railway Station and 2.4 km from Multan International Airport. Comfortable AC rooms, free WiFi, free private parking and a front desk open 24 hours — so a late train or a delayed flight never leaves you stranded.",
   url: "https://www.hotelsilversandmultan.com",
+  // NAP is LOCKED to the Google Business Profile — name, address and phone
+  // must match it character for character everywhere (site, schema, social,
+  // OTAs). "Near Aziz Hotel Chowk / Multan Cantt" is directions copy only.
   address: {
-    street: "514 Akbar Road, Railway Colony, near Aziz Hotel Chowk",
-    locality: "Cantt, Multan",
+    street: "514 Akbar Road, Railway Colony",
+    locality: "Multan",
     postalCode: "60000",
     region: "Punjab",
     country: "PK",
-    full: "514 Akbar Road, Railway Colony, near Aziz Hotel Chowk, Cantt, Multan, 60000, Pakistan",
+    full: "514 Akbar Road, Railway Colony, Multan 60000, Pakistan",
   },
-  phone: "0300-872-0939",
+  phone: "0300 8720939",
   phoneIntl: "+923008720939",
-  whatsapp: "+92 300 872 0939",
+  whatsapp: "+92 300 8720939",
   whatsappNumber: "923008720939",
   email: "info@hotelsilversandmultan.com",
   whatsappChannel: "https://whatsapp.com/channel/0029Vb7pg9iDjiOfo8uNk63s",
@@ -24,7 +27,7 @@ export const site = {
   // Real coordinates + placeId for the Multan Cantt property (used by the map embed).
   geo: { lat: 30.182376, lng: 71.4422921 },
   placeId: "ChIJXz1OzmQxOzkR0D8_sKCUClw",
-  mapQuery: "Hotel Silver Sand Multan, 514 Akbar Road, Cantt, Multan, Pakistan",
+  mapQuery: "Hotel Silver Sand Multan, 514 Akbar Road, Railway Colony, Multan, Pakistan",
   mapDirections:
     "https://www.google.com/maps/dir/?api=1&destination=Hotel+Silver+Sand+Multan&destination_place_id=ChIJXz1OzmQxOzkR0D8_sKCUClw",
   reviewUrl: "https://g.page/r/CdA_P7CglApcEBM/review",

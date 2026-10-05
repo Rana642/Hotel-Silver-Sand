@@ -183,7 +183,7 @@ export default async function HomePage() {
         <div className="container-site py-16 sm:py-20">
           <SectionHeading
             title="Guest Reviews"
-            subtitle="837 people have stayed and said so publicly"
+            subtitle={`${google.count} people have stayed and said so publicly`}
           />
           <div className="mt-5 text-center">
             <GoogleRating variant="dark" rating={google.rating} count={google.count} />

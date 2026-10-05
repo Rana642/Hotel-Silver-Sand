@@ -10,6 +10,8 @@ export type EventName =
   | "begin_checkout"
   | "booking_confirmed";
 
+import { adSignalsBlocked } from "@/lib/trackingGuard";
+
 type GtagWindow = Window & { gtag?: (...args: unknown[]) => void };
 
 /** Fire a GA4 event directly via gtag. Safe on the server and when GA4 isn't set. */
@@ -29,6 +31,7 @@ export function trackAdsConversion(label?: string) {
   if (typeof window === "undefined") return;
   const adsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
   if (!adsId || !label) return;
+  if (adSignalsBlocked()) return;
   const w = window as GtagWindow;
   if (typeof w.gtag !== "function") return;
   w.gtag("event", "conversion", { send_to: `${adsId}/${label}` });
@@ -48,6 +51,7 @@ export function trackMetaPixel(
 ) {
   if (typeof window === "undefined") return;
   if (!process.env.NEXT_PUBLIC_META_PIXEL_ID) return;
+  if (adSignalsBlocked()) return;
   const w = window as FbqWindow;
   if (typeof w.fbq !== "function") return;
   w.fbq("track", eventName, params, { eventID: eventId });

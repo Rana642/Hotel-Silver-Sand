@@ -12,6 +12,7 @@ import PreContactModal, { type ContactMode } from "@/components/PreContactModal"
 import ReservationModal from "@/components/ReservationModal";
 import { tel, waLink } from "@/data/site";
 import { trackEvent, trackAdsConversion } from "@/lib/analytics";
+import { withAttributionRef } from "@/lib/attribution";
 
 /**
  * Pre-contact "Quick details" lead form on Call/WhatsApp.
@@ -53,7 +54,7 @@ export default function BookingProvider({ children }: { children: ReactNode }) {
         : process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_WHATSAPP
     );
     if (isCall) window.location.href = tel;
-    else window.open(waLink(), "_blank", "noopener");
+    else window.open(waLink(withAttributionRef()), "_blank", "noopener");
   }, []);
 
   const openReservation = useCallback(() => setReservationOpen(true), []);

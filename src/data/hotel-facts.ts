@@ -8,8 +8,8 @@
  */
 
 /**
- * The property's live Google Business Profile score, read from the GBP panel on
- * 2026-09-04. This is the rating the site is allowed to show and mark up: it is
+ * The property's live Google Business Profile score, read from the GBP API on
+ * 2026-10-05 (update the count when it moves — it is also the schema fallback). This is the rating the site is allowed to show and mark up: it is
  * public, attributed to Google, and displayed on the page next to the claim.
  *
  * For context on why this and not Booking.com's number: Booking.com shows 6.2
@@ -18,7 +18,7 @@
  */
 export const googleRating = {
   value: 3.8,
-  count: 837,
+  count: 845,
   scale: 5,
   /** Where a visitor can verify it for themselves. */
   source: "Google",

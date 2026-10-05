@@ -27,6 +27,9 @@ export default function TrackedLink({
     <a
       href={href}
       className={cls}
+      // data-tracked: the global listener (AttributionCapture) adds the
+      // WhatsApp "Ref:" code + Ads conversion but skips its own GA4 event.
+      data-tracked=""
       onClick={() => trackEvent(event, params)}
       {...(openNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
     >

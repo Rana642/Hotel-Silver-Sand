@@ -27,7 +27,7 @@ export const roomFeatures = [
  * Names, sizes, beds and occupancy mirror the live Booking.com listing so the two
  * channels never disagree.
  *
- * The `price` values are only a build-time FALLBACK for the "From PKR x/night"
+ * The `price` values (synced to the live DB rates on 2026-10-05) are only a FALLBACK for the "From PKR x/night"
  * labels. Live rates come from the database (`useMinRate` / `getRoomsStatic`) and
  * are set by the owner in the admin dashboard off the Booking.com extranet — the
  * public Booking.com page shows post-discount rates, not the standard ones.
@@ -39,7 +39,7 @@ export const rooms: Room[] = [
     capacity: "2 Adults",
     maxAdults: 2,
     maxChildren: 0,
-    price: 3000,
+    price: 4536,
     available: true,
     image: "/images/gallery/851976912.jpg",
     features: [
@@ -57,7 +57,7 @@ export const rooms: Room[] = [
     capacity: "2 Adults",
     maxAdults: 2,
     maxChildren: 0,
-    price: 6250,
+    price: 7938,
     available: true,
     image: "/images/gallery/851976968.jpg",
     features: [
@@ -75,7 +75,7 @@ export const rooms: Room[] = [
     capacity: "3 Adults",
     maxAdults: 3,
     maxChildren: 0,
-    price: 6250,
+    price: 7371,
     available: true,
     image: "/images/gallery/851976923.jpg",
     features: [
@@ -93,7 +93,7 @@ export const rooms: Room[] = [
     capacity: "2 Adults",
     maxAdults: 2,
     maxChildren: 0,
-    price: 6250,
+    price: 6804,
     available: true,
     image: "/images/gallery/851976974.jpg",
     features: [
