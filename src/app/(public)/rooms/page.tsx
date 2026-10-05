@@ -82,7 +82,7 @@ export default async function RoomsPage() {
                       )}
                     </div>
                     {gstPercent > 0 && (
-                      <p className="mt-0.5 text-xs text-slate">Inclusive of {gstPercent}% GST</p>
+                      <p className="mt-0.5 text-xs text-slate">+ {gstPercent}% GST</p>
                     )}
 
                     {room.description && (

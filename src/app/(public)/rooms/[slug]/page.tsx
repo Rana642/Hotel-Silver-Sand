@@ -112,7 +112,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ slu
                     <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">Save {discountPct}%</span>
                   )}
                   {gstPercent > 0 && (
-                    <span className="text-xs text-slate">Inclusive of {gstPercent}% GST</span>
+                    <span className="text-xs text-slate">+ {gstPercent}% GST</span>
                   )}
                 </div>
                 {room.description && <p className="mt-4 leading-relaxed text-slate">{room.description}</p>}

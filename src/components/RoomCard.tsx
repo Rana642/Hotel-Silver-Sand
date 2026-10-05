@@ -80,7 +80,7 @@ export default function RoomCard({ room }: { room: Room }) {
             )}
             <p className="mt-0.5">
               <span className="font-heading text-2xl font-bold text-gold">{fmt(room.price)}</span>
-              <span className="text-sm text-slate"> / night</span>
+              <span className="text-sm text-slate"> / night + GST</span>
             </p>
           </div>
 

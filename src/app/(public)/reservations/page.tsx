@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ReservationsFlow, { type RoomVM } from "@/components/reservations/ReservationsFlow";
 import { getRoomsStatic, roomPricing } from "@/lib/rooms";
 import { availabilityForStay, pktToday, pktNowTime, addDays } from "@/lib/availability";
-import { getActiveDeals, pickDeal, applyDeal, pickBannerDeal } from "@/lib/deals";
+import { getActiveDeals, pickDeal, priceWithDeal, pickBannerDeal } from "@/lib/deals";
 import { pageMeta } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -54,8 +54,8 @@ export default async function ReservationsPage({
 
   const rooms: RoomVM[] = dbRooms.map((r) => {
     const p = roomPricing(r);
-    const deal = pickDeal(deals, r.id, checkIn, today, nights, nowTime);
-    const price = applyDeal(p.price, deal);
+    // Deal % off the standard rate, only if it beats the offer (same as createBooking).
+    const { price, deal } = priceWithDeal(p.price, p.original, pickDeal(deals, r.id, checkIn, today, nights, nowTime));
     return {
       id: r.id,
       slug: r.slug,
@@ -75,8 +75,9 @@ export default async function ReservationsPage({
       dealName: deal?.name ?? null,
       dealPct: deal?.discountPct ?? 0,
       dealDays: deal?.weekdays ?? [],
-      refundable: deal?.refundable ?? false,
-      freeCancelDays: deal?.freeCancelDays ?? 0,
+      // Every booking: free cancellation, 100% refund anytime, pay at the hotel.
+      refundable: true,
+      freeCancelDays: 0,
     };
   });
 

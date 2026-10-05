@@ -89,7 +89,7 @@ export default async function ThankYouPage({
                     <Row k="Nights" v={String(booking.nights)} />
                     <Row k="Guests" v={`${booking.guests} guest${booking.guests > 1 ? "s" : ""}`} />
                     <tr>
-                      <td className="px-6 py-3 font-medium text-slate">Estimated Total</td>
+                      <td className="px-6 py-3 font-medium text-slate">Total (incl. GST)</td>
                       <td className="px-6 py-3 text-right font-heading text-lg font-bold text-gold">
                         {pkr(Number(booking.total))}
                       </td>
@@ -129,7 +129,7 @@ export default async function ThankYouPage({
               {[
                 { t: "We Check Availability", d: "Our team reviews your request and verifies the room is ready for your dates." },
                 { t: "We WhatsApp or Call You", d: "We confirm your room and share the best direct rate — usually within a few hours." },
-                { t: "Arrive & Enjoy", d: "Check in at any time (24 hours). No surprises." },
+                { t: "Arrive & Enjoy", d: "Check in at any time (24 hours), pay at the hotel. No surprises." },
               ].map((s, i) => (
                 <li key={s.t} className="flex gap-3">
                   <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gold font-bold text-navy-dark">{i + 1}</span>

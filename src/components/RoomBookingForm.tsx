@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { CalendarDays, Phone, MessageCircle } from "lucide-react";
 import { useBooking } from "@/components/BookingProvider";
 import { createBooking } from "@/app/actions/booking";
+import { addGst } from "@/lib/pricing";
 import { previewCoupon } from "@/app/actions/coupon";
 import { pkr } from "@/lib/format";
 import { trackEvent, trackMetaPixel } from "@/lib/analytics";
@@ -86,9 +87,8 @@ export default function RoomBookingForm({
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }));
   const nights = f.checkIn && f.checkOut ? Math.max(0, Math.round((+new Date(f.checkOut) - +new Date(f.checkIn)) / 86400000)) : 0;
   const subtotal = price * (nights || 1) * occ.rooms;
-  const total = Math.max(0, subtotal - discount);
-  // total is GST-inclusive — extract the tax already baked in, don't add it on top.
-  const gst = gstPercent ? Math.round(total - total / (1 + gstPercent / 100)) : 0;
+  // Prices are PRE-TAX — GST is added on top (lib/pricing.ts).
+  const { gst, total } = addGst(Math.max(0, subtotal - discount), gstPercent);
   const cell = "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40";
 
   async function applyCoupon() {

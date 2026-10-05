@@ -33,6 +33,8 @@ type BookingLike = {
   rooms_count: number;
   total: number;
   special_request?: string | null;
+  /** Set when a deal was applied. */
+  deal_name?: string | null;
 };
 
 /** Notify the hotel of a new booking + send the guest a confirmation. */
@@ -49,7 +51,8 @@ export async function notifyBooking(b: BookingLike) {
     ["Check-out", fmtDate(b.check_out)],
     ["Nights / Guests / Rooms", `${b.nights} / ${b.guests} / ${b.rooms_count}`],
     ...(b.special_request ? ([["Request", b.special_request]] as [string, string][]) : []),
-    ["Total", `<b style="color:#d9a928">${pkr(b.total)}</b>`],
+    ...(b.deal_name ? ([["Offer", b.deal_name]] as [string, string][]) : []),
+    ["Total (incl. GST)", `<b style="color:#d9a928">${pkr(b.total)}</b>`],
   ];
 
   if (to) {
@@ -68,7 +71,7 @@ export async function notifyBooking(b: BookingLike) {
       html: wrap(
         "Thank you for your booking request",
         rows.filter(([k]) => k !== "Phone" && k !== "Email"),
-        `We've received your request and our team will confirm shortly on WhatsApp or by phone. No payment is required now — you pay at the hotel. Call us at ${site.phone}.`
+        `We've received your request and our team will confirm shortly on WhatsApp or by phone. No payment is required now — you pay at the hotel. Free cancellation, 100% refund anytime. Call us at ${site.phone}.`
       ),
     });
   }

@@ -176,3 +176,19 @@ export function applyDeal(basePrice: number, deal: AppliedDeal | null): number {
   if (!deal || deal.discountPct <= 0) return basePrice;
   return Math.round(basePrice * (1 - deal.discountPct / 100));
 }
+
+/**
+ * Nightly price for a room under a deal — the client's rule (same as the
+ * other hotel): the deal % comes off the STANDARD rate (`original_price`) and
+ * only applies if it beats the room's offer price; otherwise the offer stands
+ * and no deal terms apply. Server + /reservations share this.
+ */
+export function priceWithDeal(
+  offer: number,
+  standard: number | null,
+  deal: AppliedDeal | null
+): { price: number; deal: AppliedDeal | null } {
+  if (!deal || deal.discountPct <= 0) return { price: offer, deal: null };
+  const dealPrice = applyDeal(standard && standard > offer ? standard : offer, deal);
+  return dealPrice < offer ? { price: dealPrice, deal } : { price: offer, deal: null };
+}

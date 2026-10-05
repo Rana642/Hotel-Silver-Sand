@@ -12,6 +12,7 @@ import OccupancyPicker, { type Occupancy } from "@/components/booking/OccupancyP
 import DealBanner from "@/components/reservations/DealBanner";
 import type { BannerDeal } from "@/lib/deals";
 import { createBooking } from "@/app/actions/booking";
+import { addGst } from "@/lib/pricing";
 import { previewCoupon } from "@/app/actions/coupon";
 import { pkr } from "@/lib/format";
 import { trackEvent, trackMetaPixel } from "@/lib/analytics";
@@ -69,7 +70,7 @@ function cancellation(refundable: boolean, days: number, checkIn: string): { fre
   if (!refundable) return { free: false, text: "Non-Refundable" };
   const d = new Date(checkIn + "T00:00:00");
   d.setDate(d.getDate() - Math.max(0, days));
-  return { free: true, text: `Book Risk Free! Cancel for free on or before ${fmtLong(d.toISOString().slice(0, 10))}` };
+  return { free: true, text: "Free cancellation · 100% refund anytime" };
 }
 
 export default function ReservationsFlow({
@@ -273,7 +274,7 @@ function RoomRow({
               {strike && <span className="text-sm text-gray-400 line-through">{pkr(strike)}</span>}
               <div><span className="text-sm text-slate">From </span><span className="font-heading text-xl font-bold text-navy">{pkr(room.price)}</span><span className="text-sm text-slate">/night</span></div>
               {room.gstPercent > 0 && (
-                <span className="text-xs text-slate">Inclusive of {room.gstPercent}% GST</span>
+                <span className="text-xs text-slate">+ {room.gstPercent}% GST</span>
               )}
               <span className="mt-0.5 text-xs text-slate">Total {pkr(total)} for {nights} night{nights > 1 ? "s" : ""}</span>
             </>
@@ -395,15 +396,18 @@ function GuestInformation({
   const savings = strike ? (strike - room.price) * nights * search.rooms : 0;
   const cancel = cancellation(room.refundable, room.freeCancelDays, search.checkIn);
   const afterDiscount = Math.max(0, subtotal - discount);
-  // Rates are GST-inclusive — extract the tax already baked into afterDiscount
-  // for display, don't add a fresh gst% on top of it.
-  const gst = room.gstPercent ? Math.round(afterDiscount - afterDiscount / (1 + room.gstPercent / 100)) : 0;
-  const grandTotal = afterDiscount;
+  // Rates are PRE-TAX — GST is added on top (lib/pricing.ts).
+  const { gst, total: grandTotal } = addGst(afterDiscount, room.gstPercent);
 
   useEffect(() => {
     // auto-check promo from the search bar once when landing on guest step
     const code = search.promo.trim();
     if (!code) return;
+    // Promo codes don't stack with deals (server ignores them too).
+    if (room.dealName) {
+      setCouponMsg({ ok: false, text: `Promo codes can't be combined with ${room.dealName ?? "this offer"}.` });
+      return;
+    }
     previewCoupon(code, subtotal).then((res) => {
       if (res.valid) { setDiscount(res.discount); setCouponMsg({ ok: true, text: `Promo applied — save ${pkr(res.discount)}` }); }
       else setCouponMsg({ ok: false, text: res.message });
@@ -482,7 +486,7 @@ function GuestInformation({
             </div>
             <div className="mt-0.5 flex items-center justify-between gap-3 text-xs text-slate">
               <span>
-                {nights} night{nights > 1 ? "s" : ""} · pay at the hotel
+                {nights} night{nights > 1 ? "s" : ""} · incl. GST · pay at the hotel
                 {savings + discount > 0 && <span className="font-semibold text-green-600"> · You save {pkr(savings + discount)}</span>}
               </span>
               <a href="#booking-summary" onClick={(e) => { e.preventDefault(); document.getElementById("booking-summary")?.scrollIntoView({ behavior: "smooth", block: "start" }); }} className="shrink-0 font-semibold text-navy underline">Details</a>
@@ -517,7 +521,7 @@ function GuestInformation({
             <div className="flex justify-between text-slate"><span>Sub Total ({pkr(room.price)} × {nights}n × {search.rooms})</span><span className="text-navy">{pkr(subtotal)}</span></div>
             {discount > 0 && <div className="flex justify-between text-green-600"><span>Promo discount</span><span>− {pkr(discount)}</span></div>}
             {room.gstPercent > 0 && (
-              <div className="flex justify-between text-slate"><span>Includes GST ({room.gstPercent}%)</span><span className="text-navy">{pkr(gst)}</span></div>
+              <div className="flex justify-between text-slate"><span>GST ({room.gstPercent}%)</span><span className="text-navy">{pkr(gst)}</span></div>
             )}
             <div className="mt-1 flex justify-between border-t border-gray-100 pt-2 font-bold text-navy"><span>Grand Total</span><span>{pkr(grandTotal)}</span></div>
           </div>

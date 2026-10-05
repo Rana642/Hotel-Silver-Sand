@@ -57,9 +57,8 @@ export function roomPricing(room: Pick<DbRoom, "price_per_night" | "original_pri
   const original = room.original_price && room.original_price > price ? Number(room.original_price) : null;
   const discountPct = original ? Math.round(((original - price) / original) * 100) : 0;
   const gstPercent = Number(room.gst_percent) || 0;
-  // Rates are GST-inclusive — extract the tax already baked into `price`
-  // instead of adding a fresh gst% on top of it.
-  const gst = gstPercent ? Math.round(price - price / (1 + gstPercent / 100)) : 0;
+  // Rates are PRE-TAX (Booking.com pattern) — GST is added on top. See lib/pricing.ts.
+  const gst = gstPercent ? Math.round((price * gstPercent) / 100) : 0;
   return { price, original, discountPct, gst, gstPercent };
 }
 

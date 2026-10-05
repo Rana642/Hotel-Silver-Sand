@@ -2,7 +2,8 @@
 
 import { createServiceClient } from "@/lib/supabase/service";
 import { checkNightsAvailable } from "@/lib/availability";
-import { dealForRoomOnDate, applyDeal } from "@/lib/deals";
+import { dealForRoomOnDate, priceWithDeal } from "@/lib/deals";
+import { addGst } from "@/lib/pricing";
 import { sendMetaEvent } from "@/lib/meta-capi";
 import { notifyBooking } from "@/lib/notify";
 import { site } from "@/data/site";
@@ -122,7 +123,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   // --- resolve room (server-authoritative price) ---
   const { data: room } = await supabase
     .from("rooms")
-    .select("id, name, price_per_night, original_price, max_adults, max_children")
+    .select("id, name, price_per_night, original_price, max_adults, max_children, gst_percent")
     .eq("name", input.roomType)
     .maybeSingle();
 
@@ -133,9 +134,11 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   const roomsCount = Math.max(1, Number(input.roomsCount) || 1);
   // Apply any active dashboard deal for the check-in date (server-authoritative,
   // so the saved price matches what the guest was shown on /reservations).
+  // Deal % is off the standard rate and applies only if it beats the offer
+  // (lib/deals.ts priceWithDeal). Pay at the hotel — no advance on this property.
   const baseUnit = Number(room.price_per_night) || 0;
-  const deal = await dealForRoomOnDate(room.id, input.checkIn, nights);
-  const unitPrice = applyDeal(baseUnit, deal);
+  const matched = await dealForRoomOnDate(room.id, input.checkIn, nights);
+  const { price: unitPrice, deal } = priceWithDeal(baseUnit, room.original_price ? Number(room.original_price) : null, matched);
   const roomTotal = unitPrice * nights * roomsCount;
 
   // --- availability check (multi-unit inventory) — before touching coupons ---
@@ -151,7 +154,8 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   // --- coupon (atomic redeem) ---
   let discount = 0;
   let couponCode: string | null = null;
-  if (input.couponCode?.trim()) {
+  // Coupons don't stack with deals.
+  if (input.couponCode?.trim() && !deal) {
     const { data: redeem, error: rErr } = await supabase.rpc("redeem_coupon", {
       p_code: input.couponCode.trim(),
       p_total: roomTotal,
@@ -163,7 +167,8 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     couponCode = input.couponCode.trim().toUpperCase();
   }
 
-  const total = Math.max(0, roomTotal - discount);
+  // Prices are PRE-TAX; GST is added on top (lib/pricing.ts). `total` = payable.
+  const { total } = addGst(Math.max(0, roomTotal - discount), Number(room.gst_percent) || 0);
 
   // --- insert booking ---
   const bookingRef = makeRef();
@@ -184,7 +189,8 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
       unit_price: unitPrice,
       original_price: room.original_price ?? null,
       discount,
-      coupon_code: couponCode,
+      // A deal booking is marked "DEAL:<name>" so admin can see which offer applied.
+      coupon_code: deal ? `DEAL:${deal.name}` : couponCode,
       total,
       special_request: input.requests?.trim() || null,
       status: "pending",
@@ -251,6 +257,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     rooms_count: input.roomsCount,
     total,
     special_request: input.requests?.trim() || null,
+    deal_name: deal?.name ?? null,
   });
 
   return { success: true, bookingRef };
