@@ -41,7 +41,7 @@ export type RoomVM = {
   freeCancelDays: number;
 };
 
-type Search = { checkIn: string; checkOut: string; adults: number; children: number; rooms: number; promo: string };
+type Search = { checkIn: string; checkOut: string; adults: number; children: number; rooms: number; promo: string; room?: string; hasDates?: boolean };
 
 const FALLBACK_IMG = "/images/gallery/851976912.jpg";
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -55,6 +55,10 @@ const INCLUSIONS = [
   { icon: Bus, label: "Pick-up & Drop Service (chargeable)" },
   { icon: Wifi, label: "Free Wi-Fi" },
 ];
+
+function fmtShort(ymd: string) {
+  return new Date(ymd + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
 
 function fmtLong(ymd: string) {
   return new Date(ymd + "T00:00:00").toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
@@ -91,6 +95,15 @@ export default function ReservationsFlow({
 
   const guests = occ.adults + occ.children;
 
+  // Mobile: when the dates already came from the popup/URL, show a one-line
+  // summary with Modify instead of the full search box (desktop keeps the bar).
+  const [barOpen, setBarOpen] = useState(!initial.hasDates);
+  // Room chosen on a room card (?room=slug) is listed first and highlighted.
+  const pickedSlug = initial.room && rooms.some((r) => r.slug === initial.room) ? initial.room : null;
+  const orderedRooms = pickedSlug
+    ? [...rooms.filter((r) => r.slug === pickedSlug), ...rooms.filter((r) => r.slug !== pickedSlug)]
+    : rooms;
+
   // Selection + step.
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const selected = rooms.find((r) => r.slug === selectedSlug) ?? null;
@@ -124,8 +137,22 @@ export default function ReservationsFlow({
           <h1 className="font-heading text-xl font-bold text-navy sm:text-2xl">Reservations</h1>
         </div>
 
+        {/* Mobile one-line search summary (dates already chosen) */}
+        {!barOpen && (
+          <div className="flex items-center gap-3 border-x border-gray-100 bg-white px-4 py-3 shadow-card lg:hidden">
+            <CalendarDays className="size-5 shrink-0 text-gold" />
+            <p className="min-w-0 flex-1 text-sm text-navy">
+              <span className="font-semibold">{fmtShort(initial.checkIn)} – {fmtShort(initial.checkOut)}</span>
+              <span className="text-slate"> · {occ.adults} adult{occ.adults > 1 ? "s" : ""}{occ.children ? `, ${occ.children} child${occ.children > 1 ? "ren" : ""}` : ""}</span>
+            </p>
+            <button type="button" onClick={() => setBarOpen(true)} className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-navy underline underline-offset-4">
+              <Pencil className="size-3.5" /> Modify
+            </button>
+          </div>
+        )}
+
         {/* Availability bar */}
-        <div className="border-x border-gray-100 bg-white px-4 py-4 shadow-card">
+        <div className={`${barOpen ? "" : "hidden lg:block "}border-x border-gray-100 bg-white px-4 py-4 shadow-card`}>
           <div className="grid gap-2 lg:grid-cols-[1.1fr_1.3fr_1.1fr_0.9fr_auto]">
             <div className="rounded-md border border-gray-300 bg-gray-50 px-3 py-2">
               <span className="block text-[11px] font-semibold text-slate">Property</span>
@@ -174,8 +201,13 @@ export default function ReservationsFlow({
         {/* Room list — hidden once a room is selected (collapses like Zehneria) */}
         {!selected && (
           <div className="border-x border-gray-100 bg-cream">
-            {rooms.map((room) => (
-              <RoomRow key={room.slug} room={room} nights={nights} roomsWanted={occ.rooms} guests={guests} checkIn={checkIn} onBook={() => selectRoom(room.slug)} />
+            {orderedRooms.map((room) => (
+              <div key={room.slug} className={room.slug === pickedSlug ? "border-2 border-gold" : ""}>
+                {room.slug === pickedSlug && (
+                  <p className="bg-gold px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-navy-dark">Your selected room</p>
+                )}
+                <RoomRow room={room} nights={nights} roomsWanted={occ.rooms} guests={guests} checkIn={checkIn} onBook={() => selectRoom(room.slug)} />
+              </div>
             ))}
           </div>
         )}
@@ -442,6 +474,21 @@ function GuestInformation({
 
           {error && <p className="mt-2 text-center text-sm text-red-600">{error}</p>}
 
+          {/* Mobile-only total — the full summary follows the form. */}
+          <div className="mt-4 rounded-md border border-gray-200 bg-cream px-4 py-3 lg:hidden">
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm font-semibold text-navy">Grand Total</span>
+              <span className="text-base font-bold text-navy">{pkr(grandTotal)}</span>
+            </div>
+            <div className="mt-0.5 flex items-center justify-between gap-3 text-xs text-slate">
+              <span>
+                {nights} night{nights > 1 ? "s" : ""} · pay at the hotel
+                {savings + discount > 0 && <span className="font-semibold text-green-600"> · You save {pkr(savings + discount)}</span>}
+              </span>
+              <a href="#booking-summary" onClick={(e) => { e.preventDefault(); document.getElementById("booking-summary")?.scrollIntoView({ behavior: "smooth", block: "start" }); }} className="shrink-0 font-semibold text-navy underline">Details</a>
+            </div>
+          </div>
+
           <div className="mt-4 flex flex-col items-center">
             <button onClick={submit} disabled={loading}
               className="w-full max-w-sm rounded-md bg-gold px-6 py-3.5 font-semibold text-navy-dark transition hover:brightness-95 disabled:opacity-60">
@@ -452,7 +499,7 @@ function GuestInformation({
         </div>
 
         {/* Summary sidebar */}
-        <aside className="h-fit rounded-lg border border-gray-200 p-5 shadow-card">
+        <aside id="booking-summary" className="h-fit scroll-mt-24 rounded-lg border border-gray-200 p-5 shadow-card">
           <h3 className="font-heading text-lg font-bold text-navy">Your Booking Details</h3>
           <div className="mt-3 flex justify-between border-b border-gray-100 pb-3 text-sm">
             <span className="font-semibold text-navy">{site.name}</span>

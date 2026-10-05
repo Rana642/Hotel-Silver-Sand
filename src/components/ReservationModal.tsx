@@ -16,7 +16,16 @@ function localDate(offsetDays = 0) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export default function ReservationModal({ onClose }: { onClose: () => void }) {
+export default function ReservationModal({
+  onClose,
+  roomSlug,
+  roomName,
+}: {
+  onClose: () => void;
+  /** Set when opened from a room card — /reservations lists that room first. */
+  roomSlug?: string;
+  roomName?: string;
+}) {
   const router = useRouter();
   const today = localDate(0);
   const [checkIn, setCheckIn] = useState(today);
@@ -47,6 +56,7 @@ export default function ReservationModal({ onClose }: { onClose: () => void }) {
       adults: String(occ.adults), children: String(occ.children), rooms: String(occ.rooms),
     });
     if (promo.trim()) q.set("promo", promo.trim());
+    if (roomSlug) q.set("room", roomSlug);
     onClose();
     router.push(`/reservations?${q.toString()}`);
   }
@@ -60,7 +70,7 @@ export default function ReservationModal({ onClose }: { onClose: () => void }) {
       <div className="w-full max-w-4xl rounded-xl border border-white/20 bg-navy-dark/45 p-5 shadow-pop backdrop-blur-2xl sm:p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="font-heading text-lg font-bold text-white">Reservations</h2>
+            <h2 className="font-heading text-lg font-bold text-white">{roomName ? `Check Availability — ${roomName}` : "Reservations"}</h2>
             <p className="text-xs text-white/70">Best direct rates — from <span className="font-semibold text-white">PKR {startingFrom.toLocaleString("en-PK")}</span>/night</p>
           </div>
           <button onClick={onClose} aria-label="Close" className="rounded-full border border-white/20 bg-white/10 p-1.5 text-white/80 backdrop-blur-md transition hover:text-gold">

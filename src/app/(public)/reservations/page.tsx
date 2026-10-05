@@ -85,7 +85,7 @@ export default async function ReservationsPage({
   return (
     <ReservationsFlow
       rooms={rooms}
-      initial={{ checkIn, checkOut, adults, children, rooms: roomsWanted, promo }}
+      initial={{ checkIn, checkOut, adults, children, rooms: roomsWanted, promo, room: sp.room?.trim() || "", hasDates: isYmd(sp.checkIn) && isYmd(sp.checkOut) }}
       today={today}
       nights={nights}
       banner={banner}

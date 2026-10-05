@@ -4,6 +4,7 @@ import { Users, ArrowRight, BadgePercent } from "lucide-react";
 import type { Room } from "@/data/rooms";
 import { bookingComLink } from "@/data/site";
 import BookingComLink from "@/components/BookingComLink";
+import RoomCheckButton from "@/components/RoomCheckButton";
 
 const shortLabel: Record<string, string> = {
   "Air Conditioning": "AC",
@@ -83,11 +84,16 @@ export default function RoomCard({ room }: { room: Room }) {
             </p>
           </div>
 
+          <RoomCheckButton
+            slug={room.slug}
+            name={room.name}
+            className="mt-4 flex w-full items-center justify-center gap-2 bg-gold px-4 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95"
+          />
           <Link
             href={`/rooms/${room.slug}`}
-            className="mt-4 flex w-full items-center justify-center gap-2 bg-gold px-4 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95"
+            className="mt-2 flex w-full items-center justify-center gap-1.5 border border-navy/20 px-4 py-2 text-sm font-semibold text-navy transition hover:bg-navy hover:text-white"
           >
-            View Details &amp; Book <ArrowRight className="size-4" />
+            View Room <ArrowRight className="size-4" />
           </Link>
           <BookingComLink
             href={bookingComHref}

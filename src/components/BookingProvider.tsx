@@ -25,7 +25,8 @@ const CONTACT_FORM_ENABLED = true;
 
 type BookingContextValue = {
   openContact: (mode: ContactMode) => void;
-  openReservation: () => void;
+  /** Opens the dates/occupancy popup; pass a room to land on /reservations with it highlighted. */
+  openReservation: (room?: { slug: string; name: string }) => void;
 };
 
 const BookingContext = createContext<BookingContextValue | null>(null);
@@ -39,6 +40,7 @@ export function useBooking() {
 export default function BookingProvider({ children }: { children: ReactNode }) {
   const [contactMode, setContactMode] = useState<ContactMode | null>(null);
   const [reservationOpen, setReservationOpen] = useState(false);
+  const [reservationRoom, setReservationRoom] = useState<{ slug: string; name: string } | null>(null);
 
   const openContact = useCallback((mode: ContactMode) => {
     if (CONTACT_FORM_ENABLED) {
@@ -57,7 +59,10 @@ export default function BookingProvider({ children }: { children: ReactNode }) {
     else window.open(waLink(withAttributionRef()), "_blank", "noopener");
   }, []);
 
-  const openReservation = useCallback(() => setReservationOpen(true), []);
+  const openReservation = useCallback((room?: { slug: string; name: string }) => {
+    setReservationRoom(room ?? null);
+    setReservationOpen(true);
+  }, []);
 
   const value = useMemo(() => ({ openContact, openReservation }), [openContact, openReservation]);
 
@@ -67,7 +72,13 @@ export default function BookingProvider({ children }: { children: ReactNode }) {
       {CONTACT_FORM_ENABLED && contactMode && (
         <PreContactModal mode={contactMode} onClose={() => setContactMode(null)} />
       )}
-      {reservationOpen && <ReservationModal onClose={() => setReservationOpen(false)} />}
+      {reservationOpen && (
+        <ReservationModal
+          roomSlug={reservationRoom?.slug}
+          roomName={reservationRoom?.name}
+          onClose={() => setReservationOpen(false)}
+        />
+      )}
     </BookingContext.Provider>
   );
 }
