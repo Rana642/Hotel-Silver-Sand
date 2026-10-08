@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getBookingAttribution } from "@/lib/attribution";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -437,6 +438,7 @@ function GuestInformation({
         name, phone, email,
         requests,
         couponCode: search.promo.trim() || undefined,
+        attribution: getBookingAttribution(),
       });
       if (!res.success) { setError(res.error); setLoading(false); return; }
       onDone();

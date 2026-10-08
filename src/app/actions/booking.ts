@@ -1,6 +1,7 @@
 "use server";
 
 import { createServiceClient } from "@/lib/supabase/service";
+import type { BookingAttribution } from "@/lib/attribution";
 import { checkNightsAvailable } from "@/lib/availability";
 import { dealForRoomOnDate, priceWithDeal } from "@/lib/deals";
 import { addGst } from "@/lib/pricing";
@@ -63,7 +64,27 @@ export type BookingInput = {
   source?: "website" | "walkin" | "phone";
   /** Set when this booking originated from an admin-converted inquiry lead. */
   inquiryId?: string;
+  /** Website first touch (lib/attribution.ts) — which ad / source brought the guest. */
+  attribution?: BookingAttribution;
 };
+
+/** Untrusted browser input → short plain strings for the attribution columns. */
+function cleanAttribution(a: BookingAttribution | undefined) {
+  if (!a) return {};
+  const s = (v: unknown, n = 120) => (typeof v === "string" && v.trim() ? v.trim().slice(0, n) : null);
+  return {
+    ref_code: s(a.ref, 40),
+    utm_source: s(a.utm_source),
+    utm_medium: s(a.utm_medium),
+    utm_campaign: s(a.utm_campaign),
+    utm_content: s(a.utm_content),
+    utm_term: s(a.utm_term),
+    gclid: s(a.gclid, 200),
+    fbclid: s(a.fbclid, 200),
+    landing_path: s(a.landing_path, 200),
+    referrer: s(a.referrer),
+  };
+}
 
 export type BookingResult =
   | { success: true; bookingRef: string }
@@ -172,9 +193,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
 
   // --- insert booking ---
   const bookingRef = makeRef();
-  const { data: booking, error: insertError } = await supabase
-    .from("bookings")
-    .insert({
+  const row = {
       booking_ref: bookingRef,
       room_id: room.id,
       room_name: room.name,
@@ -195,9 +214,18 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
       special_request: input.requests?.trim() || null,
       status: "pending",
       source: input.source ?? "website",
-    })
+  };
+  const attribution = input.source && input.source !== "website" ? {} : cleanAttribution(input.attribution);
+  let { data: booking, error: insertError } = await supabase
+    .from("bookings")
+    .insert({ ...row, ...attribution })
     .select("id")
     .single();
+  // Before migration-phase17 runs the attribution columns don't exist —
+  // never lose a booking over that: save it without them.
+  if (insertError && Object.keys(attribution).length && /column|schema cache/i.test(insertError.message)) {
+    ({ data: booking, error: insertError } = await supabase.from("bookings").insert(row).select("id").single());
+  }
 
   if (insertError || !booking) {
     if (couponCode) await rollbackCoupon(supabase, couponCode);

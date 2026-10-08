@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getBookingAttribution } from "@/lib/attribution";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Phone, MessageCircle } from "lucide-react";
 import { useBooking } from "@/components/BookingProvider";
@@ -126,6 +127,7 @@ export default function RoomBookingForm({
         guests: occ.adults + occ.children, roomsCount: occ.rooms,
         name: f.name, phone: f.phone, email: f.email,
         couponCode: coupon.trim() || undefined,
+        attribution: getBookingAttribution(),
       });
       if (!res.success) { setError(res.error); setLoading(false); return; }
       clearIntent(); // booking done — stop the "Continue your Booking" banner
