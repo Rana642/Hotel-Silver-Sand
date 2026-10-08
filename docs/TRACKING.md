@@ -48,3 +48,8 @@ Last updated: 2026-10-05.
   1. Check Admin → Events → Create event / Modify event for a rule that creates it.
   2. Remove that rule.
   3. Un-mark it as a key event.
+
+## Booking source (2026-10-08)
+- Website bookings save the same first touch as the WhatsApp Ref: `ref_code` (e.g. `FB-SFC1`), `utm_*`, `gclid`/`fbclid`, `landing_path` and `referrer` (`supabase/migration-phase17.sql`).
+- Until that migration runs, `createBooking` saves the booking without these fields; a booking is never lost over them.
+- The Ads by Shoaib client portal reads them, so each booking shows which ad brought it.
