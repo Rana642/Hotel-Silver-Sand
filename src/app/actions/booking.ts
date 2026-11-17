@@ -5,7 +5,8 @@ import type { BookingAttribution } from "@/lib/attribution";
 import { checkNightsAvailable } from "@/lib/availability";
 import { dealForRoomOnDate, priceWithDeal } from "@/lib/deals";
 import { addGst } from "@/lib/pricing";
-import { sendMetaEvent } from "@/lib/meta-capi";
+import { sendMetaEvent, type CapiActionSource } from "@/lib/meta-capi";
+import { sendGa4ServerEvent } from "@/lib/ga4-mp";
 import { notifyBooking } from "@/lib/notify";
 import { site } from "@/data/site";
 
@@ -244,13 +245,20 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     content_name: room.name,
     content_ids: [room.id],
   };
-  await sendMetaEvent({
-    name: "Lead",
-    eventId: bookingRef,
-    eventSourceUrl: `${site.url}/thank-you?ref=${bookingRef}`,
-    user: metaUser,
-    custom: metaCustom,
-  });
+  // Staff-entered walk-in / phone bookings are not website events: they go to Meta as offline events (no website URL,
+  // and never with the admin's own IP and browser, which used to be credited to the wrong person).
+  const isWebsite = (input.source ?? "website") === "website";
+  const actionSource: CapiActionSource = input.source === "walkin" ? "physical_store" : input.source === "phone" ? "phone_call" : "website";
+  if (isWebsite) {
+    await sendMetaEvent({
+      name: "Lead",
+      eventId: bookingRef,
+      eventSourceUrl: `${site.url}/thank-you?ref=${bookingRef}`,
+      user: metaUser,
+      custom: metaCustom,
+      fbclid: input.attribution?.fbclid,
+    });
+  }
   // Also send Purchase — Meta's own hospitality funnel treats a confirmed
   // reservation as Purchase regardless of pay-at-hotel timing, and sending
   // both the generic Lead and the vertical-specific standard event maximises
@@ -261,7 +269,26 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     eventSourceUrl: `${site.url}/thank-you?ref=${bookingRef}`,
     user: metaUser,
     custom: metaCustom,
+    fbclid: isWebsite ? input.attribution?.fbclid : undefined,
+    actionSource,
   });
+
+  // GA4, server to server: the booking counts even when the guest's browser never reaches the thank-you page
+  // (ad blocker, closed tab). GA4 de-duplicates `purchase` by transaction_id. Website bookings only.
+  if (isWebsite) {
+    await sendGa4ServerEvent(
+      {
+        name: "purchase",
+        params: {
+          transaction_id: bookingRef,
+          value: total,
+          currency: "PKR",
+          items: [{ item_id: room.id, item_name: room.name, price: unitPrice, quantity: nights * roomsCount }],
+        },
+      },
+      input.attribution?.ga_client_id
+    );
+  }
 
   // Mark the source inquiry converted now that a real booking exists for it.
   // Plain status update, no separate Meta signal — the CAPI call above (with

@@ -7,7 +7,6 @@ import { logActivity } from "@/app/actions/activity";
 import { notifyInquiry } from "@/lib/notify";
 import { sendMetaEvent } from "@/lib/meta-capi";
 import { rooms as fallbackRooms } from "@/data/rooms";
-import crypto from "node:crypto";
 
 export type InquiryInput = {
   name: string;
@@ -99,9 +98,12 @@ export async function setInquiryStatus(id: string, status: string): Promise<Res>
       before.check_in && before.check_out
         ? Math.max(1, Math.round((+new Date(before.check_out) - +new Date(before.check_in)) / 86400000))
         : 1;
+    // Staff clicked this in the admin, days after the guest's own visit: an offline signal, never a website event
+    // (otherwise it would carry the admin's IP and browser and be credited to the wrong person).
     await sendMetaEvent({
       name: "Lead",
-      eventId: crypto.randomUUID(),
+      eventId: `inquiry-converted-${id}`,
+      actionSource: "chat",
       user: { name: before.name, phone: before.phone, email: before.email },
       custom: {
         currency: "PKR",
