@@ -113,7 +113,7 @@ export default function HeroBookingBar() {
           </span>
           <WhyBookDirect light />
         </div>
-        <Link
+        <Link prefetch={false}
           href="/manage-booking"
           className="text-xs font-semibold text-white/80 underline decoration-white/30 underline-offset-2 hover:text-gold"
         >

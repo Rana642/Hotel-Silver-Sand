@@ -96,7 +96,7 @@ export default function ReservationModal({
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-white/15 pt-3">
           <WhyBookDirect light />
-          <Link href="/manage-booking" onClick={onClose} className="text-xs font-semibold text-white/80 underline decoration-white/30 underline-offset-2 hover:text-gold">
+          <Link prefetch={false} href="/manage-booking" onClick={onClose} className="text-xs font-semibold text-white/80 underline decoration-white/30 underline-offset-2 hover:text-gold">
             Manage Booking
           </Link>
         </div>

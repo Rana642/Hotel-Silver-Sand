@@ -33,7 +33,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-3">
             {nav.map((item) => (
               <li key={item.href}>
-                <Link
+                <Link prefetch={false}
                   href={item.href}
                   className="text-sm text-white/80 transition hover:text-gold"
                 >
@@ -43,12 +43,12 @@ export default function Footer() {
             ))}
             {/* Not in the top nav — the bar stays short and these live here. */}
             <li>
-              <Link href="/faq" className="text-sm text-white/80 transition hover:text-gold">
+              <Link prefetch={false} href="/faq" className="text-sm text-white/80 transition hover:text-gold">
                 FAQs &amp; Policies
               </Link>
             </li>
             <li>
-              <Link href="/manage-booking" className="text-sm text-white/80 transition hover:text-gold">
+              <Link prefetch={false} href="/manage-booking" className="text-sm text-white/80 transition hover:text-gold">
                 Manage Booking
               </Link>
             </li>
@@ -86,10 +86,10 @@ export default function Footer() {
             © {new Date().getFullYear()} {site.name}. All rights reserved.
           </p>
           <div className="flex gap-5">
-            <Link href="/contact" className="hover:text-gold">
+            <Link prefetch={false} href="/contact" className="hover:text-gold">
               Privacy Policy
             </Link>
-            <Link href="/contact" className="hover:text-gold">
+            <Link prefetch={false} href="/contact" className="hover:text-gold">
               Terms of Service
             </Link>
           </div>

@@ -5,17 +5,25 @@ import Image from "next/image";
 import type { HeroImage } from "@/lib/hero";
 
 export default function HeroSlider({ images }: { images: HeroImage[] }) {
-  const [i, setI] = useState(0);
+  // Only the slide on show, the next one (so it is ready) and the ones already shown are loaded. Every slide used to
+  // load on every home page view, even the hidden ones, which multiplied image requests on the hotel's Vercel plan.
+  const [{ i, seen }, setShow] = useState<{ i: number; seen: number[] }>({ i: 0, seen: [0] });
+  const goTo = (n: number) => setShow((s) => ({ i: n, seen: s.seen.includes(n) ? s.seen : [...s.seen, n] }));
 
   useEffect(() => {
     if (images.length < 2) return;
-    const t = setInterval(() => setI((p) => (p + 1) % images.length), 5000);
+    const t = setInterval(
+      () => setShow((s) => { const n = (s.i + 1) % images.length; return { i: n, seen: s.seen.includes(n) ? s.seen : [...s.seen, n] }; }),
+      5000
+    );
     return () => clearInterval(t);
   }, [images.length]);
 
+  const next = images.length > 1 ? (i + 1) % images.length : -1;
+
   return (
     <>
-      {images.map((img, idx) => (
+      {images.map((img, idx) => (idx === i || idx === next || seen.includes(idx) ? (
         <Image
           key={img.id}
           src={img.url}
@@ -28,7 +36,7 @@ export default function HeroSlider({ images }: { images: HeroImage[] }) {
           }`}
           style={idx === i ? { animation: "heroZoom 6s ease-out forwards" } : undefined}
         />
-      ))}
+      ) : null))}
       <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/45 via-transparent to-transparent" />
 
       {images.length > 1 && (
@@ -39,7 +47,7 @@ export default function HeroSlider({ images }: { images: HeroImage[] }) {
             <button
               key={idx}
               type="button"
-              onClick={() => setI(idx)}
+              onClick={() => goTo(idx)}
               aria-label={`Show slide ${idx + 1}`}
               aria-current={idx === i}
               className="group flex h-11 w-8 items-center justify-center"

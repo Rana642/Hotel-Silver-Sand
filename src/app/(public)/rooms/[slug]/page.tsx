@@ -92,8 +92,8 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ slu
         <div className="container-site py-10 sm:py-14">
           {/* Breadcrumb */}
           <nav className="text-sm text-slate" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-gold">Home</Link> /{" "}
-            <Link href="/rooms" className="hover:text-gold">Rooms</Link> /{" "}
+            <Link prefetch={false} href="/" className="hover:text-gold">Home</Link> /{" "}
+            <Link prefetch={false} href="/rooms" className="hover:text-gold">Rooms</Link> /{" "}
             <span className="text-navy">{room.name}</span>
           </nav>
 
@@ -224,7 +224,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ slu
               <h2 className="font-heading text-2xl font-bold text-navy">Other Rooms You May Like</h2>
               <div className="mt-6 grid gap-6 sm:grid-cols-2">
                 {others.map((r) => (
-                  <Link key={r.id} href={`/rooms/${r.slug}`} className="group overflow-hidden rounded-xl border border-gray-100 bg-white shadow-card transition hover:shadow-pop">
+                  <Link prefetch={false} key={r.id} href={`/rooms/${r.slug}`} className="group overflow-hidden rounded-xl border border-gray-100 bg-white shadow-card transition hover:shadow-pop">
                     <div className="relative aspect-[16/10]">
                       <Image src={featuredImage(r)} alt={r.name} fill sizes="500px" className="object-cover transition group-hover:scale-105" />
                     </div>

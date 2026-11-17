@@ -4,7 +4,7 @@ import { site } from "@/data/site";
 
 export default function Logo({ dark = false }: { dark?: boolean }) {
   return (
-    <Link href="/" className="flex items-center gap-3" aria-label={`${site.name} home`}>
+    <Link prefetch={false} href="/" className="flex items-center gap-3" aria-label={`${site.name} home`}>
       <Image
         src={dark ? "/images/logo-transparent.png" : "/images/logo-dark.png"}
         alt={`${site.name} logo`}

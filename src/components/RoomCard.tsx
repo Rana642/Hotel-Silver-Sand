@@ -89,7 +89,7 @@ export default function RoomCard({ room }: { room: Room }) {
             name={room.name}
             className="mt-4 flex w-full items-center justify-center gap-2 bg-gold px-4 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95"
           />
-          <Link
+          <Link prefetch={false}
             href={`/rooms/${room.slug}`}
             className="mt-2 flex w-full items-center justify-center gap-1.5 border border-navy/20 px-4 py-2 text-sm font-semibold text-navy transition hover:bg-navy hover:text-white"
           >

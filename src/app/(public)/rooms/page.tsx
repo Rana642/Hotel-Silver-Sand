@@ -108,13 +108,13 @@ export default async function RoomsPage() {
                     </div>
 
                     <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                      <Link
+                      <Link prefetch={false}
                         href={`/rooms/${room.slug}`}
                         className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border border-navy/20 px-6 py-3 text-sm font-semibold text-navy transition hover:bg-navy hover:text-white"
                       >
                         View Details <ArrowRight className="size-4" />
                       </Link>
-                      <Link
+                      <Link prefetch={false}
                         href="/reservations"
                         className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-navy-dark transition hover:brightness-95"
                       >

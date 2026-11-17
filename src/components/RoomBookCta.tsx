@@ -41,7 +41,7 @@ export default function RoomBookCta({
         <p className="mt-1 text-xs text-slate">+ {pkr(gst)} GST ({gstPercent}%)</p>
       )}
 
-      <Link
+      <Link prefetch={false}
         href="/reservations"
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 font-semibold text-navy-dark transition hover:brightness-95"
       >

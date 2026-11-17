@@ -32,7 +32,7 @@ export default function Header() {
 
           <nav className="hidden items-center gap-5 xl:flex" aria-label="Primary">
             {nav.map((item) => (
-              <Link
+              <Link prefetch={false}
                 key={item.href}
                 href={item.href}
                 className={`relative text-sm font-medium transition after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:bg-gold after:transition-all hover:text-gold ${
@@ -109,7 +109,7 @@ export default function Header() {
           <ul className="flex flex-col p-4">
             {nav.map((item) => (
               <li key={item.href}>
-                <Link
+                <Link prefetch={false}
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className={`block px-4 py-3 text-base font-medium ${

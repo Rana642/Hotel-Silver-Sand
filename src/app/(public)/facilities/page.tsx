@@ -60,13 +60,13 @@ export default function FacilitiesPage() {
               staffed at three in the morning, because that is when trains arrive.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link
+              <Link prefetch={false}
                 href="/reservations"
                 className="inline-block bg-gold px-6 py-3 text-sm font-semibold text-navy-dark transition hover:brightness-95"
               >
                 Check Availability
               </Link>
-              <Link
+              <Link prefetch={false}
                 href="/faq"
                 className="inline-block border border-navy px-6 py-3 text-sm font-semibold text-navy transition hover:bg-navy hover:text-white"
               >

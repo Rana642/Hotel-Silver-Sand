@@ -125,7 +125,7 @@ export default function PromotionsSideTab() {
             </span>
           </div>
 
-          <Link
+          <Link prefetch={false}
             href={`/promotions/${promo.slug}`}
             className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-gold underline decoration-gold/50 underline-offset-2 hover:text-white"
           >

@@ -43,7 +43,7 @@ export default function BookingBar() {
             <MessageCircle className="size-4" />
             <span className="hidden xs:inline">WhatsApp</span>
           </button>
-          <Link
+          <Link prefetch={false}
             href="/reservations"
             className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2.5 text-sm font-semibold text-navy-dark transition hover:brightness-95 lg:flex-none"
           >

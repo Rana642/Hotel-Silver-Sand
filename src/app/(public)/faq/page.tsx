@@ -129,7 +129,7 @@ export default function FaqPage() {
             WiFi our guests rate 10 out of 10, free private parking, and a front desk that answers at
             three in the morning.
           </p>
-          <Link
+          <Link prefetch={false}
             href="/reservations"
             className="mt-7 inline-block bg-gold px-8 py-3 font-semibold text-navy-dark transition hover:brightness-95"
           >

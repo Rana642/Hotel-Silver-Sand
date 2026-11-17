@@ -72,7 +72,7 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
   return (
     <section className="bg-cream">
       <div className="container-site py-12 sm:py-16">
-        <Link href="/promotions" className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-gold">
+        <Link prefetch={false} href="/promotions" className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-gold">
           <ArrowLeft className="size-4" /> All Promotions
         </Link>
 
@@ -83,7 +83,7 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
               {all.map((p) => {
                 const active = p.slug === promo.slug;
                 return (
-                  <Link
+                  <Link prefetch={false}
                     key={p.id}
                     href={`/promotions/${p.slug}`}
                     aria-current={active ? "page" : undefined}

@@ -40,7 +40,7 @@ export default async function PromotionsPage() {
                   <div className="flex flex-1 flex-col p-5">
                     <h3 className="font-heading text-lg font-bold text-navy">{p.title}</h3>
                     {p.short_desc && <p className="mt-2 text-sm leading-relaxed text-slate">{p.short_desc}</p>}
-                    <Link
+                    <Link prefetch={false}
                       href={`/promotions/${p.slug}`}
                       className="mt-auto inline-flex items-center gap-2 pt-4 text-sm font-semibold text-navy hover:text-gold"
                     >

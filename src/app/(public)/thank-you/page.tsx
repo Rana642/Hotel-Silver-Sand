@@ -143,7 +143,7 @@ export default async function ThankYouPage({
           </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link
+            <Link prefetch={false}
               href="/rooms"
               className="flex flex-1 items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 font-semibold text-navy-dark hover:brightness-95"
             >
