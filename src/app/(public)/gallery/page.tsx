@@ -8,7 +8,7 @@ import { videos, youtubeChannel } from "@/data/gallery";
 import { pageMeta } from "@/lib/seo";
 import { createServiceClient } from "@/lib/supabase/service";
 
-export const revalidate = 60;
+export const revalidate = 3600; // was 60 (see the rate pages); admin saves refresh it at once.
 
 export const metadata: Metadata = pageMeta({
   title: "Hotel Silver Sand Multan | Photo Gallery",

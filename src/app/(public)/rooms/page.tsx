@@ -8,7 +8,7 @@ import { getRoomsStatic, roomPricing, featuredImage } from "@/lib/rooms";
 import { pageMeta } from "@/lib/seo";
 import { pkr } from "@/lib/format";
 
-export const revalidate = 60;
+export const revalidate = 600; // was 60: every page was rebuilt and stored every minute (ISR writes passed the Hobby limit 3x). Admin saves refresh it at once.
 
 // Description used to hard-code "from PKR 3,000 a night" — stale the moment
 // rates changed. Reads the live cheapest active room rate instead, same

@@ -6,7 +6,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { getPromotionsStatic } from "@/lib/promotions";
 import { pageMeta } from "@/lib/seo";
 
-export const revalidate = 60;
+export const revalidate = 600; // was 60: every page was rebuilt and stored every minute (ISR writes passed the Hobby limit 3x). Admin saves refresh it at once.
 
 export const metadata = pageMeta({
   title: "Promotions & Special Offers in Multan",

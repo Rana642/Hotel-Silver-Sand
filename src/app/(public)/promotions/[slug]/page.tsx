@@ -7,7 +7,7 @@ import { getPromotionsStatic, getPromotionBySlug } from "@/lib/promotions";
 import { pageMeta } from "@/lib/seo";
 import { site } from "@/data/site";
 
-export const revalidate = 60;
+export const revalidate = 600; // was 60: every page was rebuilt and stored every minute (ISR writes passed the Hobby limit 3x). Admin saves refresh it at once.
 
 export async function generateStaticParams() {
   const promos = await getPromotionsStatic();

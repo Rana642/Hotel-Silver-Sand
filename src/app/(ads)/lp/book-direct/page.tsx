@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
 // Was fully static (no revalidation) — a room price/detail edit in the admin
 // panel never reached this ad-only page until the next deploy. Matches the
 // 60s ISR window already used on /rooms and the homepage.
-export const revalidate = 60;
+export const revalidate = 600; // was 60: every page was rebuilt and stored every minute (ISR writes passed the Hobby limit 3x). Admin saves refresh it at once.
 
 // Ad-only landing page for the "Pre-Booking Demand" campaign: someone in
 // another city planning a trip, searching the brand name or a room/rate

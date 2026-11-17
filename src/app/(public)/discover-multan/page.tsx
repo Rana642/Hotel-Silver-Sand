@@ -5,7 +5,7 @@ import CTASection from "@/components/CTASection";
 import { pageMeta } from "@/lib/seo";
 import { createServiceClient } from "@/lib/supabase/service";
 
-export const revalidate = 60;
+export const revalidate = 3600; // was 60 (see the rate pages); admin saves refresh it at once.
 
 export const metadata: Metadata = pageMeta({
   title: "Discover Multan | Places to Visit Near Hotel Silver Sand",

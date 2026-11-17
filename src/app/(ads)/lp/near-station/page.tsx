@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 // Was fully static (no revalidation) — a room price/detail edit in the admin
 // panel never reached this ad-only page until the next deploy. Matches the
 // 60s ISR window already used on /rooms and the homepage.
-export const revalidate = 60;
+export const revalidate = 600; // was 60: every page was rebuilt and stored every minute (ISR writes passed the Hobby limit 3x). Admin saves refresh it at once.
 
 // Ad-only landing page for the "Arrival Intent" campaign: someone physically in
 // Multan right now — just off a train at Cantt, or just landed at the airport —
