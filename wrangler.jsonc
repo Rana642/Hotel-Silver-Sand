@@ -1,0 +1,28 @@
+{
+  // Hotel Silver Sand Multan on Cloudflare Workers (OpenNext adapter). Prepared 17 Nov 2026, after Vercel paused the Hobby project.
+  // Secrets and environment variables are NOT in this file: set them in the Cloudflare dashboard (see docs/CLOUDFLARE.md).
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "hotel-silver-sand",
+  "compatibility_date": "2025-06-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "hotel-silver-sand" }],
+
+  // Page cache for ISR (revalidate = 600 / 3600 and revalidatePath from the admin). Create the bucket once:
+  //   npx wrangler r2 bucket create hotel-silver-sand-cache
+  "r2_buckets": [{ "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "hotel-silver-sand-cache" }],
+
+  // Revalidation queue and tag cache run in Durable Objects, so nothing else has to be created by hand.
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+      { "name": "NEXT_TAG_CACHE_DO_SHARDED", "class_name": "DOShardedTagCache" }
+    ]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"] }],
+
+  // next/image optimisation (the /_next/image route)
+  "images": { "binding": "IMAGES" },
+  "observability": { "enabled": true }
+}
