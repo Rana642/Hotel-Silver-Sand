@@ -95,7 +95,7 @@ export type BookingAttribution = {
 /** GA4's client_id is the last two parts of the `_ga` cookie ("GA1.1.<random>.<time>"). */
 function gaClientId(): string | undefined {
   try {
-    const m = document.cookie.match(/(?:^|;s*)_ga=([^;]+)/);
+    const m = document.cookie.match(/(?:^|;\s*)_ga=([^;]+)/);
     const parts = m ? decodeURIComponent(m[1]).split(".") : [];
     return parts.length >= 4 ? `${parts[2]}.${parts[3]}` : undefined;
   } catch {
