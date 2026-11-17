@@ -5,6 +5,8 @@
   "main": ".open-next/worker.js",
   "name": "hotel-silver-sand",
   "compatibility_date": "2025-06-01",
+  // Keep variables and secrets set in the dashboard when a git build deploys (otherwise they are wiped on every deploy).
+  "keep_vars": true,
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "hotel-silver-sand" }],
