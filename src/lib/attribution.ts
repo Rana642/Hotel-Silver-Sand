@@ -88,14 +88,29 @@ export type BookingAttribution = {
   fbclid?: string;
   landing_path?: string;
   referrer?: string;
+  /** GA4 client id from the `_ga` cookie. Only used to tie the server-side GA4 purchase to the guest's session; never stored. */
+  ga_client_id?: string;
 };
+
+/** GA4's client_id is the last two parts of the `_ga` cookie ("GA1.1.<random>.<time>"). */
+function gaClientId(): string | undefined {
+  try {
+    const m = document.cookie.match(/(?:^|;\s*)_ga=([^;]+)/);
+    const parts = m ? decodeURIComponent(m[1]).split(".") : [];
+    return parts.length >= 4 ? `${parts[2]}.${parts[3]}` : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 export function getBookingAttribution(): BookingAttribution | undefined {
   if (typeof window === "undefined") return undefined;
   try {
     const t = JSON.parse(localStorage.getItem(KEY) || "null") as Touch | null;
-    if (!t || Date.now() - t.at > TTL_MS) return { ref: "WEB" };
+    const ga_client_id = gaClientId();
+    if (!t || Date.now() - t.at > TTL_MS) return { ref: "WEB", ga_client_id };
     return {
+      ga_client_id,
       ref: t.code ? `${t.src}-${t.code}` : t.src,
       utm_source: t.utm?.source,
       utm_medium: t.utm?.medium,
