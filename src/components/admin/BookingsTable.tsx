@@ -5,6 +5,19 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { statusMeta, type Booking, type BookingStatus } from "@/types";
 
+/** Where the guest came from, from the saved click ids / UTMs. */
+function adSource(b: Booking): string {
+  const src = (b.utm_source ?? "").toLowerCase();
+  const med = (b.utm_medium ?? "").toLowerCase();
+  if (b.gclid || (src === "google" && /cpc|ppc|paid/.test(med))) return "Google Ads";
+  if (b.fbclid || (/facebook|instagram|meta/.test(src) && /cpc|paid|ads/.test(med))) return "Meta Ads";
+  if (src === "google") return "Google Organic";
+  if (src) return src;
+  if (b.source === "walkin") return "Walk-in";
+  if (b.source === "phone") return "Phone";
+  return "Direct / Organic";
+}
+
 const filters: { key: BookingStatus | "all"; label: string }[] = [
   { key: "all", label: "All" },
   { key: "pending", label: "Pending" },
@@ -102,6 +115,7 @@ export default function BookingsTable({ bookings }: { bookings: Booking[] }) {
                   <th className="px-4 py-3">Phone</th>
                   <th className="px-4 py-3">Room</th>
                   <th className="px-4 py-3">Dates</th>
+                  <th className="px-4 py-3">Source</th>
                   <th className="px-4 py-3">Status</th>
                 </tr>
               </thead>
@@ -119,6 +133,7 @@ export default function BookingsTable({ bookings }: { bookings: Booking[] }) {
                     <td className="px-4 py-3 text-slate">
                       {b.check_in} → {b.check_out}
                     </td>
+                    <td className="px-4 py-3 text-slate">{adSource(b)}</td>
                     <td className="px-4 py-3">
                       <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${statusMeta[b.status].cls}`}>
                         {statusMeta[b.status].label}

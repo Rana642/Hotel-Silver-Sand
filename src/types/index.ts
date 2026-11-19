@@ -29,6 +29,10 @@ export type Booking = {
   admin_notes: string | null;
   status: BookingStatus;
   source: "website" | "walkin" | "phone";
+  gclid?: string | null;
+  fbclid?: string | null;
+  utm_source?: string | null;
+  utm_medium?: string | null;
   created_at: string;
 };
 
