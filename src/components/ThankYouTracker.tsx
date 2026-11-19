@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { trackEvent, trackMetaPixel } from "@/lib/analytics";
+import { trackEvent, trackMetaPixel, trackAdsConversion } from "@/lib/analytics";
+
+// Google Ads "Booking Request" conversion label (AW-18025732902). Hard-coded
+// rather than read from env, so a missing build variable can't silently drop it.
+const GADS_BOOKING_REQUEST_LABEL = "urZaCKej_eEcEKa2q5ND";
 
 /** Fires booking_confirmed exactly once per booking_ref, even across refreshes. */
 export default function ThankYouTracker({
@@ -19,6 +23,8 @@ export default function ThankYouTracker({
       if (sessionStorage.getItem(key)) return;
       sessionStorage.setItem(key, "1");
     } catch {}
+    // Google Ads Booking Request — once per booking (same guard as above).
+    trackAdsConversion(GADS_BOOKING_REQUEST_LABEL);
     trackEvent("booking_confirmed", {
       booking_ref: bookingRef,
       event_id: bookingRef, // same id server-side CAPI uses → Meta dedupes browser + server
