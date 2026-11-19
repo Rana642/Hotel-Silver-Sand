@@ -79,7 +79,8 @@ export default function PreContactModal({
       {
         content_name: isCall ? "call_click" : "whatsapp_click",
         intent,
-        ...(estimatedValue ? { value: estimatedValue, currency: "PKR" } : {}),
+        currency: "PKR",
+        ...(estimatedValue ? { value: estimatedValue } : {}),
       },
       eventIdRef.current
     );
