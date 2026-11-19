@@ -11,17 +11,16 @@ import {
 import PreContactModal, { type ContactMode } from "@/components/PreContactModal";
 import ReservationModal from "@/components/ReservationModal";
 import { tel, waLink } from "@/data/site";
-import { trackEvent, trackAdsConversion } from "@/lib/analytics";
+import { trackEvent, trackAdsConversion, trackMetaPixel } from "@/lib/analytics";
 import { withAttributionRef } from "@/lib/attribution";
 
 /**
- * Pre-contact "Quick details" lead form on Call/WhatsApp.
- * Re-enabled — the site's entire Meta/Google Ads optimization strategy
- * depends on this form's intent + dates fields to tell a qualified lead
- * (real booking intent) from a raw, un-scored click. See PreContactModal /
- * inquiry.ts / analytics.ts's trackMetaPixel for how that signal is used.
+ * Pre-contact "Quick details" popup on Call/WhatsApp — switched OFF (2026-11-19).
+ * The WhatsApp bot now filters enquiries, so Call/WhatsApp open directly.
+ * The direct path below still fires the Meta Contact event (currency PKR)
+ * on every click. PreContactModal.tsx is kept, unused, in case it is needed again.
  */
-const CONTACT_FORM_ENABLED = true;
+const CONTACT_FORM_ENABLED = false;
 
 type BookingContextValue = {
   openContact: (mode: ContactMode) => void;
@@ -50,6 +49,12 @@ export default function BookingProvider({ children }: { children: ReactNode }) {
     // Direct action — no form.
     const isCall = mode === "call";
     trackEvent(isCall ? "call_click" : "whatsapp_click", { location: "direct" });
+    // Meta Contact on every direct click (no popup, so no intent to check).
+    trackMetaPixel(
+      "Contact",
+      { content_name: isCall ? "call_click" : "whatsapp_click", currency: "PKR" },
+      typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`
+    );
     trackAdsConversion(
       isCall
         ? process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL_CALL
