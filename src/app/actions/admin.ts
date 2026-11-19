@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { logActivity } from "@/app/actions/activity";
 import { checkNightsAvailable } from "@/lib/availability";
+import { sendConfirmedToGoogleAds } from "@/app/actions/googleOffline";
 import type { BookingStatus } from "@/types";
 
 type Res = { ok: true } | { ok: false; error: string };
@@ -21,8 +22,14 @@ function eachNight(start: string, end: string) {
 
 export async function setBookingStatus(id: string, status: BookingStatus): Promise<Res> {
   const supabase = await createClient();
+  const { data: prev } = await supabase.from("bookings").select("status").eq("id", id).maybeSingle();
   const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
   if (error) return { ok: false, error: error.message };
+  // Google Ads offline conversion on the transition INTO 'confirmed' (best-effort;
+  // the status update has already succeeded). Same booking_ref dedupes repeats.
+  if (status === "confirmed" && prev?.status !== "confirmed") {
+    sendConfirmedToGoogleAds(id).catch(() => {});
+  }
   // Free the room when cancelled / no-show.
   if (status === "cancelled" || status === "no_show") {
     await supabase.from("availability_blocks").delete().eq("booking_id", id);
