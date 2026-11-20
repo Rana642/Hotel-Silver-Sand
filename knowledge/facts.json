@@ -1,0 +1,51 @@
+{
+  "_source": "KB marketing_doc source-of-truth-2026-11-20 (Hotel Silver Sand) — checked against the live database, site code and rooms page on 2026-11-20",
+  "_rule": "Bots and automations read this file. Change it only together with the KB source doc. Never hardcode these values elsewhere.",
+  "nap": {
+    "name": "Hotel Silver Sand Multan",
+    "address": "514 Akbar Road, Railway Colony, Multan 60000, Pakistan",
+    "phone": "0300 8720939",
+    "phone_international": "+92 300 8720939",
+    "whatsapp": "https://wa.me/923008720939",
+    "website": "https://www.hotelsilversandmultan.com",
+    "email": "info@hotelsilversandmultan.com",
+    "hours": "24-hour front desk"
+  },
+  "rates_pkr_per_night_as_shown_on_website": {
+    "rooms": [
+      { "slug": "deluxe-king-room", "name": "Deluxe King Room", "standard_crossed_out": 3500, "offer": 2800, "max_adults": 2, "max_children": 0 },
+      { "slug": "deluxe-double-room", "name": "Deluxe Double Room", "standard_crossed_out": 8500, "offer": 6800, "max_adults": 2, "max_children": 0 },
+      { "slug": "deluxe-triple-room", "name": "Deluxe Triple Room", "standard_crossed_out": 7500, "offer": 6000, "max_adults": 3, "max_children": 0 },
+      { "slug": "budget-twin-room", "name": "Budget Twin Room", "standard_crossed_out": 7000, "offer": 5600, "max_adults": 2, "max_children": 0 }
+    ],
+    "breakfast": "Included in every room rate"
+  },
+  "offers": [
+    { "name": "Early Booking Offer", "discount_pct": 25, "condition": "Book at least 7 days before check-in", "payment": "Pay at the hotel, no advance", "refund": "Free cancellation, 100% refund anytime" },
+    { "name": "Long Stay Offer", "discount_pct": 25, "condition": "3 nights or more", "payment": "Pay at the hotel, no advance", "refund": "Free cancellation, 100% refund anytime" },
+    { "name": "Last Minute Deal", "discount_pct": 30, "condition": "Check-in today or tomorrow; Thu/Fri/Sat; booked 15:00-23:59", "valid_until": "2026-12-31", "payment": "Pay at the hotel, no advance", "refund": "Free cancellation, 100% refund anytime" }
+  ],
+  "expired_offers": ["Early Bird Deal 10% (24-30 Sep 2026)"],
+  "policies": {
+    "check_in": "24 hours, no cut-off",
+    "check_out": "12:00 to 13:00",
+    "payment": "Cash accepted at the property. No prepayment needed.",
+    "parking": "Free private parking on site, no booking needed",
+    "airport_transfer": "Chargeable, on request; confirm fare when booking (airport 2.4 km)",
+    "children": "All ages welcome; aged 3 and above charged as adults",
+    "extra_bed": "PKR 1,000 per child per night, ages 0-12, on request. No cots.",
+    "pets": "Not allowed",
+    "parties_events": "Not allowed",
+    "restaurant": "No in-house restaurant; room service available; nearest restaurant 700 m"
+  },
+  "distances": [
+    { "place": "Multan Cantt Railway Station", "distance": "500 m", "note": "about 6 minutes' walk" },
+    { "place": "Multan International Airport", "distance": "2.4 km", "note": "about 8 minutes by car" },
+    { "place": "Multan city centre (Ghanta Ghar)", "distance": "about 3 km", "note": "about 10 minutes by car" },
+    { "place": "Multan City Railway Station", "distance": "3.8 km" }
+  ],
+  "open_items": [
+    "Website Long Stay description says 10% off; the offer is 25%. Fix the website text.",
+    "Booking.com parity for these rates is not yet checked. Website offer must stay at or below Booking.com Genius-3."
+  ]
+}
